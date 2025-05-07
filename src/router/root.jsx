@@ -2,13 +2,14 @@ import { createBrowserRouter } from "react-router-dom";
 import MainPage from "../pages/MainPage";
 import IntroPage from "../pages/intro/IntroPage";
 import LoginPage from "../pages/auth/LoginPage";
-// import courseRouter from "./courseRouter";
 import SearchMainPage from "../pages/search/SearchMainPage";
-import PlannerMainPage from "../pages/course/PlannerMainPage";
+import IndexPage from "../pages/course/indexPage";
+// import PlannerMainPage from "../pages/course/PlannerMainPage";
 import InfoMainPage from "../pages/info/InfoMainPage";
 import JoinPage from "../pages/auth/JoinPage";
-import IndexPage from "../pages/course/indexPage";
 import courseRouter from "./courseRouter";
+import searchRouter from "./searchRouter";
+import infoRouter from "./infoRouter";
 
 const root = createBrowserRouter([
   {
@@ -27,18 +28,17 @@ const root = createBrowserRouter([
     path: "/intro",
     element: <IntroPage />,
   },
-  {
-    path: "/search",
-    element: <SearchMainPage />,
-  },
-  {
-    path: "/course",
-    element: <IndexPage />,
-  },
-  {
-    path: "/info",
-    element: <InfoMainPage />,
-  },
+  searchRouter(),
+  // {
+  //   path: "/search",
+  //   element: <SearchMainPage />,
+  // },
+  courseRouter(),
+  // {
+  //   path: "/info",
+  //   element: <InfoMainPage />,
+  // },
+  infoRouter(),
 ]);
 
 export default root;

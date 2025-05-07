@@ -1,6 +1,6 @@
 import CourseBuilder from "../pages/course/CourseBuilder";
 import ListPage from "../pages/course/ListPage";
-// import IndexPage from "../pages/course/IndexPage";
+import IndexPage from "../pages/course/indexPage";
 import { Navigate } from "react-router-dom";
 
 const courseRouter = () => {

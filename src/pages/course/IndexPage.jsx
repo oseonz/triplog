@@ -7,12 +7,10 @@ function IndexPage() {
     <MainLayout>
       <div>
         <span>
-          <Link to="list">여행 만들기</Link> |{" "}
-          <Link to="builder">코스 만들기</Link>
+          {/* <Link to="list">여행 만들기</Link>
+          <Link to="builder">코스 만들기</Link> */}
         </span>
-        <div>
-          <Outlet />
-        </div>
+        <Outlet />
       </div>
     </MainLayout>
   );

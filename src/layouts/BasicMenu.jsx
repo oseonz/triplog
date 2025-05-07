@@ -30,10 +30,10 @@ function BasicMenu({ children }) {
           >
             여행검색
           </Link>
-          <div className="absolute hidden group-hover:block bg-blue-300 p-2 rounded w-[100px]">
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[150px]">
             <span className="flex gap-3">
-              <Link to="/place">여행지</Link>
-              <Link to="/food">음식점</Link>
+              <Link to="/search/place">여행지</Link>
+              <Link to="/search/food">음식점</Link>
             </span>
           </div>
         </li>
@@ -46,7 +46,7 @@ function BasicMenu({ children }) {
           >
             여행만들기
           </Link>
-          <div className="absolute hidden group-hover:block bg-blue-300 p-2 rounded w-[100px]">
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[200px]">
             <span className="flex gap-3">
               <Link to="/course/list">추천코스</Link>
               <Link to="/course/builder">코스만들기</Link>
@@ -63,7 +63,7 @@ function BasicMenu({ children }) {
           >
             여행정보
           </Link>
-          <div className="absolute hidden group-hover:block bg-blue-300 p-2 rounded w-[100px]">
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[190px]">
             <span className="flex gap-3">
               <Link to="/info/event">공연/행사</Link>
               <Link to="/info/article">여행기사</Link>
