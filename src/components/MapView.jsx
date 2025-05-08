@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 
-function MapView({ places = [], addedCourses = [], onRemoveCourse }) {
-  const center = {
-    lat: 37.566826,
-    lng: 126.9786567,
-  };
-
+function MapView({ places = [], addedCourses = [], onRemoveCourse, center }) {
   // 클릭된 마커 ID 저장
   const [selectedId, setSelectedId] = useState(null);
   // 마우스가 올라간 마커의 ID를 저장

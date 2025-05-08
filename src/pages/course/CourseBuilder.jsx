@@ -17,6 +17,10 @@ function CourseBuilder() {
   const [currentTab, setCurrentTab] = useState("여행만들기");
   const [keyword, setKeyword] = useState("");
   const [addedCourses, setAddedCourses] = useState([]);
+  const [mapCenter, setMapCenter] = useState({
+    lat: 37.566826,
+    lng: 126.9786567,
+  });
 
   // 일정 + 제목 입력용 상태
   const [tripTitle, setTripTitle] = useState("");
@@ -29,16 +33,39 @@ function CourseBuilder() {
   }, [type]);
 
   const loadPlaces = async () => {
-    const data = await fetchTourPlaces(type, 20);
-    setAllPlaces(data);
-    setVisibleCount(6);
-    setSelectedPlace(null);
-  };
-
-  const handleSearch = async () => {
     const data = await fetchTourPlaces(type, 20, keyword);
     setAllPlaces(data);
     setVisibleCount(6);
+    setSelectedPlace(null);
+
+    // ✅ 검색 결과의 첫 번째 장소로 중심 이동
+    if (data.length > 0) {
+      const first = data[0];
+      setMapCenter({
+        lat: Number(first.mapy),
+        lng: Number(first.mapx),
+      });
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      const data = await fetchTourPlaces(type, 20, keyword); // keyword 포함된 검색
+      setAllPlaces(data);
+      setVisibleCount(6); // 결과가 많을 경우를 위해 초기 6개만 보여줌
+      setSelectedPlace(null); // 기존 선택 초기화
+
+      // ✅ 지도 중심 변경
+      if (data.length > 0) {
+        const first = data[0];
+        setMapCenter({
+          lat: Number(first.mapy),
+          lng: Number(first.mapx),
+        });
+      }
+    } catch (error) {
+      console.error("❌ 검색 실패", error);
+    }
   };
 
   const handlePlaceClick = async (place) => {
@@ -84,9 +111,9 @@ function CourseBuilder() {
   };
 
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex w-full h-screen  ">
       {/* 왼쪽 사이드 영역 */}
-      <div className="w-[450px] bg-gray-100 flex flex-col relative z-10">
+      <div className="w-[450px] bg-white flex flex-col relative z-10">
         <HeaderBar
           onBack={() => console.log("이전 페이지로 이동")} // 또는 useNavigate(-1)
           onShare={() => alert("🔗 공유 기능은 추후 구현됩니다!")}
@@ -97,18 +124,21 @@ function CourseBuilder() {
 
         {/* 2. 일정 선택 + 코스 제목 */}
         <div className="p-4">
-          <div className="flex gap-2 mb-2">
-            {["당일여행", "1박2일", "2박3일"].map((label) => (
-              <button
-                key={label}
-                className={`px-3 py-1 rounded text-white ${
-                  duration === label ? "bg-blue" : "bg-gray-400"
-                }`}
-                onClick={() => setDuration(label)}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="">일정</span>
+            <div className="flex gap-2  ">
+              {["당일여행", "1박2일", "2박3일"].map((label) => (
+                <button
+                  key={label}
+                  className={`px-3 py-1 rounded text-white ${
+                    duration === label ? "bg-blue" : "bg-gray-400"
+                  }`}
+                  onClick={() => setDuration(label)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="flex align-center gap-2">
             <input
@@ -146,7 +176,7 @@ function CourseBuilder() {
                   className="w-24 h-24 object-cover rounded-full"
                 />
                 <div className="min-w-0">
-                  <p className="font-bold text-xl truncate">{place.title}</p>
+                  <p className="font-medium text-xl truncate">{place.title}</p>
                   <p className="text-sm text-gray-600 truncate">
                     {place.addr1}
                   </p>
@@ -171,6 +201,7 @@ function CourseBuilder() {
       <div className="flex-1 p-4 bg-white">
         <MapView
           places={visiblePlaces}
+          center={mapCenter}
           addedCourses={addedCourses}
           onRemoveCourse={handleRemoveCourse}
         />

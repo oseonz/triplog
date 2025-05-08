@@ -15,7 +15,7 @@ function DetailPanel({
   return (
     <div
       className={`
-        absolute top-0 left-[460px] w-[400px] h-full bg-white shadow-lg z-50
+        absolute top-[104px] left-[460px] w-[400px] h-full bg-white shadow-lg z-50
         transition-transform duration-300 ease-in-out
         ${
           selectedPlace
@@ -26,7 +26,7 @@ function DetailPanel({
     >
       {/* 상단 타이틀 + 닫기 버튼 */}
       <div className="flex justify-between items-center p-4 border-b">
-        <h2 className="text-lg font-bold">
+        <h2 className="text-lg font-semibold">
           {isFood ? "추천 음식점" : "추천 여행지"}
         </h2>
         <button onClick={onClose} className="text-xl">
@@ -41,53 +41,61 @@ function DetailPanel({
           <img
             src={selectedPlace.firstimage}
             alt={selectedPlace.title}
-            className="w-full h-48 object-cover rounded mb-4"
+            className="w-full h-48 object-cover rounded mb-3"
           />
         )}
 
-        <p className="text-lg font-bold mb-2">{selectedPlace.title}</p>
-        <p className="text-gray-700 mb-2">📍 주소: {selectedPlace.addr1}</p>
+        <p className="text-lg font-semibold pb-2"> {selectedPlace.title}</p>
+        <p>
+          <span className=" font-normal">📍 주소:</span>
+          {selectedPlace.addr1}
+        </p>
 
         {isFood ? (
           <>
             <p>
-              운영시간:{" "}
+              🕒 운영시간:{" "}
               <span
+                className="font-normal"
                 dangerouslySetInnerHTML={{
                   __html: selectedPlace.opentimefood || "정보 없음",
                 }}
               />
             </p>
             <p>
-              <strong>휴무일:</strong>{" "}
+              <span className="font-normal">🍽 대표 메뉴</span>
+              <br /> {selectedPlace.treatmenu || "정보 없음"}
+            </p>
+            <p>
+              <span className="font-normal">❌ 휴무일:</span>{" "}
               {selectedPlace.restdatefood || "정보 없음"}
             </p>
             <p>
-              <strong>대표 메뉴:</strong>{" "}
-              {selectedPlace.treatmenu || "정보 없음"}
+              <span className="font-normal">🚗 주차:</span>{" "}
+              {selectedPlace.parkingfood || "정보 없음"}
             </p>
             <p>
-              <strong>주차:</strong> {selectedPlace.parkingfood || "정보 없음"}
-            </p>
-            <p>
-              <strong>신용카드:</strong>{" "}
+              <span className="font-normal">💳 신용카드:</span>{" "}
               {selectedPlace.chkcreditcardfood || "정보 없음"}
             </p>
           </>
         ) : (
           <>
             <p>
-              <strong>문의 및 안내:</strong>{" "}
+              <span className="font-normal">📞 문의 및 안내:</span>{" "}
               {selectedPlace.infocenter || "정보 없음"}
             </p>
             <p>
-              <strong>휴무일:</strong> {selectedPlace.restdate || "정보 없음"}
+              <span className="font-normal">❌ 휴무일:</span>{" "}
+              {selectedPlace.restdate || "정보 없음"}
             </p>
             <p>
-              <strong>이용시간:</strong> {selectedPlace.usetime || "정보 없음"}
+              <span className="font-normal">🕒 이용시간:</span>{" "}
+              {selectedPlace.usetime || "정보 없음"}
             </p>
             <p>
-              <strong>주차:</strong> {selectedPlace.parking || "정보 없음"}
+              <span className="font-normal">🚗 주차:</span>{" "}
+              {selectedPlace.parking || "정보 없음"}
             </p>
           </>
         )}

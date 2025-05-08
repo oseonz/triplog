@@ -7,7 +7,7 @@ function TabMenu({ currentTab, setCurrentTab }) {
           key={tab}
           onClick={() => setCurrentTab(tab)}
           className={`flex-1 px-4 py-2 font-semibold
-          ${index !== 0 ? "border-l border-gray-300" : ""}
+          ${index !== 0 ? "border-l border-black" : ""}
           ${
             currentTab === tab
               ? "text-black border-b-2 border-black border-l-0 border-r-0 border-t-0"

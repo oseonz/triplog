@@ -1,6 +1,6 @@
 function ListBtn({ selectedType, setType }) {
   return (
-    <div className="flex gap-2 py-4 px-4">
+    <div className="flex gap-2 py-4 px-4 pb-5">
       <button
         className={`flex-1 px-3 py-1 rounded text-white ${
           selectedType === "12" ? "bg-blue" : "bg-gray-400"

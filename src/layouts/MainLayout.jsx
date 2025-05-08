@@ -5,7 +5,7 @@ import BasicMenu from "./BasicMenu";
 function MainLayout({ children }) {
   return (
     <>
-      <div className="bg-white shadow-md">
+      <div className="bg-white shadow-md z-50 relative">
         <BasicMenu />
       </div>
       <div>{children}</div>
