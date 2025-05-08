@@ -1,0 +1,19 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.left-panel {
+  width: 400px;
+  padding: 1rem;
+  background: #f3f3f3;
+  overflow-y: auto;
+  max-height: 100vh;
+}

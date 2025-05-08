@@ -1,6 +1,7 @@
 import CourseBuilder from "../pages/course/CourseBuilder";
 import ListPage from "../pages/course/ListPage";
 import IndexPage from "../pages/course/indexPage";
+// import "./assets/index.css"; // 스타일시트 추가
 import { Navigate } from "react-router-dom";
 
 const courseRouter = () => {
