@@ -95,7 +95,7 @@ function DetailPanel({
         {/* ➕ 코스 추가 버튼 */}
         <button
           onClick={onAddCourse}
-          className="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          className="w-full mt-4 bg-blue text-white py-2 rounded hover:bg-blue"
         >
           ➕ 코스에 추가
         </button>
