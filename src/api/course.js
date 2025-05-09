@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getRegionCodeFromKeyword } from "../utils/regionUtils";
 
 // ✅ 관광지 목록 (지도용)
 const LIST_URL =
@@ -12,9 +13,61 @@ const TOUR_API_KEY =
   "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
 
 // ✅ 장소 리스트 API
-export const fetchTourPlaces = async (contentTypeId = "", minCount = 10) => {
+export const fetchTourPlaces = async (
+  contentTypeId = "",
+  minCount = 10,
+  keyword = ""
+) => {
+  const region = getRegionCodeFromKeyword(keyword);
   let pageNo = 1;
   const results = [];
+
+  const SEARCH_URL =
+    "https://apis.data.go.kr/B551011/KorService1/searchKeyword1";
+
+  // ✅ keyword가 있을 경우: 검색 API 사용
+  if (keyword.trim()) {
+    try {
+      const params = {
+        ServiceKey: TOUR_API_KEY,
+        MobileOS: "ETC",
+        MobileApp: "TripLog",
+        numOfRows: minCount,
+        pageNo: 1,
+        keyword,
+        contentTypeId,
+        _type: "json",
+      };
+
+      // ✅ 지역명 자동 추출된 경우 코드 추가
+      if (region) {
+        params.areaCode = region.areaCode;
+        if (region.sigunguCode) {
+          // params.sigunguCode = region.sigunguCode;
+        }
+      }
+
+      const res = await axios.get(SEARCH_URL, {
+        params,
+        headers: { Accept: "application/json" },
+      });
+
+      const itemList = res.data?.response?.body?.items?.item;
+      if (!itemList) {
+        console.warn("❌ 검색 결과 없음");
+        return [];
+      }
+      const rawItems = Array.isArray(itemList) ? itemList : [itemList];
+      const filtered = rawItems.filter(
+        (item) => item.firstimage && item.firstimage !== ""
+      );
+
+      return filtered.slice(0, minCount);
+    } catch (error) {
+      console.error("❌ 키워드 검색 API 오류:", error);
+      return [];
+    }
+  }
 
   while (results.length < minCount) {
     const params = {
@@ -47,8 +100,9 @@ export const fetchTourPlaces = async (contentTypeId = "", minCount = 10) => {
       const itemList = data.response.body.items.item;
       const rawItems = Array.isArray(itemList) ? itemList : [itemList];
       const filtered = rawItems.filter(
-        (item) => item.firstimage && item.firstimage !== ""
+        (item) => item && item.firstimage && item.firstimage !== ""
       );
+      console.log(itemList);
 
       results.push(...filtered);
       pageNo += 1;
