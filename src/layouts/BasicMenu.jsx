@@ -58,7 +58,7 @@ function BasicMenu({ children }) {
           <Link
             to={"/info"}
             className={`${
-              location.pathname.startsWith("/tour") ? "text-blue-700" : ""
+              location.pathname.startsWith("/info") ? "text-blue-700" : ""
             }`}
           >
             여행정보
