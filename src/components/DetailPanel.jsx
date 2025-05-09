@@ -15,7 +15,7 @@ function DetailPanel({
   return (
     <div
       className={`
-        absolute top-0 left-[460px] w-[400px] h-full bg-white shadow-lg z-50
+        absolute top-[104px] left-[460px] w-[400px] h-full bg-white shadow-lg z-50
         transition-transform duration-300 ease-in-out
         ${
           selectedPlace

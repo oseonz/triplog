@@ -32,14 +32,14 @@ function LoginPage() {
             <input
               type="submit"
               value="로그인"
-              className="bg-blue text-white py-4"
+              className="bg-blue-500 text-white py-4"
             />
           </form>
 
           <div className="w-full mt-2 flex gap-1 items-start pl-1 text-sm text-gray-500">
             <span>트립로그 회원이 아니신가요?</span>
             <Link to="/join">
-              <span className="text-blue hover:underline cursor-pointer">
+              <span className="text-blue-500 hover:underline cursor-pointer">
                 회원가입하러가기
               </span>
             </Link>

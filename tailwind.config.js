@@ -19,16 +19,16 @@ export default {
         normal: "400",
         medium: "500",
         semibold: "600",
-        bold: "800",
+        bold: "700",
       },
       fontSize: {
         // Tailwind 기본명칭 + 약간 커스텀 추가
-        "4xl": ["34px", { lineHeight: "1.25" }], // headline1
+        "4xl": ["36px", { lineHeight: "1.25" }], // headline1
         "2xl": ["24px", { lineHeight: "1.25" }], // headline2
         xl: ["20px", { lineHeight: "1.25" }], // headline3
         base: ["16px", { lineHeight: "1.75" }], // title1, body1
-        sm: ["14px", { lineHeight: "1.75" }], // title2, body2
-        xs: ["12px", { lineHeight: "1.75" }], // body3
+        sm: ["15px", { lineHeight: "1.75" }], // title2, body2
+        xs: ["14px", { lineHeight: "1.75" }], // body3
       },
       colors: {
         primary: "#1D4ED8",
@@ -38,7 +38,10 @@ export default {
         error: "#EF4444",
         black: "#111827",
         white: "#FFFFFF",
-        blue: "#3465ED",
+        blue: {
+          500: "#3465ED",
+          300: "#B6C9FD",
+        },
         gray: {
           900: "#111827",
           700: "#374151",
