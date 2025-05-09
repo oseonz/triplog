@@ -40,7 +40,7 @@ function PlacePage() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-[#F3F5F6]">
+    <div className="min-h-screen text-white bg-[#F3F5F6] text-black">
       <SearchLayout>
         <div className="container mx-auto py-10">
           <div className="relative">

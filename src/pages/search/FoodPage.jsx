@@ -25,7 +25,6 @@ const regions = [
   "경남",
 ];
 
-// 카드 더미 데이터
 const cards = [
   {
     title: "Jinmi Sikdang",
@@ -69,7 +68,7 @@ function FoodPage() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-[#F3F5F6]">
+    <div className="min-h-screen bg-[#F3F5F6] text-black">
       <SearchLayout>
         <div className="container mx-auto py-10">
           <div className="relative">
@@ -118,17 +117,19 @@ function FoodPage() {
           </span>
         </div>
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {cards.map((card, i) => (
-              <TripCard
-                key={i}
-                title={card.title}
-                image={card.image}
-                location={card.location}
-                tag={card.tag}
-              />
-            ))}
-          </div>
+          <Link to="../detail">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {cards.map((card, i) => (
+                <TripCard
+                  key={i}
+                  title={card.title}
+                  image={card.image}
+                  location={card.location}
+                  tag={card.tag}
+                />
+              ))}
+            </div>
+          </Link>
         </div>
       </div>
     </div>

@@ -2,8 +2,7 @@ import React from "react";
 
 function SearchLayout({ children }) {
   return (
-    <div className="w-full bg-blue-300 p-6">
-      {/* <div className="mb-6 text-center"></div> */}
+    <div className="w-full bg-blue-300 p-6 text-black">
       <main>{children}</main>
     </div>
   );
