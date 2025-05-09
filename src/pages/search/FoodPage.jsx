@@ -109,7 +109,7 @@ function FoodPage() {
             인기 <span className="font-bold">음식점</span> 알려줄게요!
           </span>
           <span className="text-blue-500 hover:underline cursor-pointer">
-            <Link to="">여행지 보러가기</Link>
+            <Link to="../place">여행지 보러가기</Link>
           </span>
         </div>
         <div className="pb-[30px]">
