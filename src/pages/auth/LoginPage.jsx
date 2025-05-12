@@ -29,11 +29,7 @@ function LoginPage() {
               placeholder="비밀번호"
               className="py-4 ps-4 pr-40 border border-gray-300"
             />
-            <input
-              type="submit"
-              value="로그인"
-              className="bg-blue-500 text-white py-4"
-            />
+            <button className="bg-blue-500 text-white py-4">로그인</button>
           </form>
 
           <div className="w-full mt-2 flex gap-1 items-start pl-1 text-sm text-gray-500">

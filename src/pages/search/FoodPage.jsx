@@ -72,7 +72,6 @@ function FoodPage() {
       <SearchLayout>
         <div className="container mx-auto py-10">
           <div className="relative">
-            {/* 왼쪽 화살표 */}
             <button
               onClick={scrollLeft}
               className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 rounded-full hover:bg-opacity-80"
@@ -80,7 +79,6 @@ function FoodPage() {
               <img src="../public/images/arrowLeft.png" alt="" />
             </button>
 
-            {/* 리스트 영역 */}
             <div
               ref={scrollRef}
               className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
@@ -90,7 +88,6 @@ function FoodPage() {
               ))}
             </div>
 
-            {/* 오른쪽 화살표 */}
             <button
               onClick={scrollRight}
               className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 rounded-full hover:bg-opacity-80"

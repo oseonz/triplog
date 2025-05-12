@@ -1,5 +1,35 @@
 import React from "react";
 import DetailLayout from "../../layouts/DetailLayout";
+import { Link } from "react-router-dom";
+import TripCard from "../../components/TripCard";
+import BlueBtn from "../../components/BlueBtn";
+
+const cards = [
+  {
+    title: "Jinmi Sikdang",
+    image: "https://source.unsplash.com/featured/?koreanfood",
+    location: "Seoul",
+    tag: "Korean BBQ",
+  },
+  {
+    title: "Gukbap Heaven",
+    image: "https://source.unsplash.com/featured/?koreanrestaurant",
+    location: "Busan",
+    tag: "Pork Soup",
+  },
+  {
+    title: "Jeonju Bibimbap",
+    image: "https://source.unsplash.com/featured/?bibimbap",
+    location: "Jeonju",
+    tag: "Bibimbap",
+  },
+  {
+    title: "Hanok Eats",
+    image: "https://source.unsplash.com/featured/?koreanfood2",
+    location: "Gyeongju",
+    tag: "Traditional",
+  },
+];
 
 function DetailPage() {
   return (
@@ -7,7 +37,7 @@ function DetailPage() {
       <DetailLayout>
         <div className="place-items-center gap-5">
           <p className="text-4xl font-bold pb-5">여행지 타이틀</p>
-          <p className="pb-5">서울특별시 종로구</p>
+          <p className="pb-5 text-gray-500">서울특별시 종로구</p>
         </div>
         <div className="pt-12 place-items-end pb-5">
           <div className="flex gap-2">
@@ -59,11 +89,66 @@ function DetailPage() {
         </div>
         <div>
           <div className="h-[300px] bg-blue-500">지도</div>
-          <div className="bg-white p-10">
-            <div className="flex gap-2">
-              <p className="text-[18px]">• 문의 및 안내</p>
-              <p className="">어쩌고 저쩌고</p>
-            </div>
+          <div className="bg-white p-10 flex mb-12">
+            <ul className="ps-20">
+              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
+                <span className="text-[18px] w-[130px]">• 문의 및 안내</span>
+                <span className="">어쩌고 저쩌고</span>
+              </li>
+              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
+                <span className="text-[18px] w-[130px]">• 이용 시간</span>
+                <span className="">어쩌고 저쩌고</span>
+              </li>
+              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
+                <span className="text-[18px] w-[130px]">• 주소</span>
+                <span className="">어쩌고 저쩌고</span>
+              </li>
+              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
+                <span className="text-[18px] w-[130px]">• 주차</span>
+                <span className="">어쩌고 저쩌고</span>
+              </li>
+              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
+                <span className="text-[18px] w-[130px]">• 휴일</span>
+                <span className="">어쩌고 저쩌고</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="mb-12">
+          <div className="mb-2">
+            <p className="text-2xl font-bold">추천 여행지</p>
+          </div>
+          <div className="border border-black"></div>
+          <div className="pt-5">
+            <Link to="../detail">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {cards.map((card, i) => (
+                  <TripCard
+                    key={i}
+                    title={card.title}
+                    image={card.image}
+                    location={card.location}
+                    tag={card.tag}
+                  />
+                ))}
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div className="flex justify-center items-center gap-5 mb-12">
+          <BlueBtn />
+        </div>
+        <div className="mb-12">
+          <div className="mb-2">
+            <p className="text-2xl font-bold">로그 톡톡</p>
+          </div>
+          <textarea
+            name="comment"
+            placeholder="소중한 댓글을 남겨주세요."
+            className="w-[1200px] h-[100px] border border-gray-300 p-4 placeholder:text-start resize-none mb-4"
+          />
+          <div className="flex justify-end">
+            <button className="bg-blue-500 text-white py-3 px-6">등록</button>
           </div>
         </div>
       </DetailLayout>
