@@ -30,25 +30,21 @@ const cards = [
     title: "Jinmi Sikdang",
     image: "https://source.unsplash.com/featured/?koreanfood",
     location: "Seoul",
-    tag: "Korean BBQ",
   },
   {
     title: "Gukbap Heaven",
     image: "https://source.unsplash.com/featured/?koreanrestaurant",
     location: "Busan",
-    tag: "Pork Soup",
   },
   {
     title: "Jeonju Bibimbap",
     image: "https://source.unsplash.com/featured/?bibimbap",
     location: "Jeonju",
-    tag: "Bibimbap",
   },
   {
     title: "Hanok Eats",
     image: "https://source.unsplash.com/featured/?koreanfood2",
     location: "Gyeongju",
-    tag: "Traditional",
   },
 ];
 
@@ -104,9 +100,7 @@ function FoodPage() {
             방방곡곡 맛집 어디까지 가봤나요?<br></br>
             인기 <span className="font-bold">음식점</span> 알려줄게요!
           </span>
-          <span className="text-blue-500 hover:underline cursor-pointer">
-            <Link to="../place">여행지 보러가기</Link>
-          </span>
+          <input type="text" value="검색" />
         </div>
         <div className="pb-[30px]">
           <span className="text-[22px] text-black font-bold">
@@ -121,7 +115,6 @@ function FoodPage() {
                   title={card.title}
                   image={card.image}
                   location={card.location}
-                  tag={card.tag}
                 />
               </Link>
             ))}

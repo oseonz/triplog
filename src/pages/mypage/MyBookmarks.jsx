@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import { Link } from "react-router-dom";
 import WhitePageLayout from "../../layouts/WhitePageLayout";
+import TripCard from "../../components/TripCard";
 // import TripCard from "../components/TripCard"; // 실제 카드 컴포넌트 있으면 써라
 
 const TABS = ["여행지", "음식점", "여행 코스", "공연/행사"];
 
 function MyBookmarks() {
   const [activeTab, setActiveTab] = useState("여행지");
-  const [items, setItems] = useState([]);
+  const [cards, setItems] = useState([]);
 
   useEffect(() => {
     // 여기서 DB 요청 보내는 시뮬레이션
@@ -79,25 +80,20 @@ function MyBookmarks() {
 
           {/* 찜 목록 표시 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {items.length === 0 ? (
+            {cards.length === 0 ? (
               <p className="col-span-4 text-center text-gray-500">
                 찜한 {activeTab}가 없습니다.
               </p>
             ) : (
-              items.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white p-4 shadow-md rounded-md"
-                >
-                  {/* 실제로는 TripCard 컴포넌트 쓰면 됨 */}
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-40 object-cover mb-2"
+              cards.map((card, i) => (
+                <Link to="" key={i}>
+                  <TripCard
+                    title={card.title}
+                    image={card.image}
+                    location={card.location}
+                    tag={card.tag}
                   />
-                  <h3 className="text-lg font-bold">{item.title}</h3>
-                  <p className="text-sm text-gray-500">{item.location}</p>
-                </div>
+                </Link>
               ))
             )}
           </div>
