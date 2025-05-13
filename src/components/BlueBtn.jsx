@@ -7,7 +7,7 @@ function BlueBtn({ to = "/course/builder", label = "코스 만들러 가기" }) 
       <Link to={to}>
         <button
           type="button"
-          className="text-blue-500 bg-white rounded-[20px] border border-blue-500 px-5 py-2 dark:bg-blue-600"
+          className="text-blue-500 bg-white rounded-[20px] border border-blue-500 px-5 py-2"
         >
           {label}
         </button>

@@ -88,13 +88,19 @@ function PlacePage() {
             👍 <span className="text-blue-500">최근 인기 있는</span> 여행지
           </span>
         </div>
-        <div>
-          <TripCard
-          // key={i}
-          // title={place.title}
-          // image={place.image}
-          // description={place.description}
-          />
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
+            {/* {cards.map((card, i) => (
+              <Link to="../detail" key={i}>
+                <TripCard
+                  title={card.title}
+                  image={card.image}
+                  location={card.location}
+                  tag={card.tag}
+                />
+              </Link>
+            ))} */}
+          </div>
         </div>
       </div>
     </div>
