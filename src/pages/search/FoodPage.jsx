@@ -113,20 +113,19 @@ function FoodPage() {
             👍 <span className="text-blue-500">최근 인기 있는</span> 음식점
           </span>
         </div>
-        <div>
-          <Link to="../detail">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {cards.map((card, i) => (
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
+            {cards.map((card, i) => (
+              <Link to="../detail" key={i}>
                 <TripCard
-                  key={i}
                   title={card.title}
                   image={card.image}
                   location={card.location}
                   tag={card.tag}
                 />
-              ))}
-            </div>
-          </Link>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

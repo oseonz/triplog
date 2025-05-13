@@ -55,7 +55,7 @@ function DetailPage() {
             </div>
           </div>
         </div>
-        <div className="flex bg-white border-y-2 border-grary-300 justify-center mb-7">
+        <div className="flex bg-white border-y-2 justify-center mb-7">
           <div className="border-r-2 border-grary-300">
             <p className="text-xl font-bold p-5 px-[100px]">사진 보기</p>
           </div>
@@ -148,7 +148,9 @@ function DetailPage() {
             className="w-[1200px] h-[100px] border border-gray-300 p-4 placeholder:text-start resize-none mb-4"
           />
           <div className="flex justify-end">
-            <button className="bg-blue-500 text-white py-3 px-6">등록</button>
+            <button className="bg-blue-500 text-white py-2 px-6 border border-blue-500 hover:bg-blue-600">
+              등록
+            </button>
           </div>
         </div>
       </DetailLayout>
