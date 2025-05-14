@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function HeaderBar({ onBack, onShare }) {
   return (
-    <div className="flex justify-between items-center px-5 py-4 border-b bg-white">
+    <div className="flex justify-between items-center px-6 py-4 border-b bg-white">
       {/* ←콕콕플래너 */}
       <button
         onClick={onBack}
