@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchDetailImages } from "../api/course";
+import { fetchDetailImages } from "../../../api/course.js";
 import { useEffect, useState } from "react";
 
 function DetailPanel({
