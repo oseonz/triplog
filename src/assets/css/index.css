@@ -17,3 +17,13 @@ body,
   overflow-y: auto;
   max-height: 100vh;
 }
+
+/* src/index.css 또는 글로벌 css에 추가 */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

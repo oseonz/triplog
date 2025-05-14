@@ -58,7 +58,7 @@ function BasicMenu({ children }) {
           <Link
             to={"/info"}
             className={`${
-              location.pathname.startsWith("/tour") ? "text-blue-700" : ""
+              location.pathname.startsWith("/info") ? "text-blue-700" : ""
             }`}
           >
             여행정보
@@ -74,6 +74,13 @@ function BasicMenu({ children }) {
       <ul className="flex text-xl">
         <li>
           <Link to={"/login"}>로그인/회원가입</Link>
+        </li>
+      </ul>
+      <ul className="flex text-xl">
+        <li>
+          <Link to={"/mypage"}>
+            <img src="../public/images/i_user.png" alt="user" />
+          </Link>
         </li>
       </ul>
     </nav>

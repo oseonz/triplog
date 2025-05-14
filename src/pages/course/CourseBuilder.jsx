@@ -131,7 +131,7 @@ function CourseBuilder() {
                 <button
                   key={label}
                   className={`px-3 py-1 rounded text-white ${
-                    duration === label ? "bg-blue" : "bg-gray-400"
+                    duration === label ? "bg-blue-500" : "bg-gray-600"
                   }`}
                   onClick={() => setDuration(label)}
                 >
@@ -189,7 +189,7 @@ function CourseBuilder() {
           {visibleCount < allPlaces.length && (
             <button
               onClick={handleLoadMore}
-              className="w-full bg-blue text-white py-2 rounded hover:bg-blue"
+              className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
             >
               더보기 +
             </button>

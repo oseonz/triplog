@@ -15,7 +15,7 @@ function SearchBar({ keyword, setKeyword, onSearch }) {
         />
         <button
           onClick={onSearch}
-          className="bg-blue text-white px-3 py-2 rounded"
+          className="bg-blue-500 text-white px-3 py-2 rounded"
         >
           검색
         </button>

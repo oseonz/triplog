@@ -10,6 +10,7 @@ import JoinPage from "../pages/auth/JoinPage";
 import courseRouter from "./courseRouter";
 import searchRouter from "./searchRouter";
 import infoRouter from "./infoRouter";
+import mypageRouter from "./mypageRouter";
 
 const root = createBrowserRouter([
   {
@@ -39,6 +40,11 @@ const root = createBrowserRouter([
   //   element: <InfoMainPage />,
   // },
   infoRouter(),
+  // {
+  //   path: "/mypage",
+  //   element: <MyPageMain />,
+  // },
+  mypageRouter(),
 ]);
 
 export default root;
