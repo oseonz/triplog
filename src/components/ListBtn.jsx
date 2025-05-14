@@ -11,7 +11,7 @@ function ListBtn({ selectedType, setType }) {
       </button>
       <button
         className={` flex-1 px-3 py-1 rounded text-white ${
-          selectedType === "39" ? "bg-blue-500" : "bg-gray-400"
+          selectedType === "39" ? "bg-orange-500" : "bg-gray-400"
         }`}
         onClick={() => setType("39")}
       >

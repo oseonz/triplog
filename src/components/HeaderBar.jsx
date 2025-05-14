@@ -15,13 +15,13 @@ function HeaderBar({ onBack, onShare }) {
         콕콕플래너
       </button>
 
-      {/* 공유 버튼 */}
+      {/* 공유 버튼
       <button
         onClick={onShare}
         className="text-base text-gray-800 hover:text-orange-500 flex items-center"
       >
         <img src="../public/images/i_share.png" alt="" className="w-6" />
-      </button>
+      </button> */}
     </div>
   );
 }
