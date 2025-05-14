@@ -14,28 +14,28 @@ function DetailPanel({
   const isFood = String(selectedPlace.contenttypeid) === "39";
   const [images, setImages] = useState([]);
 
-  // 공유 버튼 핸들러
-  const handleShare = () => {
-    const shareUrl = window.location.href;
+  // // 공유 버튼 핸들러
+  // const handleShare = () => {
+  //   const shareUrl = window.location.href;
 
-    // 1️⃣ Web Share API 지원 여부 확인
-    if (navigator.share) {
-      navigator
-        .share({
-          title: selectedPlace.title || "트립로그",
-          text: `추천 여행지: ${selectedPlace.title || ""}`,
-          url: shareUrl,
-        })
-        .then(() => console.log("✅ 공유 완료"))
-        .catch((err) => console.warn("❌ 공유 실패:", err));
-    } else {
-      // 2️⃣ 클립보드 복사 fallback
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => alert("📋 링크가 복사되었습니다!"))
-        .catch((err) => console.error("❌ 링크 복사 실패:", err));
-    }
-  };
+  //   // 1️⃣ Web Share API 지원 여부 확인
+  //   if (navigator.share) {
+  //     navigator
+  //       .share({
+  //         title: selectedPlace.title || "트립로그",
+  //         text: `추천 여행지: ${selectedPlace.title || ""}`,
+  //         url: shareUrl,
+  //       })
+  //       .then(() => console.log("✅ 공유 완료"))
+  //       .catch((err) => console.warn("❌ 공유 실패:", err));
+  //   } else {
+  //     // 2️⃣ 클립보드 복사 fallback
+  //     navigator.clipboard
+  //       .writeText(shareUrl)
+  //       .then(() => alert("📋 링크가 복사되었습니다!"))
+  //       .catch((err) => console.error("❌ 링크 복사 실패:", err));
+  //   }
+  // };
 
   useEffect(() => {
     async function getImages() {
