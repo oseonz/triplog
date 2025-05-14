@@ -11,7 +11,7 @@ function HeaderBar({ onBack, onShare }) {
         <span className="text-2xl">←</span> 콕콕플래너
       </button>
 
-      {/* 공유 버튼 */}
+      {/* 공유 버튼. */}
       <button
         onClick={onShare}
         className="text-base text-gray-800 hover:text-orange-500 flex items-center"
