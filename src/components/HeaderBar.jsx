@@ -11,14 +11,13 @@ function HeaderBar({ onBack, onShare }) {
         <span className="text-2xl">←</span> 콕콕플래너
       </button>
 
-      {/* 공유 버튼
+      {/* 공유 버튼 */}
       <button
         onClick={onShare}
-        className="flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-lg shadow-sm hover:border-orange-500 hover:text-orange-500 transition-all"
+        className="text-base text-gray-800 hover:text-orange-500 flex items-center"
       >
-        <img src="../images/i_share.png" alt="공유" className="w-5 h-5 mr-2" />
-        <span className="text-sm font-medium">공유</span>
-      </button> */}
+        <img src="../public/images/i_share.png" alt="" className="w-6" />
+      </button>
     </div>
   );
 }
