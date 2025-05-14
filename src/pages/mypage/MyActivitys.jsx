@@ -7,18 +7,15 @@ import TripCard from "../../components/TripCard";
 const TABS = ["댓글", "좋아요"];
 
 function MyActivitys() {
-  const [activeTab, setActiveTab] = useState("여행지");
+  const [activeTab, setActiveTab] = useState("댓글");
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
     const fakeDB = {
-      여행지: [
+      댓글: [
         {
           id: 1,
-          title: "제주도",
-          location: "제주",
-          image: "jeju.jpg",
-          tag: "자연",
+          coment: "재밌을 것 같아요",
         },
       ],
       음식점: [
@@ -30,24 +27,6 @@ function MyActivitys() {
           tag: "한식",
         },
       ],
-      "여행 코스": [
-        {
-          id: 3,
-          title: "부산 투어",
-          location: "부산",
-          image: "busan.jpg",
-          tag: "도시",
-        },
-      ],
-      "공연/행사": [
-        {
-          id: 4,
-          title: "불꽃놀이",
-          location: "한강",
-          image: "fireworks.jpg",
-          tag: "이벤트",
-        },
-      ],
     };
     setCards(fakeDB[activeTab] || []);
   }, [activeTab]);
@@ -55,20 +34,9 @@ function MyActivitys() {
   return (
     <MainLayout>
       <WhitePageLayout />
-      <div className="min-h-screen bg-[#F3F5F6] flex justify-center pt-4">
+      <div className="min-h-screen bg-[#F3F5F6] flex justify-center">
         <div className="container">
-          <div className="flex float-right">
-            <Link to="../../search/place">
-              <button
-                type="button"
-                className="text-white bg-blue-500 border border-blue-500 px-6 py-2 hover:bg-blue-600"
-              >
-                찜하러 가기
-              </button>
-            </Link>
-          </div>
-
-          <div className="pt-14">
+          <div className="pt-7">
             <div className="flex bg-white border-y-2 justify-around mb-7">
               {TABS.map((tab, i) => (
                 <div
@@ -77,7 +45,7 @@ function MyActivitys() {
                   onClick={() => setActiveTab(tab)}
                 >
                   <p
-                    className={`text-xl font-bold p-5 px-[100px] ${
+                    className={`text-xl font-bold p-5 px-[276px] ${
                       activeTab === tab ? "text-blue-500" : "text-black"
                     }`}
                   >

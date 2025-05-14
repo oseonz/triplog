@@ -11,7 +11,7 @@ function MyPageMain() {
           <span className="text-4xl font-bold">마이페이지</span>
         </div>
       </div>
-      <div className="min-h-screen bg-[#F3F5F6] flex justify-center pt-14">
+      <div className="min-h-screen bg-[#F3F5F6] flex justify-center pt-[72px]">
         <div className="container flex  items-start pb-5 justify-between">
           <div className="bg-blue-500 rounded-[10px] flex flex-col p-[100px]">
             <div className="rounded-full w-[200px] h-[200px] bg-gray-300"></div>

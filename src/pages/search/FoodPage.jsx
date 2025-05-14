@@ -100,13 +100,37 @@ function FoodPage() {
             방방곡곡 맛집 어디까지 가봤나요?<br></br>
             인기 <span className="font-bold">음식점</span> 알려줄게요!
           </span>
-          <input type="text" value="검색" />
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              name="email"
+              placeholder="검색"
+              className="py-4 ps-4 pr-40 border border-gray-300"
+            />
+            <div>
+              <img src="../public/images/i_search.png" alt="" />
+            </div>
+          </div>
         </div>
         <div className="pb-[30px]">
           <span className="text-[22px] text-black font-bold">
             👍 <span className="text-blue-500">최근 인기 있는</span> 음식점
           </span>
         </div>
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
+            {cards.map((card, i) => (
+              <Link to="../detail" key={i}>
+                <TripCard
+                  title={card.title}
+                  image={card.image}
+                  location={card.location}
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div className="border border-gray-300 mt-[30px] mb-[30px]"></div>
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
             {cards.map((card, i) => (

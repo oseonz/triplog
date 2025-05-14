@@ -79,9 +79,17 @@ function PlacePage() {
             방방곡곡 우리나라 어디까지 가봤나요?<br></br>
             인기 <span className="font-bold">여행지</span> 알려줄게요!
           </span>
-          <span className="text-blue-500 hover:underline cursor-pointer">
-            <Link to="../food">음식점 보러가기</Link>
-          </span>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              name="email"
+              placeholder="검색"
+              className="py-4 ps-4 pr-40 border border-gray-300"
+            />
+            <div>
+              <img src="../public/images/i_search.png" alt="" />
+            </div>
+          </div>
         </div>
         <div className="pb-[30px]">
           <span className="text-[22px] text-black font-bold">

@@ -11,16 +11,23 @@ function TripCard({ image, title, location, tag }) {
         />
         {/* 하트 아이콘 */}
         <img
-          src="../public/images/i_heart.png"
-          className="absolute top-2 right-3 rounded-full p-2 hover:color-red-500 transition"
+          src="../public/images/i_bookmarks.png"
+          className="absolute top-2 right-3 p-2 hover:color-red-500 transition"
           alt=""
         />
       </div>
       <div className="p-4 flex flex-col justify-between">
         <div>
-          <h3 className="text-[18px] text-black">{title}</h3>
           <p className="text-sm text-blue-500">{location}</p>
-          <p className="text-xs text-gray-500">{tag}</p>
+          <h3 className="text-[18px] text-black">{title}</h3>
+          <div className="flex items-center">
+            <img
+              src="../public/images/i_heart2.png"
+              className="w-[23px]"
+              alt=""
+            />
+            {/* <p className="">{heart_count}</p> */}
+          </div>
         </div>
       </div>
     </div>
