@@ -138,3 +138,42 @@ export const fetchDetailIntro = async (contentId, contentTypeId) => {
     return {};
   }
 };
+
+// ✅ 상세 이미지 API
+const IMAGE_URL = "https://apis.data.go.kr/B551011/KorService1/detailImage1";
+
+// ✅ 상세 이미지 가져오기 함수
+export const fetchDetailImages = async (contentId, numOfRows = 10) => {
+  const params = {
+    ServiceKey: TOUR_API_KEY,
+    contentId,
+    MobileOS: "ETC",
+    MobileApp: "TripLog",
+    imageYN: "Y",
+    subImageYN: "Y",
+    numOfRows,
+    _type: "json",
+  };
+
+  try {
+    const res = await axios.get(IMAGE_URL, { params });
+    const itemList = res.data?.response?.body?.items?.item;
+
+    if (!itemList) {
+      console.warn("❌ 추가 이미지 없음");
+      return [];
+    }
+
+    const images = Array.isArray(itemList) ? itemList : [itemList];
+
+    // 대표 이미지 URL은 smallimageurl 또는 originimgurl
+    const filtered = images.filter(
+      (img) => img.originimgurl || img.smallimageurl
+    );
+
+    return filtered;
+  } catch (error) {
+    console.error("❌ detailImage API 오류:", error);
+    return [];
+  }
+};
