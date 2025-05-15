@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import { Link } from "react-router-dom";
 import WhitePageLayout from "../../layouts/WhitePageLayout";
-import TripCard from "../../components/TripCard";
+import TripCard from "../../components/common/TripCard.jsx";
 // import TripCard from "../components/TripCard"; // 실제 카드 컴포넌트 있으면 써라
 
 const TABS = ["여행지", "음식점", "여행 코스", "공연/행사"];

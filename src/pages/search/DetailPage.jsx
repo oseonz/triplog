@@ -1,8 +1,8 @@
 import React from "react";
 import DetailLayout from "../../layouts/DetailLayout";
 import { Link } from "react-router-dom";
-import TripCard from "../../components/TripCard";
-import BlueBtn from "../../components/BlueBtn";
+import TripCard from "../../components/common/TripCard.jsx";
+import BlueBtn from "../../components/common/BlueBtn.jsx";
 
 const cards = [
   {

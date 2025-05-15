@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { fetchTourPlaces } from "../../api/course";
 import { fetchDetailIntro } from "../../api/course"; // 상세정보 API 추가
-import MapView from "../../components/MapView";
-import TabMenu from "../../components/TabMenu";
-import ListBtn from "../../components/ListBtn";
-import SearchBar from "../../components/SearchBar";
-import DetailPanel from "../../components/DetailPanel";
-import HeaderBar from "../../components/HeaderBar";
+import MapView from "../../components/kokkok-planner/common/MapView.jsx";
+import TabMenu from "../../components/kokkok-planner/common/TabMenu.jsx";
+import ListBtn from "../../components/kokkok-planner/trip-creater/ListBtn.jsx";
+import SearchBar from "../../components/kokkok-planner/trip-creater/SearchBar.jsx";
+import DetailPanel from "../../components/kokkok-planner/trip-creater/DetailPanel.jsx";
+import HeaderBar from "../../components/kokkok-planner/common/HeaderBar.jsx";
 
 function CourseBuilder() {
   const [allPlaces, setAllPlaces] = useState([]);

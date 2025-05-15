@@ -1,7 +1,7 @@
 import React from "react";
 import MainLayout from "../layouts/MainLayout";
 import HomeLayout from "../layouts/HomeLayout";
-import TripCard from "../components/TripCard";
+import TripCard from "../components/common/TripCard.jsx";
 //메인페이지
 function MainPage() {
   return (

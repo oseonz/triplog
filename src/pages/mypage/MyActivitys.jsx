@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import WhitePageLayout from "../../layouts/WhitePageLayout";
 import MainLayout from "../../layouts/MainLayout";
 import { Link } from "react-router-dom";
-import TripCard from "../../components/TripCard";
+import TripCard from "../../components/common/TripCard.jsx";
 
 const TABS = ["댓글", "좋아요"];
 
