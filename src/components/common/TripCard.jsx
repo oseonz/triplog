@@ -34,10 +34,11 @@ function TripCard({ image, title, location }) {
           <h3 className="text-[18px] text-black">{title}</h3>
           <div className="flex items-center">
             <img
-              src="../public/images/i_heart2.png"
+              src="../public/images/i_heart.png"
               className="w-[23px]"
               alt="heart icon"
             />
+            <span>1</span>
           </div>
         </div>
       </div>

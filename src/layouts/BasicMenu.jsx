@@ -49,7 +49,7 @@ function BasicMenu({ children }) {
           <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[200px]">
             <span className="flex gap-3">
               <Link to="/course/list">추천코스</Link>
-              <Link to="/course/builder">코스만들기</Link>
+              <Link to="/course/builder">콕콕플래너</Link>
             </span>
           </div>
           <main>{children}</main>
