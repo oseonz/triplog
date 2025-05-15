@@ -1,4 +1,6 @@
 import React from "react";
+import { fetchDetailImages } from "../api/course";
+import { useEffect, useState } from "react";
 
 function DetailPanel({
   selectedPlace,
@@ -9,8 +11,42 @@ function DetailPanel({
   onCommentSubmit,
 }) {
   if (!selectedPlace) return null;
-
   const isFood = String(selectedPlace.contenttypeid) === "39";
+  const [images, setImages] = useState([]);
+
+  // // 공유 버튼 핸들러
+  // const handleShare = () => {
+  //   const shareUrl = window.location.href;
+
+  //   // 1️⃣ Web Share API 지원 여부 확인
+  //   if (navigator.share) {
+  //     navigator
+  //       .share({
+  //         title: selectedPlace.title || "트립로그",
+  //         text: `추천 여행지: ${selectedPlace.title || ""}`,
+  //         url: shareUrl,
+  //       })
+  //       .then(() => console.log("✅ 공유 완료"))
+  //       .catch((err) => console.warn("❌ 공유 실패:", err));
+  //   } else {
+  //     // 2️⃣ 클립보드 복사 fallback
+  //     navigator.clipboard
+  //       .writeText(shareUrl)
+  //       .then(() => alert("📋 링크가 복사되었습니다!"))
+  //       .catch((err) => console.error("❌ 링크 복사 실패:", err));
+  //   }
+  // };
+
+  useEffect(() => {
+    async function getImages() {
+      if (selectedPlace?.contentid) {
+        const imageList = await fetchDetailImages(selectedPlace.contentid);
+        setImages(imageList);
+      }
+    }
+
+    getImages();
+  }, [selectedPlace?.contentid]);
 
   return (
     <div
@@ -100,6 +136,18 @@ function DetailPanel({
           </>
         )}
 
+        {/* 이미지 갤러리 표시 */}
+        <div className="grid grid-cols-2 gap-2 justify-items-center mt-4">
+          {images.map((img, idx) => (
+            <img
+              key={idx}
+              src={img.smallimageurl || img.originimgurl}
+              alt={`여행지 이미지 ${idx + 1}`}
+              className="rounded-lg object-cover  w-40 h-28"
+            />
+          ))}
+        </div>
+
         {/* ➕ 코스 추가 버튼 */}
         <button
           onClick={onAddCourse}
@@ -110,7 +158,7 @@ function DetailPanel({
 
         {/* 💬 댓글 입력 */}
         <div className="mt-6">
-          <p className="text-sm font-semibold mb-1">💬 트립톡톡</p>
+          <p className="text-sm font-semibold mb-1">💬 로그톡톡</p>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
