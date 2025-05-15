@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
-import SearchLayout from "../../layouts/SearchLayout";
-import TripRegion from "../../components/TripRegion";
-import TripCard from "../../components/TripCard";
+import TripRegion from "../../components/search/TripRegion.jsx";
+import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
+import Regions from "../../components/search/Regions.jsx";
 
 const regions = [
   "서울",
@@ -41,7 +41,7 @@ function PlacePage() {
 
   return (
     <div className="min-h-screen text-white bg-[#F3F5F6] text-black">
-      <SearchLayout>
+      <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
             {/* 왼쪽 화살표 */}
@@ -71,7 +71,7 @@ function PlacePage() {
             </button>
           </div>
         </div>
-      </SearchLayout>
+      </Regions>
 
       <div className="container items-center m-auto mt-12">
         <div className="flex justify-between items-center pb-[30px]">

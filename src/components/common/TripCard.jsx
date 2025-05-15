@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
-function TripCard({ image, title, location, tag }) {
+function TripCard({ image, title, location }) {
+  const [bookmarked, setBookmarked] = useState(false);
+
+  const handleBookmarkClick = (e) => {
+    e.stopPropagation(); // 페이지 이동 막는다 이거야
+    e.preventDefault(); // 혹시나 모를 디폴트 동작도 차단
+    setBookmarked(!bookmarked);
+  };
+
   return (
     <div className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative">
       <div className="relative">
@@ -9,11 +17,15 @@ function TripCard({ image, title, location, tag }) {
           alt={title}
           className="w-[277px] h-[250px] object-cover"
         />
-        {/* 하트 아이콘 */}
         <img
-          src="../public/images/i_bookmarks.png"
-          className="absolute top-2 right-3 p-2 hover:color-red-500 transition"
-          alt=""
+          src={
+            bookmarked
+              ? "../public/images/i_bookmarks2.png"
+              : "../public/images/i_bookmarks.png"
+          }
+          className="absolute top-2 right-3 p-2 cursor-pointer transition"
+          onClick={handleBookmarkClick}
+          alt="bookmark icon"
         />
       </div>
       <div className="p-4 flex flex-col justify-between">
@@ -24,9 +36,8 @@ function TripCard({ image, title, location, tag }) {
             <img
               src="../public/images/i_heart2.png"
               className="w-[23px]"
-              alt=""
+              alt="heart icon"
             />
-            {/* <p className="">{heart_count}</p> */}
           </div>
         </div>
       </div>
