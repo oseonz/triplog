@@ -124,14 +124,13 @@ function CourseBuilder() {
 
         {/* 2. 일정 선택 + 코스 제목 */}
         <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="">일정</span>
-            <div className="flex gap-2  ">
+          <div className="flex items-center gap-2 mb-3 text-sm">
+            <div className="flex gap-3  ">
               {["당일여행", "1박2일", "2박3일"].map((label) => (
                 <button
                   key={label}
                   className={`px-3 py-1 rounded text-white ${
-                    duration === label ? "bg-blue-500" : "bg-gray-600"
+                    duration === label ? "bg-blue-400" : "bg-gray-300"
                   }`}
                   onClick={() => setDuration(label)}
                 >
@@ -143,7 +142,7 @@ function CourseBuilder() {
           <div className="flex align-center gap-2">
             <input
               type="text"
-              className="w-full border p-2 rounded mb-2"
+              className="w-full border p-2 rounded mb-2 text-sm"
               placeholder="코스 제목을 입력하세요"
               value={tripTitle}
               onChange={(e) => setTripTitle(e.target.value)}

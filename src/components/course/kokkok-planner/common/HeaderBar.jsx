@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 
 function HeaderBar({ onBack, onShare }) {
   return (
-    <div className="flex justify-between items-center px-6 py-4 border-b bg-white">
+    <div className="flex justify-between items-center px-7 py-6 border-b bg-white">
       {/* ←콕콕플래너 */}
       <button
         onClick={onBack}
-        className="text-lg font-semibold flex items-center gap-1 text-gray-800"
+        className="text-xl font-semibold flex items-center gap-1 text-gray-800"
       >
         <span className="text-2xl">
           <Link to="/">←</Link>

@@ -6,12 +6,12 @@ function TabMenu({ currentTab, setCurrentTab }) {
         <button
           key={tab}
           onClick={() => setCurrentTab(tab)}
-          className={`flex-1 px-4 py-2 font-semibold
+          className={`flex-1 px-4 py-2 font-semibold text-xl
           ${index !== 0 ? "border-l border-black" : ""}
           ${
             currentTab === tab
               ? "text-black border-b-2 border-black border-l-0 border-r-0 border-t-0"
-              : "text-black border-b border-transparent"
+              : "text-black border-b-[8px] border-transparent"
           }`}
         >
           {tab}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Map, MapMarker } from "react-kakao-maps-sdk";
+import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 
 function MapView({ places = [], addedCourses = [], onRemoveCourse, center }) {
   // 클릭된 마커 ID 저장
@@ -24,55 +24,61 @@ function MapView({ places = [], addedCourses = [], onRemoveCourse, center }) {
             // 여행지
             markerImg = isAdded
               ? isHovered
-                ? "/images/deletMaker2.png" // 음식점 마커 위에 마우스 올라갔을 때
+                ? "/images/mapMaker.png" // 음식점 마커 위에 마우스 올라갔을 때
                 : "/images/whisMaker2.png" // 음식점 코스에 추가된 상태
-              : "/images/tourMaker.png"; // 기본 음식점 마커
+              : "/images/mapMaker.png"; // 기본 음식점 마커
           } else {
             // 음식점
             markerImg = isAdded
               ? isHovered
-                ? "/images/deletMaker2.png" // 여행지 마커 위에 마우스 올라갔을 때
+                ? "/images/mapMaker.png" // 여행지 마커 위에 마우스 올라갔을 때
                 : "/images/whisMaker2.png" // 여행지 코스에 추가된 상태
-              : "/images/foodMaker2.png"; // 기본 여행지 마커
+              : "/images/mapMaker.png"; // 기본 여행지 마커
           }
 
           return (
-            <MapMarker
-              key={place.contentid}
-              position={{ lat, lng }}
-              image={{
-                src: markerImg,
-                size: { width: 60, height: 60 },
-                options: { offset: { x: 30, y: 60 } },
-              }}
-              onMouseOver={() => isAdded && setHoveredId(place.contentid)}
-              onMouseOut={() => setHoveredId(null)}
-              onClick={() => {
-                if (isAdded && isHovered) {
-                  // 코스에서 제거
-                  onRemoveCourse(place.contentid);
-                } else {
-                  // 일반 선택 처리
-                  setSelectedId(
-                    selectedId === place.contentid ? null : place.contentid
-                  );
-                }
-              }}
-            >
-              {/* ✅ 클릭된 마커에만 장소명 말풍선 출력 */}
+            <React.Fragment key={place.contentid}>
+              {/* 마커 */}
+              <MapMarker
+                position={{ lat, lng }}
+                image={{
+                  src: markerImg,
+                  size: { width: 50, height: 50 },
+                  options: { offset: { x: 30, y: 40 } },
+                }}
+                onMouseOver={() => isAdded && setHoveredId(place.contentid)}
+                onMouseOut={() => setHoveredId(null)}
+                onClick={() => {
+                  if (isAdded && isHovered) {
+                    onRemoveCourse(place.contentid);
+                  } else {
+                    setSelectedId(
+                      selectedId === place.contentid ? null : place.contentid
+                    );
+                  }
+                }}
+              />
+
+              {/* ✅ 마커 외부에서 타이틀 오버레이 출력 */}
               {isSelected && (
-                <div
-                  style={{
-                    padding: "5px 10px",
-                    background: "#fff",
-                    fontSize: "13px",
-                    textAlign: "center",
-                  }}
-                >
-                  {place.title}
-                </div>
+                <CustomOverlayMap position={{ lat, lng }} yAnchor={2.5}>
+                  <div
+                    style={{
+                      padding: "4px 12px",
+                      background: "#fff",
+                      fontSize: "13px",
+                      textAlign: "center",
+                      whiteSpace: "nowrap",
+                      borderRadius: "15px",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {place.title}
+                  </div>
+                </CustomOverlayMap>
               )}
-            </MapMarker>
+            </React.Fragment>
           );
         })}
       </Map>
