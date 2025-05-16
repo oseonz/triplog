@@ -58,17 +58,17 @@ function DetailPanel({
         {/* 상세 intro 정보 */}
         {isFood ? (
           <>
-            <p>🕒 운영시간: {detailInfo.opentimefood || "정보 없음"}</p>
-            <p>🍽 대표 메뉴: {detailInfo.treatmenu || "정보 없음"}</p>
-            <p>❌ 휴무일: {detailInfo.restdatefood || "정보 없음"}</p>
-            <p>🚗 주차: {detailInfo.parkingfood || "정보 없음"}</p>
+            <p>🕒 운영시간: {detailInfo?.opentimefood || "정보 없음"}</p>
+            <p>🍽 대표 메뉴: {detailInfo?.treatmenu || "정보 없음"}</p>
+            <p>❌ 휴무일: {detailInfo?.restdatefood || "정보 없음"}</p>
+            <p>🚗 주차: {detailInfo?.parkingfood || "정보 없음"}</p>
           </>
         ) : (
           <>
-            <p>📞 안내: {detailInfo.infocenter || "정보 없음"}</p>
-            <p>🕒 이용시간: {detailInfo.usetime || "정보 없음"}</p>
-            <p>❌ 휴무일: {detailInfo.restdate || "정보 없음"}</p>
-            <p>🚗 주차: {detailInfo.parking || "정보 없음"}</p>
+            <p>📞 안내: {detailInfo?.infocenter || "정보 없음"}</p>
+            <p>🕒 이용시간: {detailInfo?.usetime || "정보 없음"}</p>
+            <p>❌ 휴무일: {detailInfo?.restdate || "정보 없음"}</p>
+            <p>🚗 주차: {detailInfo?.parking || "정보 없음"}</p>
           </>
         )}
 

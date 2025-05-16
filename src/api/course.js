@@ -42,7 +42,8 @@ export const fetchTourPlaces = async (
 
 export const fetchDetailIntro = async (contentId, contentTypeId) => {
   const DETAIL_URL = "https://apis.data.go.kr/B551011/KorService1/detailIntro1";
-  const TOUR_API_KEY = "👉 인증키";
+  const TOUR_API_KEY =
+    "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
 
   const params = {
     ServiceKey: TOUR_API_KEY,
@@ -65,7 +66,8 @@ export const fetchDetailIntro = async (contentId, contentTypeId) => {
 
 export const fetchDetailImages = async (contentId) => {
   const IMAGE_URL = "https://apis.data.go.kr/B551011/KorService1/detailImage1";
-  const TOUR_API_KEY = "👉 인증키";
+  const TOUR_API_KEY =
+    "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
 
   const params = {
     ServiceKey: TOUR_API_KEY,

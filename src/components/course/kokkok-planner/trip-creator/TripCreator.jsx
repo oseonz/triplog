@@ -12,6 +12,23 @@ function TripCreator() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [selectedType, setType] = useState("12"); // 12: 관광지, 39: 음식점
   const [comment, setComment] = useState("");
+  const [courseList, setCourseList] = useState([]);
+
+  const handleAddToCourse = () => {
+    if (!selectedPlace) return;
+
+    const exists = courseList.some(
+      (item) => item.contentid === selectedPlace.contentid
+    );
+
+    if (exists) {
+      alert("이미 추가된 장소입니다!");
+      return;
+    }
+
+    setCourseList([...courseList, selectedPlace]);
+    alert("✅ 코스에 추가되었습니다!");
+  };
 
   // 🔍 검색 실행 함수
   const handleSearch = async () => {
@@ -47,8 +64,19 @@ function TripCreator() {
               className="p-3 border rounded mb-2 cursor-pointer hover:bg-gray-100"
               onClick={() => setSelectedPlace(place)}
             >
-              <p className="font-semibold text-sm">{place.title}</p>
-              <p className="text-xs text-gray-500">{place.addr1}</p>
+              <div className="flex items-center gap-4">
+                <img
+                  src={place.firstimage || "/no_img.jpg"}
+                  alt={place.title}
+                  className="w-24 h-24 object-cover rounded-full"
+                />
+                <div className="min-w-0">
+                  <p className="font-medium text-xl truncate">{place.title}</p>
+                  <p className="text-sm text-gray-600 truncate">
+                    {place.addr1}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -71,7 +99,7 @@ function TripCreator() {
       <DetailPanel
         selectedPlace={selectedPlace}
         onClose={() => setSelectedPlace(null)}
-        onAddCourse={() => console.log("➕ 코스에 추가")}
+        onAddCourse={handleAddToCourse} // ✅ 여기에 연결
         comment={comment}
         setComment={setComment}
         onCommentSubmit={() => console.log("댓글 등록")}
