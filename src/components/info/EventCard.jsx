@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+//공연/행사 카드
 
-function TripCard({ image, title, location }) {
+function EventCard({ image, title, location }) {
   const [bookmarked, setBookmarked] = useState(false);
 
   const handleBookmarkClick = (e) => {
@@ -46,4 +47,4 @@ function TripCard({ image, title, location }) {
   );
 }
 
-export default TripCard;
+export default EventCard;

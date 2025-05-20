@@ -1,31 +1,22 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { getList } from "../../api/tourAPI.jsx";
 import TripRegion from "../../components/search/TripRegion.jsx";
 import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
 import Regions from "../../components/search/Regions.jsx";
+import axios from "axios";
 
-const regions = [
-  "서울",
-  "인천",
-  "대전",
-  "대구",
-  "광주",
-  "부산",
-  "울산",
-  "세종",
-  "제주",
-  "강원",
-  "경기",
-  "충북",
-  "충남",
-  "전북",
-  "전남",
-  "경북",
-  "경남",
-];
+const params = {
+  user_id: "",
+  areacode: 1,
+  sigungucode: 20,
+  page: 0,
+  size: 8,
+};
 
 function PlacePage() {
   const scrollRef = useRef(null);
+  const [tourListData, setTourListData] = useState([]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -39,12 +30,30 @@ function PlacePage() {
     }
   };
 
+  useEffect(() => {
+    getList(params).then((data) => {
+      console.log("받은 응답:", data);
+      if (data && Array.isArray(data.items?.content)) {
+        setTourListData(data.items.content);
+      } else {
+        console.error("❌ content 배열이 없음", data);
+        setTourListData([]);
+      }
+    });
+  }, []);
+
+  const extractSiGu = (addr) => {
+    if (!addr) return "주소없음";
+    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+구)/;
+    const match = addr.match(regex);
+    return match ? match[1] : "시/구 없음";
+  };
+
   return (
-    <div className="min-h-screen text-white bg-[#F3F5F6] text-black">
+    <div className="min-h-screen bg-[#F3F5F6] text-black">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
-            {/* 왼쪽 화살표 */}
             <button
               onClick={scrollLeft}
               className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 rounded-full hover:bg-opacity-80"
@@ -52,17 +61,33 @@ function PlacePage() {
               <img src="../public/images/arrowLeft.png" alt="" />
             </button>
 
-            {/* 리스트 영역 */}
             <div
               ref={scrollRef}
               className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
             >
-              {regions.map((region, index) => (
+              {[
+                "서울",
+                "인천",
+                "대전",
+                "대구",
+                "광주",
+                "부산",
+                "울산",
+                "세종",
+                "제주",
+                "강원",
+                "경기",
+                "충북",
+                "충남",
+                "전북",
+                "전남",
+                "경북",
+                "경남",
+              ].map((region, index) => (
                 <TripRegion key={index} regionName={region} />
               ))}
             </div>
 
-            {/* 오른쪽 화살표 */}
             <button
               onClick={scrollRight}
               className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 rounded-full hover:bg-opacity-80"
@@ -98,16 +123,17 @@ function PlacePage() {
         </div>
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-            {/* {cards.map((card, i) => (
-              <Link to="../detail" key={i}>
+            {tourListData.map((item, i) => (
+              <Link to={`../detail/${item.contentid}`} key={i}>
                 <TripCard
-                  title={card.title}
-                  image={card.image}
-                  location={card.location}
-                  tag={card.tag}
+                  title={item.title}
+                  firstimage={
+                    item.firstimage || "https://via.placeholder.com/300"
+                  }
+                  addr={extractSiGu(item.addr)}
                 />
               </Link>
-            ))} */}
+            ))}
           </div>
         </div>
       </div>
