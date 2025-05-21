@@ -3,64 +3,39 @@ import axios from "axios";
 export const fetchTourPlaces = async (
   contentTypeId = "",
   minCount = 10,
-  keyword = "",
-  region = null
+  areaCode = null,
+  sigunguCode = null
 ) => {
-  const SEARCH_URL =
-    "https://apis.data.go.kr/B551011/KorService1/searchKeyword1";
+  const AREA_URL = "https://apis.data.go.kr/B551011/KorService1/areaBasedList1";
   const TOUR_API_KEY =
     "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
+
   const params = {
     ServiceKey: TOUR_API_KEY,
     MobileOS: "ETC",
     MobileApp: "TripLog",
     numOfRows: minCount,
     pageNo: 1,
-    keyword,
     contentTypeId,
     _type: "json",
   };
 
-  if (region) {
-    params.areaCode = region.areaCode;
-    if (region.sigunguCode) {
-      params.sigunguCode = region.sigunguCode;
-    }
-  }
+  // ✅ 지역 코드 기반으로만 요청
+  if (areaCode) params.areaCode = areaCode;
+  if (sigunguCode) params.sigunguCode = sigunguCode;
 
   try {
-    const res = await axios.get(SEARCH_URL, { params });
+    const res = await axios.get(AREA_URL, { params });
     const itemList = res.data?.response?.body?.items?.item;
 
-    const rawItems = Array.isArray(itemList) ? itemList : [itemList];
-    return rawItems.filter((item) => item.firstimage); // 이미지 있는 것만 반환
+    // ✅ 결과가 없으면 빈 배열 반환
+    if (!itemList) return [];
+
+    const raw = Array.isArray(itemList) ? itemList : [itemList];
+    return raw.filter((item) => item && item.firstimage); // 이미지 있는 항목만 반환
   } catch (e) {
-    console.error("❌ 관광지 검색 실패", e);
+    console.error("❌ 지역 기반 장소 검색 실패", e);
     return [];
-  }
-};
-
-export const fetchDetailIntro = async (contentId, contentTypeId) => {
-  const DETAIL_URL = "https://apis.data.go.kr/B551011/KorService1/detailIntro1";
-  const TOUR_API_KEY =
-    "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
-
-  const params = {
-    ServiceKey: TOUR_API_KEY,
-    contentId,
-    contentTypeId,
-    MobileOS: "ETC",
-    MobileApp: "TripLog",
-    _type: "json",
-  };
-
-  try {
-    const res = await axios.get(DETAIL_URL, { params });
-    const item = res.data?.response?.body?.items?.item;
-    return Array.isArray(item) ? item[0] : item;
-  } catch (err) {
-    console.error("❌ detailIntro 호출 실패", err);
-    return {};
   }
 };
 
@@ -83,10 +58,39 @@ export const fetchDetailImages = async (contentId) => {
   try {
     const res = await axios.get(IMAGE_URL, { params });
     const itemList = res.data?.response?.body?.items?.item;
+
+    // ✅ itemList가 undefined면 빈 배열 처리
+    if (!itemList) return [];
+
     const raw = Array.isArray(itemList) ? itemList : [itemList];
     return raw.filter((img) => img.originimgurl || img.smallimageurl);
   } catch (e) {
     console.error("❌ 이미지 목록 에러", e);
     return [];
+  }
+};
+
+// ✅ 이 함수가 있어야 함
+export const fetchDetailIntro = async (contentId, contentTypeId) => {
+  const DETAIL_URL = "https://apis.data.go.kr/B551011/KorService1/detailIntro1";
+  const TOUR_API_KEY =
+    "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
+
+  const params = {
+    ServiceKey: TOUR_API_KEY,
+    contentId,
+    contentTypeId,
+    MobileOS: "ETC",
+    MobileApp: "TripLog",
+    _type: "json",
+  };
+
+  try {
+    const res = await axios.get(DETAIL_URL, { params });
+    const item = res.data?.response?.body?.items?.item;
+    return item;
+  } catch (e) {
+    console.error("❌ 상세정보 API 호출 실패", e);
+    return null;
   }
 };

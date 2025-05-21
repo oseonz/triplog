@@ -8,6 +8,8 @@ function DetailPanel({
   comment,
   setComment,
   onCommentSubmit,
+  onRemoveCourse,
+  isCourseAdded,
 }) {
   const [detailInfo, setDetailInfo] = useState({});
   const [images, setImages] = useState([]);
@@ -33,8 +35,16 @@ function DetailPanel({
 
   const isFood = String(selectedPlace.contenttypeid) === "39";
 
+  const handleCourseClick = () => {
+    if (isCourseAdded) {
+      onRemoveCourse(selectedPlace.contentid);
+    } else {
+      onAddCourse(selectedPlace.contentid);
+    }
+  };
+
   return (
-    <div className="absolute top-[104px] left-[460px] w-[400px] h-full bg-white shadow-lg z-50 overflow-y-auto">
+    <div className="absolute top-[104px] left-[470px] w-[400px] h-full bg-white shadow-lg z-50 overflow-y-auto">
       {/* 상단 */}
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-lg font-semibold">
@@ -53,7 +63,7 @@ function DetailPanel({
           />
         )}
         <p className="text-lg font-bold">{selectedPlace.title}</p>
-        <p className="text-sm mb-2">📍 {selectedPlace.addr1}</p>
+        <p className="text-base ">📍 {selectedPlace.addr1}</p>
 
         {/* 상세 intro 정보 */}
         {isFood ? (
@@ -74,24 +84,26 @@ function DetailPanel({
 
         {/* 서브 이미지 */}
         {images.length > 0 && (
-          <div className="grid grid-cols-2 gap-2 my-3">
+          <div className="grid grid-cols-2 gap-2 mt-4 justify-items-center ">
             {images.map((img, idx) => (
               <img
                 key={idx}
                 src={img.smallimageurl || img.originimgurl}
                 alt={`서브이미지 ${idx + 1}`}
-                className="rounded-lg object-cover"
+                className="rounded-lg object-cover  w-40 h-28"
               />
             ))}
           </div>
         )}
 
-        {/* 코스에 추가 버튼 */}
+        {/* ✅ 코스에 추가/취소 버튼 */}
         <button
-          onClick={onAddCourse}
-          className="mt-3 w-full bg-blue-500 text-white py-2 rounded"
+          onClick={handleCourseClick}
+          className={`mt-3 w-full py-2 rounded text-white ${
+            isCourseAdded ? "bg-gray-400" : "bg-blue-400"
+          }`}
         >
-          ➕ 코스에 추가
+          {isCourseAdded ? "✔ 코스 취소하기" : "➕ 코스에 추가"}
         </button>
 
         {/* 댓글창 */}

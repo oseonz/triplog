@@ -12,17 +12,17 @@ function SearchBar({ keyword, setKeyword, onSearch }) {
   };
 
   return (
-    <div className="p-3 border-b">
+    <div className=" flex  items-center justify-center gap-2 mt-4">
       <input
         type="text"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
-        placeholder="지역명을 입력하세요 (예: 전주, 강릉)"
-        className="w-full border p-2 rounded"
+        placeholder="시/군/구 까지 검색이 가능합니다."
+        className="w-[350px] border p-2 rounded h-[40px] "
       />
       <button
         onClick={handleSearch}
-        className="mt-2 w-full bg-blue-500 text-white py-2 rounded"
+        className=" w-[75px] bg-blue-400 text-white py-2 rounded h-[40px]"
       >
         검색
       </button>
