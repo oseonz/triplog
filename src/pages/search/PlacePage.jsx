@@ -116,11 +116,11 @@ function PlacePage() {
             </div>
           </div>
         </div>
-        <div className="pb-[30px]">
+        {/* <div className="pb-[30px]">
           <span className="text-[22px] text-black font-bold">
             👍 <span className="text-blue-500">최근 인기 있는</span> 여행지
           </span>
-        </div>
+        </div> */}
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
             {tourListData.map((item, i) => (
