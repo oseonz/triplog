@@ -7,7 +7,7 @@ function MainPage() {
   return (
     <MainLayout>
       <>
-        <div className="min-h-screen text-white bg-[#F3F5F6]">
+        <div className="min-h-screen text-white bg-white">
           <HomeLayout />
           <div className="container items-center m-auto mt-12">
             <div className="flex justify-between items-center pb-[30px]">

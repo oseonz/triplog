@@ -33,7 +33,7 @@ const cards = [
 
 function DetailPage() {
   return (
-    <div className="min-h-screen bg-[#F3F5F6] text-black">
+    <div className="min-h-screen bg-white text-black">
       <DetailLayout>
         <div className="place-items-center gap-5">
           <p className="text-4xl font-bold pb-5">여행지 타이틀</p>
@@ -55,7 +55,7 @@ function DetailPage() {
             </div>
           </div>
         </div>
-        <div className="flex bg-white border-y-2 justify-center mb-7">
+        {/* <div className="flex bg-white border-y-2 justify-center mb-7">
           <div className="border-r-2 border-grary-300">
             <p className="text-xl font-bold p-5 px-[100px]">사진 보기</p>
           </div>
@@ -68,7 +68,7 @@ function DetailPage() {
           <div className="">
             <p className="text-xl font-bold p-5 px-[100px]">로그톡톡</p>
           </div>
-        </div>
+        </div> */}
         <div className="h-[375px] bg-blue-500 mb-7">사진</div>
         <div className="mb-12">
           <div className="mb-2">

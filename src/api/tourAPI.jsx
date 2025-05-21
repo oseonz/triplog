@@ -10,12 +10,13 @@ const prefix = `${API_SERVER_HOST}/likes/content/`;
 // };
 
 export const getList = async (params) => {
-  const { user_id, areacode, sigungucode, page, size } = params;
+  const { user_id, areacode, contenttypeid, sigungucode, page, size } = params;
 
   const res = await axios.get(`${prefix}list`, {
     params: {
       user_id: user_id,
       areacode: areacode,
+      contenttypeid: contenttypeid,
       sigungucode: sigungucode,
       page: page,
       size: size,

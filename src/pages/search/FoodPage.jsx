@@ -15,7 +15,7 @@ function FoodPage() {
   const [params, setParams] = useState({
     user_id: "",
     areacode: 1,
-    sigungucode: 20,
+    contenttypeid: 39,
     page: 0,
     size: 12,
   });
@@ -60,7 +60,7 @@ function FoodPage() {
   }; //페이지네이션
 
   return (
-    <div className="min-h-screen bg-[#F3F5F6] text-black">
+    <div className="min-h-screen bg-white text-black">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">

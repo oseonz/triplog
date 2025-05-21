@@ -6,17 +6,22 @@ import { Link } from "react-router-dom";
 import Regions from "../../components/search/Regions.jsx";
 import axios from "axios";
 
-const params = {
-  user_id: "",
-  areacode: 1,
-  sigungucode: 20,
-  page: 0,
-  size: 8,
-};
+//java -jar tourAPI-0521.war
 
 function PlacePage() {
   const scrollRef = useRef(null);
   const [tourListData, setTourListData] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [params, setParams] = useState({
+    user_id: "",
+    areacode: 1,
+    contenttypeid: 12,
+    page: 0,
+    size: 12,
+  });
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -35,12 +40,39 @@ function PlacePage() {
       console.log("받은 응답:", data);
       if (data && Array.isArray(data.items?.content)) {
         setTourListData(data.items.content);
+        setTotalPages(data.items.totalPages || 1);
       } else {
         console.error("❌ content 배열이 없음", data);
         setTourListData([]);
       }
     });
-  }, []);
+  }, [params]);
+
+  const regionCodeMap = {
+    서울: 1,
+    인천: 2,
+    대전: 3,
+    대구: 4,
+    광주: 5,
+    부산: 6,
+    울산: 7,
+    세종: 8,
+    경기: 31,
+    강원: 32,
+    충북: 33,
+    충남: 34,
+    전북: 35,
+    전남: 36,
+    경북: 37,
+    경남: 38,
+    제주: 39,
+  };
+
+  const handleRegionClick = (regionName) => {
+    const code = regionCodeMap[regionName] || 1;
+    setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
+    setCurrentPage(0);
+  };
 
   const extractSiGu = (addr) => {
     if (!addr) return "주소없음";
@@ -49,8 +81,15 @@ function PlacePage() {
     return match ? match[1] : "시/구 없음";
   };
 
+  const handlePageChange = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+      setParams((prev) => ({ ...prev, page }));
+    }
+  }; //페이지네이션
+
   return (
-    <div className="min-h-screen bg-[#F3F5F6] text-black">
+    <div className="min-h-screen bg-white text-black">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
@@ -84,7 +123,11 @@ function PlacePage() {
                 "경북",
                 "경남",
               ].map((region, index) => (
-                <TripRegion key={index} regionName={region} />
+                <TripRegion
+                  key={index}
+                  regionName={region}
+                  onClick={() => handleRegionClick(region)}
+                />
               ))}
             </div>
 
@@ -134,6 +177,38 @@ function PlacePage() {
                 />
               </Link>
             ))}
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-10">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 0}
+              className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
+            >
+              이전
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i)}
+                className={`px-4 py-2 rounded-full border border-blue-500 ${
+                  i === currentPage
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-black"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages - 1}
+              className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
+            >
+              다음
+            </button>
           </div>
         </div>
       </div>
