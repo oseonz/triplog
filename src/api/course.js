@@ -1,5 +1,10 @@
 import axios from "axios";
 
+const LOCATION_URL =
+  "https://apis.data.go.kr/B551011/KorService1/locationBasedList1";
+const TOUR_API_KEY =
+  "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA=="; // 실제 키로 교체
+
 export const fetchTourPlaces = async (
   contentTypeId = "",
   minCount = 10,
@@ -94,3 +99,30 @@ export const fetchDetailIntro = async (contentId, contentTypeId) => {
     return null;
   }
 };
+
+export async function fetchTourPlacesByCoords(
+  mapX, // 경도 (lng)
+  mapY, // 위도 (lat)
+  radius = 10000, // 반경 (미터)
+  numOfRows = 10, // 한 페이지 결과 수
+  contentTypeId = "" // 콘텐츠 타입 (빈 문자열이면 전체)
+) {
+  const { data } = await axios.get(LOCATION_URL, {
+    params: {
+      ServiceKey: TOUR_API_KEY,
+      mapX,
+      mapY,
+      radius,
+      listYN: "Y",
+      arrange: "B", // 정렬 방식: B=제목순
+      numOfRows,
+      pageNo: 1,
+      contentTypeId,
+      MobileOS: "ETC",
+      MobileApp: "TripLog",
+      _type: "json",
+    },
+  });
+  // API 응답 구조에 맞춰 items.item 반환
+  return data.response.body.items.item || [];
+}

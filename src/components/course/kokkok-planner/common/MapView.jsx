@@ -19,7 +19,7 @@ function MapView({
   const [hoveredId, setHoveredId] = useState(null);
 
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
+    <div className="w-full vheight">
       <Map
         center={center || { lat: 37.566826, lng: 126.9786567 }} // ✅ 기본값 서울시청
         level={level || 5} // ✅ 기본 줌 레벨

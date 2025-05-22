@@ -1,5 +1,5 @@
 import React from "react";
-// import "./styles/App.css";s
+import "./App.css";
 import { RouterProvider } from "react-router-dom";
 import root from "./router/root";
 

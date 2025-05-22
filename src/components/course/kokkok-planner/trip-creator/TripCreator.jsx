@@ -7,7 +7,11 @@ import MapView from "../common/MapView";
 import DetailPanel from "./DetailPanel";
 import BookmarkPanel from "../bookmarks/BookmarkPanel.jsx";
 import TripNote from "../trip-note/TripNote";
-import { fetchTourPlaces, fetchDetailIntro } from "../../../../api/course";
+import {
+  fetchTourPlaces,
+  fetchDetailIntro,
+  fetchTourPlacesByCoords,
+} from "../../../../api/course";
 import { regionList } from "../../../../utils/regionData";
 
 function TripCreator({ currentTab, setCurrentTab }) {
@@ -24,8 +28,8 @@ function TripCreator({ currentTab, setCurrentTab }) {
     lat: 37.566826,
     lng: 126.9786567,
   });
-  const [tripTitle, setTripTitle] = useState("");
-  const [showCourseList, setShowCourseList] = useState(false);
+
+  //const [showCourseList, setShowCourseList] = useState(false);
   const bookmarkedTour = tourPlaces.filter((p) => p.bookmarked); // 또는 원하는 조건
   const bookmarkedFood = foodPlaces.filter((p) => p.bookmarked);
 
@@ -39,6 +43,27 @@ function TripCreator({ currentTab, setCurrentTab }) {
   const region = useMemo(() => {
     return regionList.find((r) => keyword.includes(r.name));
   }, [keyword]);
+
+  useEffect(() => {
+    if (region) {
+      setMapCenter({ lat: region.lat, lng: region.lng });
+    }
+  }, [selectedType]);
+
+  // useEffect(() => {
+  //   // 컴포넌트가 처음 렌더링될 때 딱 한 번만
+  //   async function loadInitial() {
+  //     const initialTerm = "서울";
+  //     const data = await fetchTourPlaces(initialTerm /* minCount 등 옵션 */);
+  //     setTourPlaces(data); // 리스트 상태에 바로 세팅
+  //   }
+  //   loadInitial();
+  // }, []);
+
+  useEffect(() => {
+    // keyword가 “서울”로 세팅된 직후 한 번 검색 호출
+    handleSearch();
+  }, []); // 컴포넌트 마운트시에만 실행
 
   useEffect(() => {
     if (region) {
@@ -125,9 +150,9 @@ function TripCreator({ currentTab, setCurrentTab }) {
   const handleLoadMore = () => setVisibleCount((prev) => prev + 6);
 
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex w-full h-[900px]">
       {/* 왼쪽 영역 */}
-      <div className="w-[600px] bg-white flex flex-col relative z-10">
+      <div className="w-[550px] bg-white flex flex-col relative z-10">
         <HeaderBar onBack={() => console.log("뒤로")} />
         <TabMenu currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
@@ -167,8 +192,8 @@ function TripCreator({ currentTab, setCurrentTab }) {
                 <ListBtn
                   selectedType={selectedType}
                   setSelectedType={setSelectedType}
-                  showCourseList={showCourseList}
-                  setShowCourseList={setShowCourseList}
+                  //showCourseList={showCourseList}
+                  // setShowCourseList={setShowCourseList}
                 />
 
                 <div className="w-full px-4 pb-4 overflow-y-auto">
@@ -257,12 +282,12 @@ function TripCreator({ currentTab, setCurrentTab }) {
           (p) => p.contentid === selectedPlace?.contentid
         )}
       />
-      <BookmarkPanel
+      {/* <BookmarkPanel
         isOpen={currentTab === "찜"} // 또는 상태 변수
         onClose={() => setCurrentTab("여행만들기")}
         bookmarkedTour={bookmarkedTour}
         bookmarkedFood={bookmarkedFood}
-      />
+      /> */}
     </div>
   );
 }

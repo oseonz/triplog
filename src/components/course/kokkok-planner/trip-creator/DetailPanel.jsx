@@ -44,7 +44,7 @@ function DetailPanel({
   };
 
   return (
-    <div className="absolute top-[104px] left-[470px] w-[400px] h-full bg-white shadow-lg z-50 overflow-y-auto">
+    <div className="absolute top-[104px] left-[445px] w-[400px] h-[88%] bg-white shadow-lg z-50 overflow-y-auto">
       {/* 상단 */}
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-lg font-semibold">

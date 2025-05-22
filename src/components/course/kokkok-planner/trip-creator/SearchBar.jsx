@@ -18,7 +18,7 @@ function SearchBar({ keyword, setKeyword, onSearch }) {
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="시/군/구 까지 검색이 가능합니다."
-        className="w-[350px] border p-2 rounded h-[40px] "
+        className="w-[320px] border p-2 rounded h-[40px] "
       />
       <button
         onClick={handleSearch}
