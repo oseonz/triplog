@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getList } from "../../api/tourAPI.jsx";
+import { getList } from "../../api/placeLikes.jsx";
 import TripRegion from "../../components/search/TripRegion.jsx";
 import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
@@ -19,6 +19,8 @@ function FoodPage() {
     page: 0,
     size: 12,
   });
+
+  const [selectedRegion, setSelectedRegion] = useState("서울");
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -44,6 +46,33 @@ function FoodPage() {
       }
     });
   }, [params]);
+
+  const regionCodeMap = {
+    서울: 1,
+    인천: 2,
+    대전: 3,
+    대구: 4,
+    광주: 5,
+    부산: 6,
+    울산: 7,
+    세종: 8,
+    경기: 31,
+    강원: 32,
+    충북: 33,
+    충남: 34,
+    전북: 35,
+    전남: 36,
+    경북: 37,
+    경남: 38,
+    제주: 39,
+  };
+
+  const handleRegionClick = (regionName) => {
+    const code = regionCodeMap[regionName] || 1;
+    setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
+    setCurrentPage(0);
+    setSelectedRegion(regionName);
+  };
 
   const extractSiGu = (addr) => {
     if (!addr) return "주소없음";
@@ -93,7 +122,12 @@ function FoodPage() {
                 "경북",
                 "경남",
               ].map((region, index) => (
-                <TripRegion key={index} regionName={region} />
+                <TripRegion
+                  key={index}
+                  regionName={region}
+                  selected={selectedRegion === region} // 선택 여부
+                  onClick={() => handleRegionClick(region)}
+                />
               ))}
             </div>
             <button

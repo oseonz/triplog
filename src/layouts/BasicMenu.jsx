@@ -7,7 +7,7 @@ function BasicMenu({ children }) {
     <nav className="flex justify-between container items-center mx-auto py-3">
       <h1>
         <Link to="/">
-          <img src="../src/assets/logo.svg" alt="triplog" />
+          <img src="/src/assets/logo.svg" alt="triplog" />
         </Link>
       </h1>
       <ul className="flex gap-11 text-xl">
@@ -79,7 +79,7 @@ function BasicMenu({ children }) {
       <ul className="flex text-xl">
         <li>
           <Link to={"/mypage"}>
-            <img src="../public/images/i_user.png" alt="user" />
+            <img src="/images/i_user.png" alt="user" />
           </Link>
         </li>
       </ul>

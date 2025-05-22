@@ -1,56 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import DetailLayout from "../../layouts/DetailLayout";
 import { Link } from "react-router-dom";
 import TripCard from "../../components/common/TripCard.jsx";
 import BlueBtn from "../../components/common/BlueBtn.jsx";
 
-const cards = [
-  {
-    title: "Jinmi Sikdang",
-    image: "https://source.unsplash.com/featured/?koreanfood",
-    location: "Seoul",
-    tag: "Korean BBQ",
-  },
-  {
-    title: "Gukbap Heaven",
-    image: "https://source.unsplash.com/featured/?koreanrestaurant",
-    location: "Busan",
-    tag: "Pork Soup",
-  },
-  {
-    title: "Jeonju Bibimbap",
-    image: "https://source.unsplash.com/featured/?bibimbap",
-    location: "Jeonju",
-    tag: "Bibimbap",
-  },
-  {
-    title: "Hanok Eats",
-    image: "https://source.unsplash.com/featured/?koreanfood2",
-    location: "Gyeongju",
-    tag: "Traditional",
-  },
-];
-
 function DetailPage() {
+  const { contentid } = useParams();
+  const [detail, setDetail] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `https://apis.data.go.kr/B551011/KorService2/detailCommon2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&numOfRows=10&pageNo=1`
+        );
+        const data = await res.json();
+        setDetail(data.response.body.items.item[0]);
+      } catch (err) {
+        console.error("API 호출 실패:", err);
+      }
+    };
+
+    fetchData();
+  }, [contentid]);
+
+  if (!detail) return <div>데이터 불러오는 중...</div>;
+
   return (
     <div className="min-h-screen bg-white text-black">
       <DetailLayout>
         <div className="place-items-center gap-5">
-          <p className="text-4xl font-bold pb-5">여행지 타이틀</p>
-          <p className="pb-5 text-gray-500">서울특별시 종로구</p>
+          <p className="text-4xl font-bold pb-5">{detail.title}</p>
+          <p className="pb-5 text-gray-500">{detail.addr1}</p>
         </div>
         <div className="pt-12 place-items-end pb-5">
           <div className="flex gap-2">
             <div className="flex items-center gap-1">
-              <img src="../public/images/i_heart.png" alt="" />
+              <img src="/images/i_heart.png" alt="" />
               <p>좋아요</p>
             </div>
             <div className="flex items-center gap-1">
-              <img src="../public/images/i_bookmarks.png" alt="" />
+              <img src="/images/i_bookmarks.png" alt="" />
               <p>북마크</p>
             </div>
             <div className="flex items-center gap-1">
-              <img src="../public/images/i_share.png" alt="" />
+              <img src="/images/i_share.png" alt="" />
               <p>공유하기</p>
             </div>
           </div>
@@ -69,25 +64,24 @@ function DetailPage() {
             <p className="text-xl font-bold p-5 px-[100px]">로그톡톡</p>
           </div>
         </div> */}
-        <div className="h-[375px] bg-blue-500 mb-7">사진</div>
+        <div className="relative h-[375px] overflow-hidden">
+          <img
+            src={detail.firstimage || "/no_img.jpg"}
+            alt={detail.title}
+            className="absolute top-[-10px] left-0 w-full h-full object-cover"
+          ></img>
+        </div>
+
         <div className="mb-12">
           <div className="mb-2">
             <p className="text-2xl font-bold">상세 정보</p>
           </div>
           <div className="border border-black"></div>
           <div className="p-5">
-            <p>
-              인천대공원은 인천 남동구 장수동에 위치한 공원이다. 자연을 만끽할
-              수 있는 즐거움이 있고 여유롭게 힐링할 수 있어 연간 400만 명의
-              시민들이 찾는 수도권의 대표적인 휴양공원이다. 주요 시설로 수목원,
-              습지원, 숲학교, 캠핑장, 휴게음식점, 공연시설 등을 갖추고 있다.
-              체험은 산림치유프로그램, 목재문화체험, 어린이동물원 등을 운영한다.
-              축구장, 풋살장은 미리 예약하면 이용할 수 있다. 다양한 체험과
-              쾌적한 휴식처를 제공하는 생명의 숲에서 행복한 시간을 보내보자.
-            </p>
+            <p>{detail.overview || "상세 설명이 없습니다."}</p>
           </div>
         </div>
-        <div>
+        <div className="shadow-lg">
           <div className="h-[300px] bg-blue-500">지도</div>
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
@@ -120,7 +114,7 @@ function DetailPage() {
           </div>
           <div className="border border-black"></div>
           <div className="pt-5">
-            <Link to="../detail">
+            {/* <Link to="../detail">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card, i) => (
                   <TripCard
@@ -132,7 +126,7 @@ function DetailPage() {
                   />
                 ))}
               </div>
-            </Link>
+            </Link> */}
           </div>
         </div>
         <div className="flex justify-center items-center gap-5 mb-12">

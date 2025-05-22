@@ -1,10 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { getList } from "../../api/tourAPI.jsx";
+import { getList } from "../../api/placeLikes.jsx";
 import TripRegion from "../../components/search/TripRegion.jsx";
 import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
 import Regions from "../../components/search/Regions.jsx";
-import axios from "axios";
 
 //java -jar tourAPI-0521.war
 
@@ -22,6 +21,8 @@ function PlacePage() {
     page: 0,
     size: 12,
   });
+
+  const [selectedRegion, setSelectedRegion] = useState("서울");
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -72,6 +73,7 @@ function PlacePage() {
     const code = regionCodeMap[regionName] || 1;
     setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
     setCurrentPage(0);
+    setSelectedRegion(regionName);
   };
 
   const extractSiGu = (addr) => {
@@ -126,6 +128,7 @@ function PlacePage() {
                 <TripRegion
                   key={index}
                   regionName={region}
+                  selected={selectedRegion === region} // 선택 여부
                   onClick={() => handleRegionClick(region)}
                 />
               ))}
@@ -174,6 +177,7 @@ function PlacePage() {
                     item.firstimage || "https://via.placeholder.com/300"
                   }
                   addr={extractSiGu(item.addr)}
+                  likes_count={item.likes_count}
                 />
               </Link>
             ))}

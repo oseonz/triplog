@@ -12,7 +12,7 @@ const courseRouter = () => {
       { path: "", element: <Navigate to="place" replace /> }, // 기본 리다이렉트
       { path: "place", element: <PlacePage /> },
       { path: "food", element: <FoodPage /> },
-      { path: "detail", element: <DetailPage /> },
+      { path: "detail/:contentid", element: <DetailPage /> },
     ],
   };
 };

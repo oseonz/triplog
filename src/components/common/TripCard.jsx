@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function TripCard({ firstimage, title, addr }) {
+function TripCard({ firstimage, title, addr, likes_count, contentid }) {
   const [bookmarked, setBookmarked] = useState(false);
+  const navigate = useNavigate();
 
   const handleBookmarkClick = (e) => {
     e.stopPropagation();
@@ -9,8 +11,15 @@ function TripCard({ firstimage, title, addr }) {
     setBookmarked(!bookmarked);
   };
 
+  const handleCardClick = () => {
+    navigate(`../detail/${contentid}`);
+  };
+
   return (
-    <div className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative">
+    <div
+      onClick={handleCardClick}
+      className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative"
+    >
       <div className="relative">
         <img
           src={firstimage || "/no_img.jpg"}
@@ -31,14 +40,16 @@ function TripCard({ firstimage, title, addr }) {
       <div className="p-4 flex flex-col justify-between">
         <div>
           <p className="text-sm text-blue-500">{addr}</p>
-          <h3 className="text-[18px] text-black">{title}</h3>
+          <h3 className="text-[18px] text-black">
+            {title.length > 15 ? `${title.slice(0, 12)}⋯` : title}
+          </h3>
           <div className="flex items-center">
             <img
               src="../public/images/i_heart.png"
               className="w-[23px]"
               alt="heart icon"
             />
-            <span></span>
+            <span>{likes_count}</span>
           </div>
         </div>
       </div>
