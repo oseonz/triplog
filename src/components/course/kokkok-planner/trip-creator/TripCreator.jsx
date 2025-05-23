@@ -5,13 +5,9 @@ import SearchBar from "./SearchBar";
 import ListBtn from "./ListBtn";
 import MapView from "../common/MapView";
 import DetailPanel from "./DetailPanel";
-import BookmarkPanel from "../bookmarks/BookmarkPanel.jsx";
+import BookMarkPanel from "../bookmarks/BookMarkPanel";
 import TripNote from "../trip-note/TripNote";
-import {
-  fetchTourPlaces,
-  fetchDetailIntro,
-  fetchTourPlacesByCoords,
-} from "../../../../api/course";
+import { fetchTourPlaces, fetchDetailIntro } from "../../../../api/course";
 import { regionList } from "../../../../utils/regionData";
 
 function TripCreator({ currentTab, setCurrentTab }) {
@@ -24,14 +20,13 @@ function TripCreator({ currentTab, setCurrentTab }) {
   const [courseList, setCourseList] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [mapLevel, setMapLevel] = useState(5);
+  const [likedMap, setLikedMap] = useState({});
+  const [likeCountMap, setLikeCountMap] = useState({});
+
   const [mapCenter, setMapCenter] = useState({
     lat: 37.566826,
     lng: 126.9786567,
   });
-
-  //const [showCourseList, setShowCourseList] = useState(false);
-  const bookmarkedTour = tourPlaces.filter((p) => p.bookmarked); // 또는 원하는 조건
-  const bookmarkedFood = foodPlaces.filter((p) => p.bookmarked);
 
   const visiblePlaces =
     selectedType === "12"
@@ -50,16 +45,6 @@ function TripCreator({ currentTab, setCurrentTab }) {
     }
   }, [selectedType]);
 
-  // useEffect(() => {
-  //   // 컴포넌트가 처음 렌더링될 때 딱 한 번만
-  //   async function loadInitial() {
-  //     const initialTerm = "서울";
-  //     const data = await fetchTourPlaces(initialTerm /* minCount 등 옵션 */);
-  //     setTourPlaces(data); // 리스트 상태에 바로 세팅
-  //   }
-  //   loadInitial();
-  // }, []);
-
   useEffect(() => {
     // keyword가 “서울”로 세팅된 직후 한 번 검색 호출
     handleSearch();
@@ -76,6 +61,11 @@ function TripCreator({ currentTab, setCurrentTab }) {
       handleSearch();
     }
   }, [selectedType]);
+
+  // 탭이 바뀌면 디테일 패널 닫기
+  useEffect(() => {
+    setSelectedPlace(null);
+  }, [currentTab]);
 
   const handleSearch = async () => {
     try {
@@ -149,32 +139,26 @@ function TripCreator({ currentTab, setCurrentTab }) {
 
   const handleLoadMore = () => setVisibleCount((prev) => prev + 6);
 
+  // 하트 클릭 핸들러
+  const handleToggleLike = (contentid) => {
+    setLikedMap((prev) => ({
+      ...prev,
+      [contentid]: !prev[contentid], // true <-> false 토글
+    }));
+  };
+
   return (
     <div className="flex w-full h-[900px]">
       {/* 왼쪽 영역 */}
-      <div className="w-[550px] bg-white flex flex-col relative z-10">
+      <div className="w-[582px] bg-white flex flex-col  z-10">
         <HeaderBar onBack={() => console.log("뒤로")} />
         <TabMenu currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
-        {/* 코스 제목 입력 */}
-        {/* <div className="p-4 flex justify-center">
-          <div className="flex align-center gap-2 items-center">
-            <span className="bg-blue-200 p-2 rounded-xl">코스제목</span>
-            <input
-              type="text"
-              className="w-[320px] border p-2 rounded text-sm h-[40px]"
-              placeholder="코스 제목을 입력하세요"
-              value={tripTitle}
-              onChange={(e) => setTripTitle(e.target.value)}
-            />
-          </div>
-        </div> */}
-
-        <div className="border-t-[10px] border-gray-100" />
+        <div className="border-t-[15px] border-gray-100" />
 
         {/* ✅ 탭에 따라 다른 콘텐츠 렌더링 */}
         {currentTab === "찜" ? (
-          <BookmarkPanel
+          <BookMarkPanel
             isOpen={true}
             onClose={() => setCurrentTab("여행만들기")}
           />
@@ -212,15 +196,28 @@ function TripCreator({ currentTab, setCurrentTab }) {
                           <img
                             src={place.firstimage || "/no_img.jpg"}
                             alt={place.title}
-                            className="w-24 h-24 object-cover rounded-full"
+                            className="w-[90px] h-[90px] object-cover rounded-full"
                           />
-                          <div className="min-w-0 flex-1 w-[300px]">
+                          <div className="min-w-0 flex-1 w-[330px]">
                             <p className="font-medium text-xl truncate">
                               {place.title}
                             </p>
                             <p className="text-sm text-gray-600 truncate overflow-hidden">
                               {place.addr1}
                             </p>
+                            <img
+                              src={
+                                likedMap[place.contentid]
+                                  ? "/images/i_heart.png"
+                                  : "/images/i_heart2.png"
+                              }
+                              alt="좋아요 하트"
+                              onClick={(e) => {
+                                e.stopPropagation(); // 클릭 이벤트가 카드 열기로 퍼지는 것 방지
+                                handleToggleLike(place.contentid);
+                              }}
+                              className="w-5 h-5 cursor-pointer"
+                            />
                           </div>
                           <input
                             type="checkbox"
@@ -271,7 +268,7 @@ function TripCreator({ currentTab, setCurrentTab }) {
 
       {/* 디테일 패널 */}
       <DetailPanel
-        selectedPlace={selectedPlace}
+        place={selectedPlace}
         onClose={() => setSelectedPlace(null)}
         onAddCourse={handleAddToCourse}
         comment={comment}
@@ -282,12 +279,6 @@ function TripCreator({ currentTab, setCurrentTab }) {
           (p) => p.contentid === selectedPlace?.contentid
         )}
       />
-      {/* <BookmarkPanel
-        isOpen={currentTab === "찜"} // 또는 상태 변수
-        onClose={() => setCurrentTab("여행만들기")}
-        bookmarkedTour={bookmarkedTour}
-        bookmarkedFood={bookmarkedFood}
-      /> */}
     </div>
   );
 }

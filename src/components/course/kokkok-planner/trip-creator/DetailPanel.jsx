@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { fetchDetailIntro, fetchDetailImages } from "../../../../api/course";
+import {
+  fetchDetailIntro,
+  fetchDetailImages,
+  fetchOverview,
+} from "../../../../api/course";
 
 function DetailPanel({
-  selectedPlace,
+  place,
   onClose,
   onAddCourse,
   comment,
@@ -13,38 +17,58 @@ function DetailPanel({
 }) {
   const [detailInfo, setDetailInfo] = useState({});
   const [images, setImages] = useState([]);
+  const [overview, setOverview] = useState("");
+
+  useEffect(() => {
+    async function loadOverview() {
+      if (!place?.contentid) return;
+      // const overview = await fetchOverview(
+      //   place.contentid,
+      //   place.contenttypeid
+      // );
+      // const overview = await fetchOverview("126508", "12");
+
+      console.log("✅ overview 내용:", overview); // "" or 실제 값
+      setOverview(overview);
+    }
+
+    loadOverview();
+  }, [place]);
 
   useEffect(() => {
     async function loadDetail() {
-      if (!selectedPlace?.contentid) return;
+      if (!place?.contentid) return;
 
       const intro = await fetchDetailIntro(
-        selectedPlace.contentid,
-        selectedPlace.contenttypeid
+        place.contentid,
+        place.contenttypeid
       );
-      const imgs = await fetchDetailImages(selectedPlace.contentid);
+      const imgs = await fetchDetailImages(place.contentid);
 
-      setDetailInfo(intro);
+      console.log("📦 원본 intro:", intro);
+
+      // ✅ 첫 번째 객체만 저장
+      setDetailInfo(Array.isArray(intro) ? intro[0] : {});
       setImages(imgs);
     }
 
     loadDetail();
-  }, [selectedPlace]);
+  }, [place]);
 
-  if (!selectedPlace) return null;
+  if (!place) return null;
 
-  const isFood = String(selectedPlace.contenttypeid) === "39";
+  const isFood = String(place.contenttypeid) === "39";
 
   const handleCourseClick = () => {
     if (isCourseAdded) {
-      onRemoveCourse(selectedPlace.contentid);
+      onRemoveCourse(place.contentid);
     } else {
-      onAddCourse(selectedPlace.contentid);
+      onAddCourse(place.contentid);
     }
   };
 
   return (
-    <div className="absolute top-[104px] left-[445px] w-[400px] h-[88%] bg-white shadow-lg z-50 overflow-y-auto">
+    <div className="absolute top-[104px] left-[465px] w-[400px] h-[88%] bg-white shadow-lg z-50 overflow-y-auto">
       {/* 상단 */}
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-lg font-semibold">
@@ -55,30 +79,73 @@ function DetailPanel({
 
       {/* 기본 정보 */}
       <div className="p-4">
-        {selectedPlace.firstimage && (
+        {place.firstimage && (
           <img
-            src={selectedPlace.firstimage}
+            src={place.firstimage}
             alt="대표 이미지"
             className="w-full h-48 object-cover rounded mb-3"
           />
         )}
-        <p className="text-lg font-bold">{selectedPlace.title}</p>
-        <p className="text-base ">📍 {selectedPlace.addr1}</p>
-
+        <p className="text-lg font-bold">{place.title}</p>
+        <p className="text-base ">📍 {place.addr1}</p>
+        {overview ? (
+          <div
+            className="text-sm text-gray-600 whitespace-pre-line"
+            dangerouslySetInnerHTML={{ __html: overview }}
+          />
+        ) : (
+          <p className="text-gray-400">소개 정보 없음</p>
+        )}
         {/* 상세 intro 정보 */}
         {isFood ? (
           <>
-            <p>🕒 운영시간: {detailInfo?.opentimefood || "정보 없음"}</p>
-            <p>🍽 대표 메뉴: {detailInfo?.treatmenu || "정보 없음"}</p>
-            <p>❌ 휴무일: {detailInfo?.restdatefood || "정보 없음"}</p>
-            <p>🚗 주차: {detailInfo?.parkingfood || "정보 없음"}</p>
+            {detailInfo?.opentimefood?.trim() ? (
+              <p>🕒 운영시간: {detailInfo.opentimefood}</p>
+            ) : (
+              <p className="text-gray-400">🕒 운영시간: 정보 없음</p>
+            )}
+            {detailInfo?.treatmenu?.trim() ? (
+              <p>🍽 대표 메뉴: {detailInfo.treatmenu}</p>
+            ) : (
+              <p className="text-gray-400">🍽 대표 메뉴: 정보 없음</p>
+            )}
+            {detailInfo?.restdatefood?.trim() ? (
+              <p>❌ 휴무일: {detailInfo.restdatefood}</p>
+            ) : (
+              <p className="text-gray-400">❌ 휴무일: 정보 없음</p>
+            )}
+            {detailInfo?.parkingfood?.trim() ? (
+              <p>🚗 주차: {detailInfo.parkingfood}</p>
+            ) : (
+              <p className="text-gray-400">🚗 주차: 정보 없음</p>
+            )}
           </>
         ) : (
           <>
-            <p>📞 안내: {detailInfo?.infocenter || "정보 없음"}</p>
-            <p>🕒 이용시간: {detailInfo?.usetime || "정보 없음"}</p>
-            <p>❌ 휴무일: {detailInfo?.restdate || "정보 없음"}</p>
-            <p>🚗 주차: {detailInfo?.parking || "정보 없음"}</p>
+            {/* 여행지용 필드 예시 */}
+            {detailInfo?.infocenter ? (
+              <p>📞 안내: {detailInfo.infocenter}</p>
+            ) : (
+              <p className="text-gray-400">📞 안내: 정보 없음</p>
+            )}
+
+            {detailInfo?.usetime ? (
+              <p>🕒 이용시간: {detailInfo.usetime}</p>
+            ) : (
+              <p className="text-gray-400">🕒 이용시간: 정보 없음</p>
+            )}
+
+            {detailInfo?.restdate ? (
+              <p>❌ 휴무일: {detailInfo.restdate}</p>
+            ) : (
+              <p className="text-gray-400">❌ 휴무일: 정보 없음</p>
+            )}
+
+            {detailInfo?.parking ? (
+              <p>🚗 주차: {detailInfo.parking}</p>
+            ) : (
+              <p className="text-gray-400">🚗 주차: 정보 없음</p>
+            )}
           </>
         )}
 

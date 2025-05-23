@@ -6,7 +6,7 @@ function HeaderBar({ onBack, onShare }) {
   const [tripTitle, setTripTitle] = useState("");
 
   return (
-    <div className="flex justify-between items-center px-4 py-4 border-b bg-white">
+    <div className="flex justify-between items-center px-8 py-4 border-b bg-white">
       {/* ←콕콕플래너 */}
       <button
         onClick={onBack}
@@ -22,7 +22,7 @@ function HeaderBar({ onBack, onShare }) {
           <input
             type="text"
             className="w-[260px] border p-2 rounded text-lg font-normal h-[px] "
-            placeholder="코스 제목을 입력하세요"
+            placeholder="코스 제목을 입력하세요."
             value={tripTitle}
             onChange={(e) => setTripTitle(e.target.value)}
           />

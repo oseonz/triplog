@@ -3,7 +3,31 @@ import axios from "axios";
 const LOCATION_URL =
   "https://apis.data.go.kr/B551011/KorService1/locationBasedList1";
 const TOUR_API_KEY =
-  "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA=="; // 실제 키로 교체
+  "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
+
+export const fetchOverview = async (contentId, contentTypeId) => {
+  const url = "https://apis.data.go.kr/B551011/KorService1/detailCommon1";
+  const API_KEY =
+    "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA=="; // 본인의 인증키 사용
+
+  const params = {
+    ServiceKey: API_KEY,
+    MobileOS: "ETC",
+    MobileApp: "TripLog",
+    contentId,
+    contentTypeId,
+    defaultYN: "Y",
+    overviewYN: "Y",
+    _type: "json",
+  };
+
+  const res = await axios.get(url, { params });
+  // ✅ 여기가 중요!
+  const items = res.data.response.body.items.item;
+  const item = Array.isArray(items) ? items[0] : items;
+
+  return item?.overview ?? "";
+};
 
 export const fetchTourPlaces = async (
   contentTypeId = "",

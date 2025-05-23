@@ -4,37 +4,30 @@ import TabMenu from "../common/TabMenu";
 import SearchBar from "../trip-creator/SearchBar";
 import ListBtn from "../trip-creator/ListBtn";
 import MapView from "../common/MapView";
-//import DetailPanel from "../trip-creator/DetailPanel";
+import DetailPanel from "../trip-creator/DetailPanel";
 import { fetchTourPlaces } from "../../../../api/course";
 import { regionList } from "../../../../utils/regionData";
 import { fetchDetailIntro } from "../../../../api/course";
-//import BookmarkPanel from "../bookmarks/BookMarkPanel.jsx";
 
-function BookmarkList({ currentTab, setCurrentTab }) {
-  const [keyword, setKeyword] = useState("");
-  const [places, setPlaces] = useState([]);
-  const [tourPlaces, setTourPlaces] = useState([]); // 여행지 (contentTypeId: 12)
-  const [foodPlaces, setFoodPlaces] = useState([]); // 음식점 (contentTypeId: 39)
-  const [selectedType, setSelectedType] = useState("12"); // 리스트 필터용
-  //const [selectedId, setSelectedId] = useState(null);
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [comment, setComment] = useState("");
-  const [courseList, setCourseList] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(6); // 보여줄 여행지 개수
-  const [mapLevel, setMapLevel] = useState(5); // 지도 줌 레벨
-  const [showCourseList, setShowCourseList] = useState(false); //코스 추가된 리스트
-  const [mapCenter, setMapCenter] = useState({
-    lat: 37.566826,
-    lng: 126.9786567,
+// function BookMarkList({ currentTab, setCurrentTab }) {
+//   const [keyword, setKeyword] = useState("");
+//   const [places, setPlaces] = useState([]);
+//   const [tourPlaces, setTourPlaces] = useState([]); // 여행지 (contentTypeId: 12)
+//   const [foodPlaces, setFoodPlaces] = useState([]); // 음식점 (contentTypeId: 39)
+//   const [selectedType, setSelectedType] = useState("12"); // 리스트 필터용
+//   const [selectedPlace, setSelectedPlace] = useState(null);
+//   const [comment, setComment] = useState("");
+//   const [courseList, setCourseList] = useState([]);
+//   const [visibleCount, setVisibleCount] = useState(6); // 보여줄 여행지 개수
+//   const [mapLevel, setMapLevel] = useState(5); // 지도 줌 레벨
+//   const [showCourseList, setShowCourseList] = useState(false); //코스 추가된 리스트
+//   const [mapCenter, setMapCenter] = useState({
+//     lat: 37.566826,
+//     lng: 126.9786567,
   });
 
-  // 마커에서 받아온 선택된 ID 기반으로 장소 정보 찾기
-  //const allPlaces = [...tourPlaces, ...foodPlaces]; // 리스트 합치기
-  //const selectedPlace = allPlaces.find((p) => p.contentid === selectedId);
-
-  // 일정 + 제목 입력용 상태
+  // 제목 입력용 상태
   const [tripTitle, setTripTitle] = useState("");
-  const [duration, setDuration] = useState("당일여행");
 
   const visiblePlaces =
     selectedType === "12"
@@ -82,6 +75,7 @@ function BookmarkList({ currentTab, setCurrentTab }) {
     }
   };
 
+  // 관광지 검색
   const handleSearch = async () => {
     try {
       // ✅ 키워드에서 지역명 추출
@@ -121,6 +115,7 @@ function BookmarkList({ currentTab, setCurrentTab }) {
     }
   };
 
+  // 더보기
   const handleLoadMore = () => setVisibleCount((prev) => prev + 6);
 
   const handlePlaceClick = async (place) => {
@@ -172,12 +167,6 @@ function BookmarkList({ currentTab, setCurrentTab }) {
               {place.addr1}
             </p>
           </div>
-          <input
-            type="checkbox"
-            checked={isAdded}
-            onChange={handleCheckboxClick}
-            className="w-5 h-5 accent-blue-500"
-          />
         </div>
       </div>
     );
@@ -185,7 +174,7 @@ function BookmarkList({ currentTab, setCurrentTab }) {
   return (
     <div className="flex w-full h-screen">
       {/* 콕콕플래서 상단 */}
-      <div className="w-[550px] bg-white flex flex-col relative z-10 ">
+      <div className="w-[550px] bg-white flex flex-col  z-10 ">
         <HeaderBar onBack={() => console.log("뒤로")} />
         {/*1. 탭 메뉴 */}
         <TabMenu currentTab={currentTab} setCurrentTab={setCurrentTab} />
@@ -217,7 +206,7 @@ function BookmarkList({ currentTab, setCurrentTab }) {
           setKeyword={setKeyword}
           onSearch={handleSearch}
         />
-        {/* ✅ 추가한 코스 리스트 출력 */}
+        {/* ✅ 추가한 코스 리스트 출력
         {showCourseList && (
           <div className="px-4 pb-2">
             <p className="text-sm text-gray-600 mb-2">📌 내가 담은 코스 목록</p>
@@ -235,7 +224,7 @@ function BookmarkList({ currentTab, setCurrentTab }) {
             )}
           </div>
         )}
-        <div className="w-full px-4 pb-4 overflow-y-auto">
+        <div className="w-full px-4 pb-4 overflow-y-auto"> */}
           {renderedPlaceList}
 
           {visibleCount <
@@ -250,20 +239,19 @@ function BookmarkList({ currentTab, setCurrentTab }) {
             </div>
           )}
         </div>
+        {/*6. 지도영역 */}
+        <MapView
+          places={[...tourPlaces, ...foodPlaces]}
+          center={mapCenter}
+          level={mapLevel}
+          addedCourses={courseList}
+          onRemoveCourse={handleRemoveFromCourse}
+          onMarkerClick={setSelectedPlace}
+          selectedType={selectedType}
+        />
       </div>
-
-      {/*6. 지도영역 */}
-      <MapView
-        places={[...tourPlaces, ...foodPlaces]}
-        center={mapCenter}
-        level={mapLevel}
-        addedCourses={courseList}
-        onRemoveCourse={handleRemoveFromCourse}
-        onMarkerClick={setSelectedPlace}
-        selectedType={selectedType}
-      />
     </div>
   );
 }
 
-export default BookmarkList;
+export default BookMarkList;
