@@ -7,7 +7,7 @@ function MainPage() {
   return (
     <MainLayout>
       <>
-        <div className="min-h-screen text-white bg-[#F3F5F6]">
+        <div className="min-h-screen text-white bg-white">
           <HomeLayout />
           <div className="container items-center m-auto mt-12">
             <div className="flex justify-between items-center pb-[30px]">
@@ -16,12 +16,12 @@ function MainPage() {
               </span>
             </div>
             <div>
-              <TripCard
-              // key={i}
-              // title={place.title}
-              // image={place.image}
-              // description={place.description}
-              />
+              {/* <TripCard
+                key={i}
+                title={place.title}
+                image={place.image}
+                description={place.description}
+              /> */}
             </div>
           </div>
         </div>
