@@ -247,7 +247,7 @@ function TripCreator({ currentTab, setCurrentTab }) {
                         onClick={handleLoadMore}
                         className="w-[100px] bg-blue-400 text-white py-2 rounded-3xl hover:bg-blue-500"
                       >
-                        더보기 +
+                        더보기1 +
                       </button>
                     </div>
                   )}
