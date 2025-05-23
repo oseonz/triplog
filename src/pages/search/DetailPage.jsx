@@ -8,6 +8,7 @@ import BlueBtn from "../../components/common/BlueBtn.jsx";
 function DetailPage() {
   const { contentid } = useParams();
   const [detail, setDetail] = useState(null);
+  const [intro, setIntro] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +17,17 @@ function DetailPage() {
           `https://apis.data.go.kr/B551011/KorService2/detailCommon2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&numOfRows=10&pageNo=1`
         );
         const data = await res.json();
-        setDetail(data.response.body.items.item[0]);
+        const item = data.response.body.items.item[0];
+        setDetail(item);
+
+        if (item.contenttypeid) {
+          const contentTypeId = item.contenttypeid;
+          const resIntro = await fetch(
+            `https://apis.data.go.kr/B551011/KorService2/detailIntro2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&contentTypeId=${contentTypeId}&numOfRows=10&pageNo=1`
+          );
+          const dataIntro = await resIntro.json();
+          setIntro(dataIntro.response.body.items.item[0]);
+        }
       } catch (err) {
         console.error("API 호출 실패:", err);
       }
@@ -87,23 +98,23 @@ function DetailPage() {
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
                 <span className="text-[18px] w-[130px]">• 문의 및 안내</span>
-                <span className="">어쩌고 저쩌고</span>
+                <span>{intro?.infocenter || "정보 없음"}</span>
               </li>
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
                 <span className="text-[18px] w-[130px]">• 이용 시간</span>
-                <span className="">어쩌고 저쩌고</span>
+                <span>{intro?.usetime || "정보 없음"}</span>
               </li>
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
                 <span className="text-[18px] w-[130px]">• 주소</span>
-                <span className="">어쩌고 저쩌고</span>
+                <span>{detail.addr1 || "정보 없음"}</span>
               </li>
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
                 <span className="text-[18px] w-[130px]">• 주차</span>
-                <span className="">어쩌고 저쩌고</span>
+                <span>{intro?.parking || "정보 없음"}</span>
               </li>
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
                 <span className="text-[18px] w-[130px]">• 휴일</span>
-                <span className="">어쩌고 저쩌고</span>
+                <span>{intro?.restdate || "정보 없음"}</span>
               </li>
             </ul>
           </div>
