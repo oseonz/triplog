@@ -3,12 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 function TripCard({ firstimage, title, addr, likes_count, contentid }) {
   const [bookmarked, setBookmarked] = useState(false);
+  const [heart, setHeart] = useState(false);
   const navigate = useNavigate();
 
   const handleBookmarkClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
     setBookmarked(!bookmarked);
+  };
+
+  const handleHeartClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setHeart(!heart);
   };
 
   const handleCardClick = () => {
@@ -45,8 +52,13 @@ function TripCard({ firstimage, title, addr, likes_count, contentid }) {
           </h3>
           <div className="flex items-center">
             <img
-              src="../public/images/i_heart.png"
+              src={
+                heart
+                  ? "../public/images/i_heart2.png"
+                  : "../public/images/i_heart.png"
+              }
               className="w-[23px]"
+              onClick={handleHeartClick}
               alt="heart icon"
             />
             <span>{likes_count}</span>

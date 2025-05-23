@@ -16,12 +16,12 @@ function MainPage() {
               </span>
             </div>
             <div>
-              <TripCard
-              // key={i}
-              // title={place.title}
-              // image={place.image}
-              // description={place.description}
-              />
+              {/* <TripCard
+                key={i}
+                title={place.title}
+                image={place.image}
+                description={place.description}
+              /> */}
             </div>
           </div>
         </div>
