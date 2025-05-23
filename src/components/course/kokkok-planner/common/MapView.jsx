@@ -26,8 +26,10 @@ function MapView({
         style={{ width: "100%", height: "100%" }}
       >
         {places.map((place, index) => {
-          const lat = Number(place.mapy) + index * 0.00003;
-          const lng = Number(place.mapx) + index * 0.00003;
+          const lat = Number(place.mapy);
+          const lng = Number(place.mapx);
+
+          if (isNaN(lat) || isNaN(lng)) return null;
           const isSelected = selectedId === place.contentid;
 
           const type = String(place.contenttypeid);

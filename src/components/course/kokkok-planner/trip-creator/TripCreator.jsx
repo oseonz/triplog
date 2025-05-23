@@ -175,8 +175,8 @@ function TripCreator({ currentTab, setCurrentTab }) {
         {/* ✅ 탭에 따라 다른 콘텐츠 렌더링 */}
         {currentTab === "찜" ? (
           <BookmarkPanel
-            bookmarkedTour={tourPlaces.slice(0, 3)} // 임시 데이터
-            bookmarkedFood={foodPlaces.slice(0, 3)} // 임시 데이터
+            isOpen={true}
+            onClose={() => setCurrentTab("여행만들기")}
           />
         ) : (
           <>
