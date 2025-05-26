@@ -1,31 +1,28 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { getList } from "../../api/placeLikes.jsx";
 import TripRegion from "../../components/search/TripRegion.jsx";
 import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
 import Regions from "../../components/search/Regions.jsx";
 
-const regions = [
-  "서울",
-  "인천",
-  "대전",
-  "대구",
-  "광주",
-  "부산",
-  "울산",
-  "세종",
-  "제주",
-  "강원",
-  "경기",
-  "충북",
-  "충남",
-  "전북",
-  "전남",
-  "경북",
-  "경남",
-];
+//java -jar tourAPI-0521.war
 
 function PlacePage() {
   const scrollRef = useRef(null);
+  const [tourListData, setTourListData] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [params, setParams] = useState({
+    user_id: "",
+    areacode: 1,
+    contenttypeid: 12,
+    page: 0,
+    size: 12,
+  });
+
+  const [selectedRegion, setSelectedRegion] = useState("서울");
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -39,12 +36,65 @@ function PlacePage() {
     }
   };
 
+  useEffect(() => {
+    getList(params).then((data) => {
+      console.log("받은 응답:", data);
+      if (data && Array.isArray(data.items?.content)) {
+        setTourListData(data.items.content);
+        setTotalPages(data.items.totalPages || 1);
+      } else {
+        console.error("❌ content 배열이 없음", data);
+        setTourListData([]);
+      }
+    });
+  }, [params]);
+
+  const regionCodeMap = {
+    서울: 1,
+    인천: 2,
+    대전: 3,
+    대구: 4,
+    광주: 5,
+    부산: 6,
+    울산: 7,
+    세종: 8,
+    경기: 31,
+    강원: 32,
+    충북: 33,
+    충남: 34,
+    전북: 35,
+    전남: 36,
+    경북: 37,
+    경남: 38,
+    제주: 39,
+  };
+
+  const handleRegionClick = (regionName) => {
+    const code = regionCodeMap[regionName] || 1;
+    setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
+    setCurrentPage(0);
+    setSelectedRegion(regionName);
+  };
+
+  const extractSiGu = (addr) => {
+    if (!addr) return "주소없음";
+    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
+    const match = addr.match(regex);
+    return match ? match[1] : "시/구 없음";
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+      setParams((prev) => ({ ...prev, page }));
+    }
+  }; //페이지네이션
+
   return (
-    <div className="min-h-screen text-white bg-[#F3F5F6] text-black">
+    <div className="min-h-screen bg-white text-black">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
-            {/* 왼쪽 화살표 */}
             <button
               onClick={scrollLeft}
               className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 rounded-full hover:bg-opacity-80"
@@ -52,17 +102,38 @@ function PlacePage() {
               <img src="../public/images/arrowLeft.png" alt="" />
             </button>
 
-            {/* 리스트 영역 */}
             <div
               ref={scrollRef}
               className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
             >
-              {regions.map((region, index) => (
-                <TripRegion key={index} regionName={region} />
+              {[
+                "서울",
+                "인천",
+                "대전",
+                "대구",
+                "광주",
+                "부산",
+                "울산",
+                "세종",
+                "제주",
+                "강원",
+                "경기",
+                "충북",
+                "충남",
+                "전북",
+                "전남",
+                "경북",
+                "경남",
+              ].map((region, index) => (
+                <TripRegion
+                  key={index}
+                  regionName={region}
+                  selected={selectedRegion === region} // 선택 여부
+                  onClick={() => handleRegionClick(region)}
+                />
               ))}
             </div>
 
-            {/* 오른쪽 화살표 */}
             <button
               onClick={scrollRight}
               className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 rounded-full hover:bg-opacity-80"
@@ -91,23 +162,57 @@ function PlacePage() {
             </div>
           </div>
         </div>
-        <div className="pb-[30px]">
+        {/* <div className="pb-[30px]">
           <span className="text-[22px] text-black font-bold">
             👍 <span className="text-blue-500">최근 인기 있는</span> 여행지
           </span>
-        </div>
+        </div> */}
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-            {/* {cards.map((card, i) => (
-              <Link to="../detail" key={i}>
+            {tourListData.map((item, i) => (
+              <Link to={`../detail/${item.contentid}`} key={i}>
                 <TripCard
-                  title={card.title}
-                  image={card.image}
-                  location={card.location}
-                  tag={card.tag}
+                  title={item.title}
+                  firstimage={
+                    item.firstimage || "https://via.placeholder.com/300"
+                  }
+                  addr={extractSiGu(item.addr)}
+                  likes_count={item.likes_count}
                 />
               </Link>
-            ))} */}
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-10">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 0}
+              className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
+            >
+              이전
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i)}
+                className={`px-4 py-2 rounded-full border border-blue-500 ${
+                  i === currentPage
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-black"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages - 1}
+              className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
+            >
+              다음
+            </button>
           </div>
         </div>
       </div>
