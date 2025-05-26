@@ -1,19 +1,9 @@
-<<<<<<< HEAD
-import React from "react";
-<<<<<<<< HEAD:src/components/kokkok-planner/trip-creater/DetailPanel.jsx
-import { fetchDetailImages } from "../../../../src/api/course";
-========
-import { fetchDetailImages } from "../../../../api/course.js";
->>>>>>>> ddavid:src/components/course/kokkok-planner/trip-creator/DetailPanel.jsx
-import { useEffect, useState } from "react";
-=======
 import React, { useEffect, useState } from "react";
 import {
   fetchDetailIntro,
   fetchDetailImages,
   fetchOverview,
 } from "../../../../api/course";
->>>>>>> origin/refactor/new-structure
 
 function DetailPanel({
   place,
