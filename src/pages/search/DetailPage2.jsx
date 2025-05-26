@@ -4,9 +4,9 @@ import DetailLayout from "../../layouts/DetailLayout";
 import { Link } from "react-router-dom";
 import TripCard from "../../components/common/TripCard.jsx";
 import BlueBtn from "../../components/common/BlueBtn.jsx";
-import { getList } from "../../api/placeLikes.jsx";
+import { getList, getOne } from "../../api/placeLikes.jsx";
 
-function DetailPage() {
+function DetailPage2({ likes_count }) {
   const { contentid } = useParams();
   const [detail, setDetail] = useState(null);
   const [intro, setIntro] = useState(null);
@@ -42,7 +42,6 @@ function DetailPage() {
         const data = await res.json();
         const item = data.response.body.items.item[0];
         setDetail(item);
-        console.log("detail 응답:", data);
 
         if (item.contenttypeid) {
           const contentTypeId = item.contenttypeid;
@@ -64,22 +63,9 @@ function DetailPage() {
   useEffect(() => {
     const fetchLikes = async () => {
       try {
-        const data = await getList({
-          user_id: "",
-          areacode: null,
-          contenttypeid: null,
-          sigungucode: null,
-          likes_count: null,
-        });
-
-        const target = data.items?.content?.find(
-          (item) => String(item.contentid) === String(contentid)
-        );
-
-        console.log("📌 contentid:", contentid);
-        console.log("💥 좋아요 찾은 결과:", target);
-
-        setLikes(target?.likes_count || 0);
+        const data = await getOne(contentid);
+        console.log("🔥 좋아요 응답:", data);
+        setLikes(data?.likes_count || 0);
       } catch (err) {
         console.error("❌ 좋아요 정보 불러오기 실패:", err);
       }
@@ -153,16 +139,18 @@ function DetailPage() {
                 <span
                   dangerouslySetInnerHTML={{
                     __html:
-                      intro?.infocenter?.replace(/\n/g, "<br>") || "정보 없음",
+                      intro?.infocenterfood?.replace(/\n/g, "<br>") ||
+                      "정보 없음",
                   }}
                 />
               </li>
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
-                <span className="text-[18px] w-[130px]">• 이용 시간</span>
+                <span className="text-[18px] w-[130px]">• 운영 시간</span>
                 <span
                   dangerouslySetInnerHTML={{
                     __html:
-                      intro?.usetime?.replace(/\n/g, "<br>") || "정보 없음",
+                      intro?.opentimefood?.replace(/\n/g, "<br>") ||
+                      "정보 없음",
                   }}
                 />
               </li>
@@ -179,7 +167,7 @@ function DetailPage() {
                 <span
                   dangerouslySetInnerHTML={{
                     __html:
-                      intro?.parking?.replace(/\n/g, "<br>") || "정보 없음",
+                      intro?.parkingfood?.replace(/\n/g, "<br>") || "정보 없음",
                   }}
                 />
               </li>
@@ -188,7 +176,8 @@ function DetailPage() {
                 <span
                   dangerouslySetInnerHTML={{
                     __html:
-                      intro?.restdate?.replace(/\n/g, "<br>") || "정보 없음",
+                      intro?.restdatefood?.replace(/\n/g, "<br>") ||
+                      "정보 없음",
                   }}
                 />
               </li>
@@ -239,4 +228,4 @@ function DetailPage() {
   );
 }
 
-export default DetailPage;
+export default DetailPage2;

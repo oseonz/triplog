@@ -9,8 +9,21 @@ const prefix = `${API_SERVER_HOST}/likes/content/`;
 //   return res.data;
 // };
 
+export const getOne = async (contentid) => {
+  const res = await axios.get(`${prefix}view/${contentid}`);
+  return res.data;
+};
+
 export const getList = async (params) => {
-  const { user_id, areacode, contenttypeid, sigungucode, page, size } = params;
+  const {
+    user_id,
+    areacode,
+    contenttypeid,
+    sigungucode,
+    likes_count,
+    page,
+    size,
+  } = params;
 
   const res = await axios.get(`${prefix}list`, {
     params: {
@@ -18,6 +31,7 @@ export const getList = async (params) => {
       areacode: areacode,
       contenttypeid: contenttypeid,
       sigungucode: sigungucode,
+      likes_count: likes_count,
       page: page,
       size: size,
     },

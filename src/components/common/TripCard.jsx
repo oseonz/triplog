@@ -48,7 +48,7 @@ function TripCard({ firstimage, title, addr, likes_count, contentid }) {
         <div>
           <p className="text-sm text-blue-500">{addr}</p>
           <h3 className="text-[18px] text-black">
-            {title.length > 15 ? `${title.slice(0, 12)}⋯` : title}
+            {title.length > 14 ? `${title.slice(0, 12)}⋯` : title}
           </h3>
           <div className="flex items-center">
             <img

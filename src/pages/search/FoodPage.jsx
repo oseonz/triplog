@@ -76,7 +76,7 @@ function FoodPage() {
 
   const extractSiGu = (addr) => {
     if (!addr) return "주소없음";
-    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+구)/;
+    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구))/;
     const match = addr.match(regex);
     return match ? match[1] : "시/구 없음";
   }; //구까지만 찾아서 나옴
@@ -175,6 +175,7 @@ function FoodPage() {
                     item.firstimage || "https://via.placeholder.com/300"
                   }
                   addr={extractSiGu(item.addr)}
+                  likes_count={item.likes_count}
                 />
               </Link>
             ))}
