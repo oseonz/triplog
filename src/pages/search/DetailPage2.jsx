@@ -15,7 +15,7 @@ function DetailPage2({ likes_count }) {
   const [params] = useState({
     user_id: "",
     areacode: 1,
-    contenttypeid: 12,
+    contenttypeid: 39,
     page: 0,
     size: 12,
   });

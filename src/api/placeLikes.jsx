@@ -4,13 +4,8 @@ const API_SERVER_HOST = "http://localhost:8081";
 
 const prefix = `${API_SERVER_HOST}/likes/content/`;
 
-// export const postAdd = async (formData) => {
-//   const res = await axios.post(prefix, formData);
-//   return res.data;
-// };
-
 export const getOne = async (contentid) => {
-  const res = await axios.get(`${prefix}view/${contentid}`);
+  const res = await axios.get(`${prefix}detail/${contentid}`);
   return res.data;
 };
 

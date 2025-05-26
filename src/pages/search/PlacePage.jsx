@@ -76,10 +76,10 @@ function PlacePage() {
     setSelectedRegion(regionName);
   };
 
-  const extractSiGu = (addr) => {
-    if (!addr) return "주소없음";
+  const extractSiGu = (addr1) => {
+    if (!addr1) return "주소없음";
     const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
-    const match = addr.match(regex);
+    const match = addr1.match(regex);
     return match ? match[1] : "시/구 없음";
   };
 
@@ -176,7 +176,7 @@ function PlacePage() {
                   firstimage={
                     item.firstimage || "https://via.placeholder.com/300"
                   }
-                  addr={extractSiGu(item.addr)}
+                  addr1={extractSiGu(item.addr1)}
                   likes_count={item.likes_count}
                 />
               </Link>

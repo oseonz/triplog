@@ -2,36 +2,48 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DetailLayout from "../../layouts/DetailLayout";
 import { Link } from "react-router-dom";
-import TripCard from "../../components/common/TripCard.jsx";
 import BlueBtn from "../../components/common/BlueBtn.jsx";
-import { getList } from "../../api/placeLikes.jsx";
+import { getOne } from "../../api/placeLikes.jsx";
+
+<script
+  type="text/javascript"
+  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d14b3407f2ab8aa29337555dccd89793&libraries=services,clusterer"
+></script>;
 
 function DetailPage() {
   const { contentid } = useParams();
   const [detail, setDetail] = useState(null);
   const [intro, setIntro] = useState(null);
-  const [likes, setLikes] = useState(0);
+  const [likes, setLikes] = useState(null);
 
   const [params] = useState({
     user_id: "",
     areacode: 1,
     contenttypeid: 12,
+    sigungucode: 1,
     page: 0,
     size: 12,
   });
 
   useEffect(() => {
-    getList(params).then((data) => {
-      console.log("받은 응답:", data);
-      if (data && Array.isArray(data.items?.content)) {
-        // setTourListData(data.items.content);
-        // setTotalPages(data.items.totalPages || 1);
-      } else {
-        console.error("❌ content 배열이 없음", data);
-        setTourListData([]);
-      }
-    });
-  }, [params]);
+    if (!contentid) return;
+
+    getOne(contentid)
+      .then((data) => {
+        console.log("받은 응답:", data);
+
+        // ✅ 좋아요 수만 저장
+        if (data && data.item) {
+          setLikes(data.item.likes_count ?? 0);
+        } else {
+          setLikes(0);
+        }
+      })
+      .catch((err) => {
+        console.error("❌ getOne API 호출 실패:", err);
+        setLikes(0);
+      });
+  }, [contentid]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,33 +71,6 @@ function DetailPage() {
     };
 
     fetchData();
-  }, [contentid]);
-
-  useEffect(() => {
-    const fetchLikes = async () => {
-      try {
-        const data = await getList({
-          user_id: "",
-          areacode: null,
-          contenttypeid: null,
-          sigungucode: null,
-          likes_count: null,
-        });
-
-        const target = data.items?.content?.find(
-          (item) => String(item.contentid) === String(contentid)
-        );
-
-        console.log("📌 contentid:", contentid);
-        console.log("💥 좋아요 찾은 결과:", target);
-
-        setLikes(target?.likes_count || 0);
-      } catch (err) {
-        console.error("❌ 좋아요 정보 불러오기 실패:", err);
-      }
-    };
-
-    fetchLikes();
   }, [contentid]);
 
   if (!detail) return <div>데이터 불러오는 중...</div>;
@@ -145,7 +130,7 @@ function DetailPage() {
           </div>
         </div>
         <div className="shadow-lg">
-          <div className="h-[300px] bg-blue-500">지도</div>
+          <div id="map" className="h-[300px] w-full"></div>
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
