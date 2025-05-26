@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { fetchTourPlaces } from "../../api/course";
 import { fetchDetailIntro } from "../../api/course"; // 상세정보 API 추가
+<<<<<<< HEAD
 import MapView from "../../components/kokkok-planner/common/MapView.jsx";
 import TabMenu from "../../components/kokkok-planner/common/TabMenu.jsx";
 import ListBtn from "../../components/kokkok-planner/trip-creater/ListBtn.jsx";
 import SearchBar from "../../components/kokkok-planner/trip-creater/SearchBar.jsx";
 import DetailPanel from "../../components/kokkok-planner/trip-creater/DetailPanel.jsx";
 import HeaderBar from "../../components/kokkok-planner/common/HeaderBar.jsx";
+=======
+import MapView from "../../components/course/kokkok-planner/common/MapView.jsx";
+import TabMenu from "../../components/course/kokkok-planner/common/TabMenu.jsx";
+import ListBtn from "../../components/course/kokkok-planner/trip-creator/ListBtn.jsx";
+import SearchBar from "../../components/course/kokkok-planner/trip-creator/SearchBar.jsx";
+import DetailPanel from "../../components/course/kokkok-planner/trip-creator/DetailPanel.jsx";
+import HeaderBar from "../../components/course/kokkok-planner/common/HeaderBar.jsx";
+>>>>>>> ddavid
 
 function CourseBuilder() {
   const [allPlaces, setAllPlaces] = useState([]);
@@ -124,14 +133,13 @@ function CourseBuilder() {
 
         {/* 2. 일정 선택 + 코스 제목 */}
         <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="">일정</span>
-            <div className="flex gap-2  ">
+          <div className="flex items-center gap-2 mb-3 text-sm">
+            <div className="flex gap-3  ">
               {["당일여행", "1박2일", "2박3일"].map((label) => (
                 <button
                   key={label}
                   className={`px-3 py-1 rounded text-white ${
-                    duration === label ? "bg-blue-500" : "bg-gray-600"
+                    duration === label ? "bg-blue-400" : "bg-gray-300"
                   }`}
                   onClick={() => setDuration(label)}
                 >
@@ -143,7 +151,7 @@ function CourseBuilder() {
           <div className="flex align-center gap-2">
             <input
               type="text"
-              className="w-full border p-2 rounded mb-2"
+              className="w-full border p-2 rounded mb-2 text-sm"
               placeholder="코스 제목을 입력하세요"
               value={tripTitle}
               onChange={(e) => setTripTitle(e.target.value)}
