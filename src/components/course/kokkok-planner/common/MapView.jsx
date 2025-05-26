@@ -1,44 +1,64 @@
 import React, { useState } from "react";
-import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
+import {
+  Map,
+  MapMarker,
+  CustomOverlayMap,
+  Polyline,
+} from "react-kakao-maps-sdk";
 
-function MapView({ places = [], addedCourses = [], onRemoveCourse, center }) {
-  // 클릭된 마커 ID 저장
+function MapView({
+  places = [],
+  addedCourses = [],
+  onRemoveCourse,
+  center,
+  level,
+  onMarkerClick,
+  selectedType,
+}) {
   const [selectedId, setSelectedId] = useState(null);
-  // 마우스가 올라간 마커의 ID를 저장
   const [hoveredId, setHoveredId] = useState(null);
 
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
-      <Map center={center} level={3} style={{ width: "100%", height: "100%" }}>
+    <div className="w-full vheight">
+      <Map
+        center={center || { lat: 37.566826, lng: 126.9786567 }} // ✅ 기본값 서울시청
+        level={level || 5} // ✅ 기본 줌 레벨
+        style={{ width: "100%", height: "100%" }}
+      >
         {places.map((place, index) => {
-          const lat = Number(place.mapy) + index * 0.00003;
-          const lng = Number(place.mapx) + index * 0.00003;
+          const lat = Number(place.mapy);
+          const lng = Number(place.mapx);
+
+          if (isNaN(lat) || isNaN(lng)) return null;
           const isSelected = selectedId === place.contentid;
 
           const type = String(place.contenttypeid);
-          let markerImg = "public/images/tourMaker.png";
-
-          const isAdded = addedCourses.includes(place.contentid);
+          const isAdded = addedCourses.some(
+            (course) => course.contentid === place.contentid
+          );
           const isHovered = hoveredId === place.contentid;
+
+          // ✅ 마커 이미지 조건 분기
+          let markerImg = "/images/mapMaker.png";
           if (type === "12") {
             // 여행지
             markerImg = isAdded
               ? isHovered
-                ? "/images/mapMaker.png" // 음식점 마커 위에 마우스 올라갔을 때
-                : "/images/whisMaker2.png" // 음식점 코스에 추가된 상태
-              : "/images/mapMaker.png"; // 기본 음식점 마커
+                ? "/images/mapDeleteMaker.png"
+                : "/images/mapWishMaker.png"
+              : "/images/mapMaker.png";
           } else {
             // 음식점
             markerImg = isAdded
               ? isHovered
-                ? "/images/mapMaker.png" // 여행지 마커 위에 마우스 올라갔을 때
-                : "/images/whisMaker2.png" // 여행지 코스에 추가된 상태
-              : "/images/mapMaker.png"; // 기본 여행지 마커
+                ? "/images/foodDeleteMaker.png"
+                : "/images/foodWishMaker.png"
+              : "/images/foodMaker.png";
           }
 
           return (
             <React.Fragment key={place.contentid}>
-              {/* 마커 */}
+              {/* ✅ 마커 */}
               <MapMarker
                 position={{ lat, lng }}
                 image={{
@@ -56,10 +76,12 @@ function MapView({ places = [], addedCourses = [], onRemoveCourse, center }) {
                       selectedId === place.contentid ? null : place.contentid
                     );
                   }
+                  setSelectedId(place.contentid);
+                  onMarkerClick(place);
                 }}
               />
 
-              {/* ✅ 마커 외부에서 타이틀 오버레이 출력 */}
+              {/* ✅ 마커 오버레이 (타이틀) */}
               {isSelected && (
                 <CustomOverlayMap position={{ lat, lng }} yAnchor={2.5}>
                   <div
@@ -81,6 +103,20 @@ function MapView({ places = [], addedCourses = [], onRemoveCourse, center }) {
             </React.Fragment>
           );
         })}
+
+        {/* ✅ 코스 선 연결 */}
+        {selectedType === "course" && addedCourses.length >= 2 && (
+          <Polyline
+            path={addedCourses.map((place) => ({
+              lat: Number(place.mapy),
+              lng: Number(place.mapx),
+            }))}
+            strokeWeight={5}
+            strokeColor={"#007AFF"}
+            strokeOpacity={0.8}
+            strokeStyle={"solid"}
+          />
+        )}
       </Map>
     </div>
   );
