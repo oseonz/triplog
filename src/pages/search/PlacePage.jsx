@@ -42,6 +42,7 @@ function PlacePage() {
       if (data && Array.isArray(data.items?.content)) {
         setTourListData(data.items.content);
         setTotalPages(data.items.totalPages || 1);
+        console.log(data.items.content);
       } else {
         console.error("❌ content 배열이 없음", data);
         setTourListData([]);
@@ -91,7 +92,7 @@ function PlacePage() {
   }; //페이지네이션
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black pb-7">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
