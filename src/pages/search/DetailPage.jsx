@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import BlueBtn from "../../components/common/BlueBtn.jsx";
 import { getOne } from "../../api/placeLikes.jsx";
 
+//지도 스크립트
 <script
   type="text/javascript"
   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d14b3407f2ab8aa29337555dccd89793&libraries=services,clusterer"
@@ -45,6 +46,7 @@ function DetailPage() {
       });
   }, [contentid]);
 
+  //상세 정보, 안내 정보 이펙트
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,6 +74,34 @@ function DetailPage() {
 
     fetchData();
   }, [contentid]);
+
+  //지도 이펙트
+  useEffect(() => {
+    if (!detail || !window.kakao || !window.kakao.maps) return;
+
+    const container = document.getElementById("map");
+
+    const x = parseFloat(detail.mapx);
+    const y = parseFloat(detail.mapy);
+
+    if (!x || !y) {
+      console.warn("위치 정보 없음");
+      return;
+    }
+
+    const options = {
+      center: new window.kakao.maps.LatLng(y, x),
+      level: 3,
+    };
+
+    const map = new window.kakao.maps.Map(container, options);
+
+    const marker = new window.kakao.maps.Marker({
+      position: new window.kakao.maps.LatLng(y, x),
+    });
+
+    marker.setMap(map);
+  }, [detail]);
 
   if (!detail) return <div>데이터 불러오는 중...</div>;
 
@@ -130,7 +160,9 @@ function DetailPage() {
           </div>
         </div>
         <div className="shadow-lg">
-          <div id="map" className="h-[300px] w-full"></div>
+          <div id="map" className="h-[300px] w-full">
+            지도
+          </div>
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
