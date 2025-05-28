@@ -17,6 +17,20 @@ function DetailPage() {
   const { contentid } = useParams();
   const [detail, setDetail] = useState(null);
   const [intro, setIntro] = useState(null);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [heart, setHeart] = useState(false);
+
+  const handleBookmarkClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setBookmarked(!bookmarked);
+  };
+
+  const handleHeartClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setHeart(!heart);
+  };
 
   useEffect(() => {
     Promise.all([tourApiViewOne(contentid), getLikes({ contentid })]).then(
@@ -30,34 +44,34 @@ function DetailPage() {
     );
   }, []);
 
-  //상세 정보, 안내 정보 이펙트
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(
-          `https://apis.data.go.kr/B551011/KorService2/detailCommon2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&numOfRows=10&pageNo=1`
-        );
-        const data = await res.json();
-        const item = data.response.body.items.item[0];
-        setDetail(item);
-        console.log("detail 응답:", data);
+  // //상세 정보, 안내 정보 이펙트
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await fetch(
+  //         `https://apis.data.go.kr/B551011/KorService2/detailCommon2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&numOfRows=10&pageNo=1`
+  //       );
+  //       const data = await res.json();
+  //       const item = data.response.body.items.item[0];
+  //       setDetail(item);
+  //       console.log("detail 응답:", data);
 
-        if (item.contenttypeid) {
-          const contentTypeId = item.contenttypeid;
-          const resIntro = await fetch(
-            `https://apis.data.go.kr/B551011/KorService2/detailIntro2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&contentTypeId=${contentTypeId}&numOfRows=10&pageNo=1`
-          );
-          const dataIntro = await resIntro.json();
-          setIntro(dataIntro.response.body.items.item[0]);
-          console.log("intro 응답:", dataIntro);
-        }
-      } catch (err) {
-        console.error("API 호출 실패:", err);
-      }
-    };
+  //       if (item.contenttypeid) {
+  //         const contentTypeId = item.contenttypeid;
+  //         const resIntro = await fetch(
+  //           `https://apis.data.go.kr/B551011/KorService2/detailIntro2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&contentTypeId=${contentTypeId}&numOfRows=10&pageNo=1`
+  //         );
+  //         const dataIntro = await resIntro.json();
+  //         setIntro(dataIntro.response.body.items.item[0]);
+  //         console.log("intro 응답:", dataIntro);
+  //       }
+  //     } catch (err) {
+  //       console.error("API 호출 실패:", err);
+  //     }
+  //   };
 
-    fetchData();
-  }, [contentid]);
+  //   fetchData();
+  // }, [contentid]);
 
   // //지도 이펙트
   // useEffect(() => {
@@ -102,17 +116,28 @@ function DetailPage() {
         <div className="pt-12 place-items-end pb-5">
           <div className="flex gap-2">
             <div className="flex items-center gap-1">
-              <img src="/images/i_heart.png" alt="" />
+              <img
+                src={heart ? "/images/i_heart2.png" : "/images/i_heart.png"}
+                onClick={handleHeartClick}
+                alt="좋아요"
+              />
               <p>{detail?.likes_count}</p>
             </div>
             <div className="flex items-center gap-1">
-              <img src="/images/i_bookmarks.png" alt="" />
-              <p>북마크</p>
+              <img
+                src={
+                  bookmarked
+                    ? "/images/i_bookmarks2.png"
+                    : "/images/i_bookmarks.png"
+                }
+                onClick={handleBookmarkClick}
+                alt="북마크"
+              />
             </div>
-            <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-1">
               <img src="/images/i_share.png" alt="" />
               <p>공유하기</p>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="relative h-[375px] overflow-hidden">
