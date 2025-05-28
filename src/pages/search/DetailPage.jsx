@@ -4,6 +4,7 @@ import DetailLayout from "../../layouts/DetailLayout";
 import { tourApiViewOne } from "../../api/newSearchApi";
 import { getLikes } from "../../api/newSearchBackApi";
 import BlueBtn from "../../components/common/BlueBtn";
+import MapView from "../../components/course/kokkok-planner/common/MapView";
 import MyMap from "../../components/search/MyMap";
 
 // //지도 스크립트
@@ -131,7 +132,12 @@ function DetailPage() {
           </div>
         </div>
         <div className="shadow-lg">
-          <MyMap />
+          <div id="map" className="h-[300px] w-full">
+            <MyMap
+              places={[detail]}
+              center={{ lat: Number(detail.mapy), lng: Number(detail.mapx) }}
+            />
+          </div>
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
