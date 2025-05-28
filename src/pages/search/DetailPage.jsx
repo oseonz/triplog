@@ -4,12 +4,13 @@ import DetailLayout from "../../layouts/DetailLayout";
 import { tourApiViewOne } from "../../api/newSearchApi";
 import { getLikes } from "../../api/newSearchBackApi";
 import BlueBtn from "../../components/common/BlueBtn";
+import MyMap from "../../components/search/MyMap";
 
-//지도 스크립트
-<script
-  type="text/javascript"
-  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d14b3407f2ab8aa29337555dccd89793&libraries=services,clusterer"
-></script>;
+// //지도 스크립트
+// <script
+//   type="text/javascript"
+//   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d14b3407f2ab8aa29337555dccd89793&libraries=services,clusterer"
+// ></script>;
 
 function DetailPage() {
   const { contentid } = useParams();
@@ -57,36 +58,36 @@ function DetailPage() {
     fetchData();
   }, [contentid]);
 
-  //지도 이펙트
-  useEffect(() => {
-    if (!detail || !window.kakao || !window.kakao.maps) return;
+  // //지도 이펙트
+  // useEffect(() => {
+  //   if (!detail || !window.kakao || !window.kakao.maps) return;
 
-    const container = document.getElementById("map");
+  //   const container = document.getElementById("map");
 
-    const x = parseFloat(detail.mapx);
-    const y = parseFloat(detail.mapy);
+  //   const x = parseFloat(detail.mapx);
+  //   const y = parseFloat(detail.mapy);
 
-    if (!x || !y) {
-      console.warn("위치 정보 없음");
-      return;
-    }
+  //   if (!x || !y) {
+  //     console.warn("위치 정보 없음");
+  //     return;
+  //   }
 
-    const options = {
-      center: new window.kakao.maps.LatLng(y, x),
-      level: 3,
-      draggable: false,
-      scrollwheel: false,
-      disableDoubleClickZoom: true,
-    };
+  //   const options = {
+  //     center: new window.kakao.maps.LatLng(y, x),
+  //     level: 3,
+  //     draggable: false,
+  //     scrollwheel: false,
+  //     disableDoubleClickZoom: true,
+  //   };
 
-    const map = new window.kakao.maps.Map(container, options);
+  //   const map = new window.kakao.maps.Map(container, options);
 
-    const marker = new window.kakao.maps.Marker({
-      position: new window.kakao.maps.LatLng(y, x),
-    });
+  //   const marker = new window.kakao.maps.Marker({
+  //     position: new window.kakao.maps.LatLng(y, x),
+  //   });
 
-    marker.setMap(map);
-  }, [detail]);
+  //   marker.setMap(map);
+  // }, [detail]);
 
   if (!detail) return <div>데이터 불러오는 중...</div>;
 
@@ -130,9 +131,7 @@ function DetailPage() {
           </div>
         </div>
         <div className="shadow-lg">
-          <div id="map" className="h-[300px] w-full">
-            지도
-          </div>
+          <MyMap />
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
