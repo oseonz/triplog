@@ -6,6 +6,11 @@ import TripCard from "../../components/common/TripCard.jsx";
 import BlueBtn from "../../components/common/BlueBtn.jsx";
 import { getList, getOne } from "../../api/placeLikes.jsx";
 
+<script
+  type="text/javascript"
+  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d14b3407f2ab8aa29337555dccd89793&libraries=services,clusterer"
+></script>;
+
 function DetailPage2({ likes_count }) {
   const { contentid } = useParams();
   const [detail, setDetail] = useState(null);
@@ -15,23 +20,30 @@ function DetailPage2({ likes_count }) {
   const [params] = useState({
     user_id: "",
     areacode: 1,
-    contenttypeid: 12,
+    contenttypeid: 39,
     page: 0,
     size: 12,
   });
 
   useEffect(() => {
-    getList(params).then((data) => {
-      console.log("받은 응답:", data);
-      if (data && Array.isArray(data.items?.content)) {
-        // setTourListData(data.items.content);
-        // setTotalPages(data.items.totalPages || 1);
-      } else {
-        console.error("❌ content 배열이 없음", data);
-        setTourListData([]);
-      }
-    });
-  }, [params]);
+    if (!contentid) return;
+
+    getOne(contentid)
+      .then((data) => {
+        console.log("받은 응답:", data);
+
+        // ✅ 좋아요 수만 저장
+        if (data && data.item) {
+          setLikes(data.item.likes_count ?? 0);
+        } else {
+          setLikes(0);
+        }
+      })
+      .catch((err) => {
+        console.error("❌ getOne API 호출 실패:", err);
+        setLikes(0);
+      });
+  }, [contentid]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +54,7 @@ function DetailPage2({ likes_count }) {
         const data = await res.json();
         const item = data.response.body.items.item[0];
         setDetail(item);
+        console.log("detail 응답:", data);
 
         if (item.contenttypeid) {
           const contentTypeId = item.contenttypeid;
@@ -60,19 +73,33 @@ function DetailPage2({ likes_count }) {
     fetchData();
   }, [contentid]);
 
+  //지도 이펙트
   useEffect(() => {
-    const fetchLikes = async () => {
-      try {
-        const data = await getOne(contentid);
-        console.log("🔥 좋아요 응답:", data);
-        setLikes(data?.likes_count || 0);
-      } catch (err) {
-        console.error("❌ 좋아요 정보 불러오기 실패:", err);
-      }
+    if (!detail || !window.kakao || !window.kakao.maps) return;
+
+    const container = document.getElementById("map");
+
+    const x = parseFloat(detail.mapx);
+    const y = parseFloat(detail.mapy);
+
+    if (!x || !y) {
+      console.warn("위치 정보 없음");
+      return;
+    }
+
+    const options = {
+      center: new window.kakao.maps.LatLng(y, x),
+      level: 3,
     };
 
-    fetchLikes();
-  }, [contentid]);
+    const map = new window.kakao.maps.Map(container, options);
+
+    const marker = new window.kakao.maps.Marker({
+      position: new window.kakao.maps.LatLng(y, x),
+    });
+
+    marker.setMap(map);
+  }, [detail]);
 
   if (!detail) return <div>데이터 불러오는 중...</div>;
 
@@ -131,7 +158,9 @@ function DetailPage2({ likes_count }) {
           </div>
         </div>
         <div className="shadow-lg">
-          <div className="h-[300px] bg-blue-500">지도</div>
+          <div id="map" className="h-[300px] w-full">
+            지도
+          </div>
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
@@ -158,7 +187,8 @@ function DetailPage2({ likes_count }) {
                 <span className="text-[18px] w-[130px]">• 주소</span>
                 <span
                   dangerouslySetInnerHTML={{
-                    __html: intro?.addr1?.replace(/\n/g, "<br>") || "정보 없음",
+                    __html:
+                      detail?.addr1?.replace(/\n/g, "<br>") || "정보 없음",
                   }}
                 />
               </li>

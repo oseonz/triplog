@@ -4,6 +4,7 @@ import MyCourses from "../pages/mypage/MyCourses";
 import MyBookmarks from "../pages/mypage/MyBookmarks";
 import MyActivitys from "../pages/mypage/MyActivitys";
 import MyPageMain from "../pages/mypage/MyPageMain";
+import MyCalendar from "../pages/mypage/MyCalendar";
 
 const mypageRouter = () => {
   return {
@@ -13,6 +14,7 @@ const mypageRouter = () => {
       { path: "mypage_course", element: <MyCourses /> },
       { path: "mypage_bookmark", element: <MyBookmarks /> },
       { path: "mypage_activity", element: <MyActivitys /> },
+      { path: "mypage_calendar", element: <MyCalendar /> },
     ],
   };
 };

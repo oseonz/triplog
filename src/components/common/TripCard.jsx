@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function TripCard({ firstimage, title, addr, likes_count, contentid }) {
+function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
   const [bookmarked, setBookmarked] = useState(false);
   const [heart, setHeart] = useState(false);
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ function TripCard({ firstimage, title, addr, likes_count, contentid }) {
       </div>
       <div className="p-4 flex flex-col justify-between">
         <div>
-          <p className="text-sm text-blue-500">{addr}</p>
+          <p className="text-sm text-blue-500">{addr1}</p>
           <h3 className="text-[18px] text-black">
             {title.length > 14 ? `${title.slice(0, 12)}⋯` : title}
           </h3>

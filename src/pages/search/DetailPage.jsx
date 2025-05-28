@@ -1,38 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DetailLayout from "../../layouts/DetailLayout";
-import { Link } from "react-router-dom";
-import TripCard from "../../components/common/TripCard.jsx";
-import BlueBtn from "../../components/common/BlueBtn.jsx";
-import { getList } from "../../api/placeLikes.jsx";
+import { tourApiViewOne } from "../../api/newSearchApi";
+import { getLikes } from "../../api/newSearchBackApi";
+import BlueBtn from "../../components/common/BlueBtn";
+import MyMap from "../../components/search/MyMap";
+
+// //지도 스크립트
+// <script
+//   type="text/javascript"
+//   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d14b3407f2ab8aa29337555dccd89793&libraries=services,clusterer"
+// ></script>;
 
 function DetailPage() {
   const { contentid } = useParams();
   const [detail, setDetail] = useState(null);
   const [intro, setIntro] = useState(null);
-  const [likes, setLikes] = useState(0);
-
-  const [params] = useState({
-    user_id: "",
-    areacode: 1,
-    contenttypeid: 12,
-    page: 0,
-    size: 12,
-  });
 
   useEffect(() => {
-    getList(params).then((data) => {
-      console.log("받은 응답:", data);
-      if (data && Array.isArray(data.items?.content)) {
-        // setTourListData(data.items.content);
-        // setTotalPages(data.items.totalPages || 1);
-      } else {
-        console.error("❌ content 배열이 없음", data);
-        setTourListData([]);
+    Promise.all([tourApiViewOne(contentid), getLikes({ contentid })]).then(
+      ([tourData, likesData]) => {
+        console.log(likesData);
+        setDetail({
+          ...tourData,
+          likes_count: likesData,
+        });
       }
-    });
-  }, [params]);
+    );
+  }, []);
 
+  //상세 정보, 안내 정보 이펙트
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,47 +58,51 @@ function DetailPage() {
     fetchData();
   }, [contentid]);
 
-  useEffect(() => {
-    const fetchLikes = async () => {
-      try {
-        const data = await getList({
-          user_id: "",
-          areacode: null,
-          contenttypeid: null,
-          sigungucode: null,
-          likes_count: null,
-        });
+  // //지도 이펙트
+  // useEffect(() => {
+  //   if (!detail || !window.kakao || !window.kakao.maps) return;
 
-        const target = data.items?.content?.find(
-          (item) => String(item.contentid) === String(contentid)
-        );
+  //   const container = document.getElementById("map");
 
-        console.log("📌 contentid:", contentid);
-        console.log("💥 좋아요 찾은 결과:", target);
+  //   const x = parseFloat(detail.mapx);
+  //   const y = parseFloat(detail.mapy);
 
-        setLikes(target?.likes_count || 0);
-      } catch (err) {
-        console.error("❌ 좋아요 정보 불러오기 실패:", err);
-      }
-    };
+  //   if (!x || !y) {
+  //     console.warn("위치 정보 없음");
+  //     return;
+  //   }
 
-    fetchLikes();
-  }, [contentid]);
+  //   const options = {
+  //     center: new window.kakao.maps.LatLng(y, x),
+  //     level: 3,
+  //     draggable: false,
+  //     scrollwheel: false,
+  //     disableDoubleClickZoom: true,
+  //   };
+
+  //   const map = new window.kakao.maps.Map(container, options);
+
+  //   const marker = new window.kakao.maps.Marker({
+  //     position: new window.kakao.maps.LatLng(y, x),
+  //   });
+
+  //   marker.setMap(map);
+  // }, [detail]);
 
   if (!detail) return <div>데이터 불러오는 중...</div>;
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <>
       <DetailLayout>
         <div className="place-items-center gap-5">
-          <p className="text-4xl font-bold pb-5">{detail.title}</p>
-          <p className="pb-5 text-gray-500">{detail.addr1}</p>
+          <p className="text-4xl font-bold pb-5">{detail?.title}</p>
+          <p className="pb-5 text-gray-500">{detail?.addr1}</p>
         </div>
         <div className="pt-12 place-items-end pb-5">
           <div className="flex gap-2">
             <div className="flex items-center gap-1">
               <img src="/images/i_heart.png" alt="" />
-              <p>{likes}</p>
+              <p>{detail?.likes_count}</p>
             </div>
             <div className="flex items-center gap-1">
               <img src="/images/i_bookmarks.png" alt="" />
@@ -113,39 +114,24 @@ function DetailPage() {
             </div>
           </div>
         </div>
-        {/* <div className="flex bg-white border-y-2 justify-center mb-7">
-          <div className="border-r-2 border-grary-300">
-            <p className="text-xl font-bold p-5 px-[100px]">사진 보기</p>
-          </div>
-          <div className="border-r-2 border-grary-300">
-            <p className="text-xl font-bold p-5 px-[100px]">상세 정보</p>
-          </div>
-          <div className="border-r-2 border-grary-300">
-            <p className="text-xl font-bold p-5 px-[100px]">추천 여행지</p>
-          </div>
-          <div className="">
-            <p className="text-xl font-bold p-5 px-[100px]">로그톡톡</p>
-          </div>
-        </div> */}
         <div className="relative h-[375px] overflow-hidden">
           <img
-            src={detail.firstimage || "/no_img.jpg"}
-            alt={detail.title}
+            src={detail?.firstimage || "/no_img.jpg"}
+            alt={detail?.title}
             className="absolute top-[-10px] left-0 w-full h-full object-cover"
           ></img>
         </div>
-
         <div className="mb-12">
           <div className="mb-2">
             <p className="text-2xl font-bold">상세 정보</p>
           </div>
           <div className="border border-black"></div>
           <div className="p-5">
-            <p>{detail.overview || "상세 설명이 없습니다."}</p>
+            <p>{detail?.overview || "상세 설명이 없습니다."}</p>
           </div>
         </div>
         <div className="shadow-lg">
-          <div className="h-[300px] bg-blue-500">지도</div>
+          <MyMap />
           <div className="bg-white p-10 flex mb-12">
             <ul className="ps-20">
               <li className="items-start flex gap-2 float-left w-[50%] pt-1">
@@ -200,21 +186,7 @@ function DetailPage() {
             <p className="text-2xl font-bold">추천 여행지</p>
           </div>
           <div className="border border-black"></div>
-          <div className="pt-5">
-            {/* <Link to="../detail">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {cards.map((card, i) => (
-                  <TripCard
-                    key={i}
-                    title={card.title}
-                    image={card.image}
-                    location={card.location}
-                    tag={card.tag}
-                  />
-                ))}
-              </div>
-            </Link> */}
-          </div>
+          <div className="pt-5"></div>
         </div>
         <div className="flex justify-center items-center gap-5 mb-12">
           <BlueBtn />
@@ -235,7 +207,7 @@ function DetailPage() {
           </div>
         </div>
       </DetailLayout>
-    </div>
+    </>
   );
 }
 
