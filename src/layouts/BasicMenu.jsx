@@ -30,8 +30,8 @@ function BasicMenu({ children }) {
           >
             여행검색
           </Link>
-          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[150px]">
-            <span className="flex gap-3">
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[120px]">
+            <span className="flex flex-col items-center gap-3">
               <Link to="/search/place">여행지</Link>
               <Link to="/search/food">음식점</Link>
             </span>
@@ -46,8 +46,8 @@ function BasicMenu({ children }) {
           >
             여행만들기
           </Link>
-          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[200px]">
-            <span className="flex gap-3">
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[120px]">
+            <span className="flex flex-col items-center gap-3">
               <Link to="/course/list">추천코스</Link>
               <Link to="/course/builder">콕콕플래너</Link>
             </span>
@@ -63,24 +63,30 @@ function BasicMenu({ children }) {
           >
             여행정보
           </Link>
-          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[190px]">
-            <span className="flex gap-3">
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[120px]">
+            <span className="flex flex-col items-center gap-3">
               <Link to="/info/event">공연/행사</Link>
               <Link to="/info/article">여행기사</Link>
             </span>
           </div>
         </li>
       </ul>
-      <ul className="flex text-xl">
+      <ul className="flex text-xl hidden">
         <li>
           <Link to={"/login"}>로그인/회원가입</Link>
         </li>
       </ul>
       <ul className="flex text-xl">
-        <li>
+        <li className="relative group">
           <Link to={"/mypage"}>
             <img src="/images/i_user.png" alt="user" />
           </Link>
+          <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[120px] top-8">
+            <span className="flex flex-col items-center gap-3">
+              <Link to="/login">로그아웃</Link>
+              <Link to={"/mypage"}>마이페이지</Link>
+            </span>
+          </div>
         </li>
       </ul>
     </nav>
