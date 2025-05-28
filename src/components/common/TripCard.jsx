@@ -29,7 +29,10 @@ function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
     >
       <div className="relative">
         <img
-          src={firstimage || "/no_img.jpg"}
+          src={firstimage}
+          onError={(e) => {
+            e.target.src = "../public/images/no_img.jpg";
+          }}
           alt={title}
           className="w-[277px] h-[250px] object-cover"
         />

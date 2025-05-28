@@ -89,7 +89,7 @@ function FoodPage() {
   }; //페이지네이션
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black pb-7">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
