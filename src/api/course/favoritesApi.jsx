@@ -1,33 +1,57 @@
-// src/api/favoritesApi.js
+// 🔗 찜 목록 관련 API
 import axios from "axios";
 
-const favoritesApi = axios.create({
-  baseURL: "", // proxy 쓰면 빈 문자열
-  withCredentials: true,
-  headers: { "Content-Type": "application/json" },
-});
+const API_SERVER_HOST = "http://localhost:8081";
+const prefix = `${API_SERVER_HOST}/favorites/list`;
+
+export const fetchFavorites = async ({ user_id, contenttypeid }) => {
+  try {
+    const res = await axios.get(prefix, {
+      params: {
+        user_id,
+        contenttypeid,
+      },
+    });
+    return res.data?.items || []; // or res.data if no `items` wrapping
+  } catch (err) {
+    console.error("❌ 찜 목록 불러오기 실패", err);
+    throw err;
+  }
+};
+
+// const favoritesApi = axios.create({
+//   baseURL: "", // 프록시 사용 시 빈 문자열 유지
+//   withCredentials: true,
+//   headers: { "Content-Type": "application/json" },
+// });
 
 /**
- * 찜목록 조회
- * @param {object} params
- * @param {string|number} params.user_id         – 사용자 ID
- * @param {string|number} params.contenttypeid   – 콘텐츠 타입 ID (39: 음식점, 12: 관광지 등)
- * @param {string|number} [params.areacode]      – 지역 코드
- * @param {string|number} [params.sigungucode]   – 시군구 코드
- * @returns {Promise<any>}                       – 응답 데이터
+ * ✅ 찜 목록 조회 (관광지/음식점)
+ * - user_id + contenttypeid(12 or 39)를 기준으로 찜한 항목 리스트 조회
+ * - 선택적으로 areacode, sigungucode를 필터로 줄 수 있음
  */
-export const fetchFavorites = (params) =>
-  favoritesApi
-    .get("/favorites/list", {
-      params: {
-        user_id: params.user_id,
-        contenttypeid: params.contenttypeid,
-        // 필요하다면 추가 파라미터도 여기에 넣으세요:
-        // areacode: params.areacode,
-        // sigungucode: params.sigungucode,
-      },
-    })
-    .then((res) => {
-      console.log("🧾 API 응답 구조:", res.data);
-      return res.data.items; // ✅ 여기서 .items가 반드시 존재해야 함
-    });
+
+// ✅ 찜 목록 조회 (관광지/음식점) - Recoil 통일 리팩토링
+// export const fetchFavorites = async ({
+//   user_id,
+//   contenttypeid,
+//   areacode,
+//   sigungucode,
+// }) => {
+//   try {
+//     const res = await favoritesApi.get("/favorites/list", {
+//       params: {
+//         user_id,
+//         contenttypeid,
+//         areacode,
+//         sigungucode,
+//       },
+//     });
+
+//     // ✅ 응답에 items가 없다면 빈 배열로 처리
+//     return res.data?.items || [];
+//   } catch (err) {
+//     console.error("❌ 찜 목록 불러오기 실패", err);
+//     return [];
+//   }
+// };

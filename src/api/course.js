@@ -5,30 +5,7 @@ const LOCATION_URL =
 const TOUR_API_KEY =
   "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==";
 
-export const fetchOverview = async (contentId, contentTypeId) => {
-  const url = "https://apis.data.go.kr/B551011/KorService1/detailCommon1";
-  const API_KEY =
-    "qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA=="; // 본인의 인증키 사용
-
-  const params = {
-    ServiceKey: API_KEY,
-    MobileOS: "ETC",
-    MobileApp: "TripLog",
-    contentId,
-    contentTypeId,
-    defaultYN: "Y",
-    overviewYN: "Y",
-    _type: "json",
-  };
-
-  const res = await axios.get(url, { params });
-  // ✅ 여기가 중요!
-  const items = res.data.response.body.items.item;
-  const item = Array.isArray(items) ? items[0] : items;
-
-  return item?.overview ?? "";
-};
-
+// 지역 기반 장소 검색 API 호출
 export const fetchTourPlaces = async (
   contentTypeId = "",
   minCount = 10,
@@ -68,6 +45,7 @@ export const fetchTourPlaces = async (
   }
 };
 
+// 상세 이미지 API 호출
 export const fetchDetailImages = async (contentId) => {
   const IMAGE_URL = "https://apis.data.go.kr/B551011/KorService1/detailImage1";
   const TOUR_API_KEY =
@@ -99,7 +77,7 @@ export const fetchDetailImages = async (contentId) => {
   }
 };
 
-// ✅ 이 함수가 있어야 함
+// 상세 정보 API 호출
 export const fetchDetailIntro = async (contentId, contentTypeId) => {
   const DETAIL_URL = "https://apis.data.go.kr/B551011/KorService1/detailIntro1";
   const TOUR_API_KEY =

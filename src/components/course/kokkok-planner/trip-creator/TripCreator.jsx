@@ -7,22 +7,24 @@ import MapView from "../common/MapView";
 import DetailPanel from "./DetailPanel";
 import BookMarkPanel from "../bookmarks/BookMarkPanel";
 import TripNote from "../trip-note/TripNote";
-import { fetchTourPlaces, fetchDetailIntro } from "../../../../api/course";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import { courseDataState } from "../../../../pages/course/atom/courseState";
 import { regionList } from "../../../../utils/regionData";
+import { detailIntro } from "../../atom/detailIntro";
+import { searchResultState, keywordState } from "../../atom/searchState";
 
 function TripCreator({ currentTab, setCurrentTab }) {
-  const [keyword, setKeyword] = useState("");
-  const [tourPlaces, setTourPlaces] = useState([]);
-  const [foodPlaces, setFoodPlaces] = useState([]);
   const [selectedType, setSelectedType] = useState("12");
-  const [selectedPlace, setSelectedPlace] = useState(null);
   const [comment, setComment] = useState("");
-  const [courseList, setCourseList] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [mapLevel, setMapLevel] = useState(5);
-  const [likedMap, setLikedMap] = useState({});
-  const [likeCountMap, setLikeCountMap] = useState({});
-
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [courseList, setCourseList] = useState([]);
+  const [courseData, setCourseData] = useRecoilState(courseDataState);
+  const setSelectedPlace = useSetRecoilState(detailIntro);
+  const { tourPlaces, foodPlaces, likesMap, bookmarkedIds } = courseData;
+  const searchResults = useRecoilValue(searchResultState);
+  const keyword = useRecoilValue(keywordState);
   const [mapCenter, setMapCenter] = useState({
     lat: 37.566826,
     lng: 126.9786567,
@@ -30,14 +32,45 @@ function TripCreator({ currentTab, setCurrentTab }) {
 
   const visiblePlaces =
     selectedType === "12"
-      ? tourPlaces.slice(0, visibleCount)
+      ? courseData.tourPlaces.slice(0, visibleCount)
       : selectedType === "39"
-      ? foodPlaces.slice(0, visibleCount)
+      ? courseData.foodPlaces.slice(0, visibleCount)
       : courseList;
 
   const region = useMemo(() => {
     return regionList.find((r) => keyword.includes(r.name));
   }, [keyword]);
+
+  // 좋아요 수를 미리 불러오는 함수
+  const preloadLikes = async (places) => {
+    const counts = {};
+    const failedSet = new Set();
+
+    for (const place of places) {
+      const id = place?.contentid;
+      if (!id) continue;
+
+      try {
+        const count = await fetchLikeCount(id);
+        counts[id] = count;
+      } catch (err) {
+        if (!failedSet.has(place.title)) {
+          // console.warn("❌ 좋아요 수 로딩 실패:", place.title);
+          failedSet.add(place.title);
+        }
+        counts[id] = 0;
+      }
+    }
+
+    // ✅ place가 아니라 counts를 통째로 반영해야 함
+    setCourseData((prev) => ({
+      ...prev,
+      likesMap: {
+        ...prev.likesMap,
+        ...likesMap,
+      },
+    }));
+  };
 
   useEffect(() => {
     if (region) {
@@ -45,10 +78,8 @@ function TripCreator({ currentTab, setCurrentTab }) {
     }
   }, [selectedType]);
 
-  useEffect(() => {
-    // keyword가 “서울”로 세팅된 직후 한 번 검색 호출
-    handleSearch();
-  }, []); // 컴포넌트 마운트시에만 실행
+  // 컴포넌트가 처음 마운트될 때만 실행
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (region) {
@@ -67,69 +98,68 @@ function TripCreator({ currentTab, setCurrentTab }) {
     setSelectedPlace(null);
   }, [currentTab]);
 
-  const handleSearch = async () => {
-    try {
-      const region = regionList.find((r) => keyword.includes(r.name));
-      const areaCode = region?.areaCode ?? null;
-      const sigunguCode = region?.sigunguCode ?? null;
+  // 초기 데이터 로딩
+  // console.log("🧩 courseDataState:", {
+  //   tourPlaces,
+  //   foodPlaces,
+  //   likesMap,
+  //   bookmarkedIds,
+  // });
 
-      if (region?.lat && region?.lng) {
-        setMapCenter({ lat: region.lat, lng: region.lng });
-        setMapLevel(5);
-      }
+  const handleSearch = () => {
+    const region = regionList.find((r) => keyword.includes(r.name));
+    const areaCode = region?.areaCode ?? null;
+    const sigunguCode = region?.sigunguCode ?? null;
 
-      const [tour, food] = await Promise.all([
-        fetchTourPlaces("12", 20, areaCode, sigunguCode),
-        fetchTourPlaces("39", 20, areaCode, sigunguCode),
-      ]);
+    if (region?.lat && region?.lng) {
+      setMapCenter({ lat: region.lat, lng: region.lng });
+      setMapLevel(5);
+    }
 
-      setTourPlaces(tour);
-      setFoodPlaces(food);
-      setVisibleCount(6);
-      setSelectedPlace(null);
+    setVisibleCount(6);
+    setSelectedPlace(null);
 
-      const first = tour[0] || food[0];
-      if (first) {
-        setMapCenter({ lat: Number(first.mapy), lng: Number(first.mapx) });
-        setMapLevel(5);
-      }
-    } catch (error) {
-      console.error("❌ 검색 실패", error);
+    const first = selectedType === "12" ? tourPlaces[0] : foodPlaces[0];
+    if (first) {
+      setMapCenter({ lat: Number(first.mapy), lng: Number(first.mapx) });
+      setMapLevel(5);
     }
   };
 
-  const handlePlaceClick = async (place) => {
-    try {
-      const detailData = await fetchDetailIntro(
-        place.contentid,
-        place.contenttypeid
-      );
-      const detailPlace = {
-        ...place,
-        ...(Array.isArray(detailData) ? detailData[0] : detailData),
-      };
-      setSelectedPlace(detailPlace);
-    } catch (error) {
-      console.error("❌ 상세정보 병합 실패", error);
-      setSelectedPlace(place);
+  // 디테일패널 핸들러
+  const handlePlaceClick = (place) => {
+    const allPlaces = [...courseData.tourPlaces, ...courseData.foodPlaces];
+
+    const detailPlace = allPlaces.find(
+      (item) => item.contentid === place.contentid
+    );
+
+    if (detailPlace) {
+      setSelectedPlace(detailPlace); // ✅ 선택된 장소를 Recoil 상태에 저장
+      setIsDetailOpen(true); // 패널을 열기 위한 내부 상태
+    } else {
+      console.warn("❌ 상세 데이터를 찾을 수 없음:", place.title);
     }
   };
 
-  const handleAddToCourse = () => {
-    if (!selectedPlace) return;
-    if (courseList.some((item) => item.contentid === selectedPlace.contentid)) {
-      alert("이미 추가된 장소입니다!");
-      return;
-    }
-    setCourseList([...courseList, selectedPlace]);
-    alert("✅ 코스에 추가되었습니다!");
-  };
+  //코스에 장소 추가 핸들러
+  // const handleAddToCourse = () => {
+  //   if (!selectedPlace) return;
+  //   if (courseList.some((item) => item.contentid === selectedPlace.contentid)) {
+  //     alert("이미 추가된 장소입니다!");
+  //     return;
+  //   }
+  //   setCourseList([...courseList, selectedPlace]);
+  //   alert("✅ 코스에 추가되었습니다!");
+  // };
 
+  // 코스에서 장소 제거 핸들러
   const handleRemoveFromCourse = (contentId) => {
     const updated = courseList.filter((place) => place.contentid !== contentId);
     setCourseList(updated);
   };
 
+  // 댓글 작성 핸들러
   const handleCommentSubmit = () => {
     if (comment.trim() !== "") {
       alert(`📝 댓글 작성됨: ${comment}`);
@@ -137,24 +167,49 @@ function TripCreator({ currentTab, setCurrentTab }) {
     }
   };
 
+  // 더보기 버튼 핸들러
   const handleLoadMore = () => setVisibleCount((prev) => prev + 6);
 
   // 하트 클릭 핸들러
-  const handleToggleLike = (contentid) => {
-    setLikedMap((prev) => ({
-      ...prev,
-      [contentid]: !prev[contentid], // true <-> false 토글
-    }));
+  const handleToggleLike = async (place) => {
+    try {
+      await saveLike({ ...place, user_id: 1 }); // 서버에 좋아요 토글
+      const updatedCount = await fetchLikeCount(place.contentid); // 최신 좋아요 수
+
+      // ✅ 기존 값 가져오기
+      const prevCount = courseData.likesMap[place.contentid] ?? 0;
+
+      // ✅ 값이 실제로 바뀐 경우에만 업데이트
+      if (updatedCount !== prevCount) {
+        setCourseData((prev) => ({
+          ...prev,
+          likesMap: {
+            ...prev.likesMap,
+            [place.contentid]: updatedCount,
+          },
+        }));
+      }
+    } catch (err) {
+      console.error("❌ 좋아요 처리 실패", err);
+    }
   };
+
+  useEffect(() => {
+    const allPlaces = [...tourPlaces, ...foodPlaces];
+    if (allPlaces.length > 0) {
+      preloadLikes(allPlaces);
+    }
+  }, []);
 
   return (
     <div className="flex w-full h-[900px]">
       {/* 왼쪽 영역 */}
-      <div className="w-[582px] bg-white flex flex-col  z-10">
+      <div className="w-[570px] bg-white flex flex-col  z-10">
         <HeaderBar onBack={() => console.log("뒤로")} />
+
         <TabMenu currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
-        <div className="border-t-[15px] border-gray-100" />
+        <div className="border-t-[10px] border-gray-100" />
 
         {/* ✅ 탭에 따라 다른 콘텐츠 렌더링 */}
         {currentTab === "찜" ? (
@@ -162,25 +217,19 @@ function TripCreator({ currentTab, setCurrentTab }) {
             isOpen={true}
             onClose={() => setCurrentTab("여행만들기")}
           />
+        ) : currentTab === "여행노트" ? (
+          <TripNote />
         ) : (
           <>
-            {/* ✅ 여행만들기/여행노트 탭 UI */}
-
             {currentTab === "여행만들기" && (
               <>
-                <SearchBar
-                  keyword={keyword}
-                  setKeyword={setKeyword}
-                  onSearch={handleSearch}
-                />
+                <SearchBar />
                 <ListBtn
                   selectedType={selectedType}
                   setSelectedType={setSelectedType}
-                  //showCourseList={showCourseList}
-                  // setShowCourseList={setShowCourseList}
                 />
 
-                <div className="w-full px-4 pb-4 overflow-y-auto">
+                <div className="w-full px-4 pb-4 ">
                   {visiblePlaces.map((place) => {
                     const isAdded = courseList.some(
                       (item) => item.contentid === place.contentid
@@ -198,26 +247,31 @@ function TripCreator({ currentTab, setCurrentTab }) {
                             alt={place.title}
                             className="w-[90px] h-[90px] object-cover rounded-full"
                           />
-                          <div className="min-w-0 flex-1 w-[330px]">
+                          <div className="min-w-0 flex-1 w-[320px]">
                             <p className="font-medium text-xl truncate">
                               {place.title}
                             </p>
                             <p className="text-sm text-gray-600 truncate overflow-hidden">
                               {place.addr1}
                             </p>
-                            <img
-                              src={
-                                likedMap[place.contentid]
-                                  ? "/images/i_heart.png"
-                                  : "/images/i_heart2.png"
-                              }
-                              alt="좋아요 하트"
-                              onClick={(e) => {
-                                e.stopPropagation(); // 클릭 이벤트가 카드 열기로 퍼지는 것 방지
-                                handleToggleLike(place.contentid);
-                              }}
-                              className="w-5 h-5 cursor-pointer"
-                            />
+                            <div className="flex items-center mt-1 gap-1">
+                              <img
+                                src={
+                                  (likesMap[place.contentid] ?? 0) > 0
+                                    ? "/images/i_heart2.png"
+                                    : "/images/i_heart.png"
+                                }
+                                alt="좋아요 하트"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleLike(place);
+                                }}
+                                className="w-5 h-5 cursor-pointer"
+                              />
+                              <span className=" text-sm text-gray-500">
+                                {likesMap[place.contentid] ?? 0}
+                              </span>
+                            </div>
                           </div>
                           <input
                             type="checkbox"
@@ -242,9 +296,9 @@ function TripCreator({ currentTab, setCurrentTab }) {
                     <div className="flex justify-center items-center mt-4">
                       <button
                         onClick={handleLoadMore}
-                        className="w-[100px] bg-blue-400 text-white py-2 rounded-3xl hover:bg-blue-500"
+                        className="w-[100px] bg-blue-500 text-white py-2 rounded-3xl hover:bg-blue-500"
                       >
-                        더보기1 +
+                        더보기 +
                       </button>
                     </div>
                   )}
@@ -257,7 +311,7 @@ function TripCreator({ currentTab, setCurrentTab }) {
 
       {/* 오른쪽 MapView는 항상 유지 */}
       <MapView
-        places={[...tourPlaces, ...foodPlaces]}
+        places={[...tourPlaces, ...foodPlaces]} // ✅ Recoil 값 기반
         center={mapCenter}
         level={mapLevel}
         addedCourses={courseList}
@@ -265,20 +319,8 @@ function TripCreator({ currentTab, setCurrentTab }) {
         onMarkerClick={setSelectedPlace}
         selectedType={selectedType}
       />
-
       {/* 디테일 패널 */}
-      <DetailPanel
-        place={selectedPlace}
-        onClose={() => setSelectedPlace(null)}
-        onAddCourse={handleAddToCourse}
-        comment={comment}
-        setComment={setComment}
-        onCommentSubmit={handleCommentSubmit}
-        onRemoveCourse={handleRemoveFromCourse}
-        isCourseAdded={courseList.some(
-          (p) => p.contentid === selectedPlace?.contentid
-        )}
-      />
+      {isDetailOpen && <DetailPanel onClose={() => setIsDetailOpen(false)} />}
     </div>
   );
 }

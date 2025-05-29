@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import {
-  fetchDetailIntro,
-  fetchDetailImages,
-  fetchOverview,
-} from "../../../../api/course";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { detailIntro } from "../../atom/detailIntro";
+import { fetchDetailIntro, fetchDetailImages } from "../../../../api/course";
 
 function DetailPanel({
   place,
@@ -17,85 +15,66 @@ function DetailPanel({
 }) {
   const [detailInfo, setDetailInfo] = useState({});
   const [images, setImages] = useState([]);
-  const [overview, setOverview] = useState("");
-
-  useEffect(() => {
-    async function loadOverview() {
-      if (!place?.contentid) return;
-      // const overview = await fetchOverview(
-      //   place.contentid,
-      //   place.contenttypeid
-      // );
-      // const overview = await fetchOverview("126508", "12");
-
-      console.log("✅ overview 내용:", overview); // "" or 실제 값
-      setOverview(overview);
-    }
-
-    loadOverview();
-  }, [place]);
+  const selectedPlace = useRecoilValue(detailIntro);
 
   useEffect(() => {
     async function loadDetail() {
-      if (!place?.contentid) return;
+      if (!selectedPlace?.contentid) return;
 
       const intro = await fetchDetailIntro(
-        place.contentid,
-        place.contenttypeid
+        selectedPlace.contentid,
+        selectedPlace.contenttypeid
       );
-      const imgs = await fetchDetailImages(place.contentid);
+      const imgs = await fetchDetailImages(selectedPlace.contentid);
 
-      console.log("📦 원본 intro:", intro);
-
-      // ✅ 첫 번째 객체만 저장
       setDetailInfo(Array.isArray(intro) ? intro[0] : {});
-      setImages(imgs);
+      setImages(Array.isArray(imgs) ? imgs : []);
     }
 
     loadDetail();
-  }, [place]);
+  }, [selectedPlace]); // ✅ selectedPlace만 의존성으로 둠
 
-  if (!place) return null;
+  if (!selectedPlace) return null;
 
-  const isFood = String(place.contenttypeid) === "39";
+  const isFood = String(selectedPlace.contenttypeid) === "39";
 
   const handleCourseClick = () => {
     if (isCourseAdded) {
-      onRemoveCourse(place.contentid);
+      onRemoveCourse(selectedPlace.contentid);
     } else {
-      onAddCourse(place.contentid);
+      onAddCourse(selectedPlace.contentid);
     }
   };
 
   return (
-    <div className="absolute top-[104px] left-[465px] w-[400px] h-[88%] bg-white shadow-lg z-50 overflow-y-auto">
+    <div className="absolute top-[95px] left-[445px] w-[400px] h-[88%] bg-white shadow-lg z-50 overflow-y-auto">
       {/* 상단 */}
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-lg font-semibold">
-          {isFood ? "추천 음식점" : "추천 여행지"}
+          {isFood ? "음식점" : "여행지"}
         </h2>
-        <button onClick={onClose}>✕</button>
+        <button
+          onClick={() => {
+            onClose(); // ✅ 패널 닫기
+          }}
+        >
+          ✕
+        </button>
       </div>
 
       {/* 기본 정보 */}
       <div className="p-4">
-        {place.firstimage && (
+        {selectedPlace.firstimage && (
           <img
-            src={place.firstimage}
+            src={selectedPlace.firstimage}
             alt="대표 이미지"
             className="w-full h-48 object-cover rounded mb-3"
           />
         )}
-        <p className="text-lg font-bold">{place.title}</p>
-        <p className="text-base ">📍 {place.addr1}</p>
-        {overview ? (
-          <div
-            className="text-sm text-gray-600 whitespace-pre-line"
-            dangerouslySetInnerHTML={{ __html: overview }}
-          />
-        ) : (
-          <p className="text-gray-400">소개 정보 없음</p>
-        )}
+        <p className="text-lg font-bold">{selectedPlace.title}</p>
+        <p className="text-base ">📍 {selectedPlace.addr1}</p>
+        <p>{selectedPlace.overview || "상세 설명이 없습니다."}</p>
+
         {/* 상세 intro 정보 */}
         {isFood ? (
           <>
@@ -167,7 +146,7 @@ function DetailPanel({
         <button
           onClick={handleCourseClick}
           className={`mt-3 w-full py-2 rounded text-white ${
-            isCourseAdded ? "bg-gray-400" : "bg-blue-400"
+            isCourseAdded ? "bg-gray-400" : "bg-blue-500"
           }`}
         >
           {isCourseAdded ? "✔ 코스 취소하기" : "➕ 코스에 추가"}
@@ -184,7 +163,7 @@ function DetailPanel({
           />
           <button
             onClick={onCommentSubmit}
-            className="mt-2 w-full bg-gray-800 text-white py-2 rounded"
+            className="mt-2 w-full bg-blue-500 text-white py-2 rounded"
           >
             댓글 등록
           </button>

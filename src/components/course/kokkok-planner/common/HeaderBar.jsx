@@ -6,7 +6,7 @@ function HeaderBar({ onBack, onShare }) {
   const [tripTitle, setTripTitle] = useState("");
 
   return (
-    <div className="flex justify-between items-center px-8 py-4 border-b bg-white">
+    <div className="flex justify-between items-center px-5 py-4 border-b bg-white">
       {/* ←콕콕플래너 */}
       <button
         onClick={onBack}

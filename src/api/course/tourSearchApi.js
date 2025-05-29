@@ -33,6 +33,7 @@ export const fetchTourPlaces = async (contentId) => {
   }
 };
 
+// 지역 기반 장소 검색 API 호출
 // export const fetchTourPlaces = async (
 //   contentTypeId = "",
 //   minCount = 10,
@@ -72,6 +73,7 @@ export const fetchTourPlaces = async (contentId) => {
 //   }
 // };
 
+// 상세 이미지 API 호출
 export const fetchDetailImages = async (contentId) => {
   const IMAGE_URL = "https://apis.data.go.kr/B551011/KorService1/detailImage1";
   const TOUR_API_KEY =
