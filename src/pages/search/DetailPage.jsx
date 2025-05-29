@@ -19,6 +19,7 @@ function DetailPage() {
   const [intro, setIntro] = useState(null);
   const [bookmarked, setBookmarked] = useState(false);
   const [heart, setHeart] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
   const handleBookmarkClick = (e) => {
     e.stopPropagation();
@@ -29,17 +30,22 @@ function DetailPage() {
   const handleHeartClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    setHeart(!heart);
+
+    setHeart((prev) => {
+      const newHeart = !prev;
+      setLikesCount((count) => (newHeart ? count + 1 : count - 1)); // ✅ 증감 처리
+      return newHeart;
+    });
   };
 
   useEffect(() => {
     Promise.all([tourApiViewOne(contentid), getLikes({ contentid })]).then(
       ([tourData, likesData]) => {
-        console.log(likesData);
         setDetail({
           ...tourData,
           likes_count: likesData,
         });
+        setLikesCount(likesData);
       }
     );
   }, []);
@@ -121,7 +127,7 @@ function DetailPage() {
                 onClick={handleHeartClick}
                 alt="좋아요"
               />
-              <p>{detail?.likes_count}</p>
+              <p>{likesCount}</p>
             </div>
             <div className="flex items-center gap-1">
               <img

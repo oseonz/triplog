@@ -22,6 +22,10 @@ function MyMap({
         center={mapCenter}
         level={level || 3}
         style={{ width: "100%", height: "100%" }}
+        draggable={false}
+        zoomable={false}
+        disableDoubleClickZoom={true}
+        scrollwheel={false}
       >
         {places.map((detail) => {
           const lat = Number(detail.mapy);
