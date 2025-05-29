@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DetailLayout from "../../layouts/DetailLayout";
-import { tourApiViewOne } from "../../api/newSearchApi";
+import { fetchDetailIntro, tourApiViewOne } from "../../api/newSearchApi";
 import { getLikes } from "../../api/newSearchBackApi";
 import BlueBtn from "../../components/common/BlueBtn";
 import MapView from "../../components/course/kokkok-planner/common/MapView";
 import MyMap from "../../components/search/MyMap";
+import DetailInfo from "../../components/search/DetailInfo";
+import DetailInfo2 from "../../components/search/DetailInfo2";
 
 // //지도 스크립트
 // <script
@@ -14,7 +16,7 @@ import MyMap from "../../components/search/MyMap";
 // ></script>;
 
 function DetailPage() {
-  const { contentid } = useParams();
+  const { contentid, contenttypeid } = useParams();
   const [detail, setDetail] = useState(null);
   const [intro, setIntro] = useState(null);
   const [bookmarked, setBookmarked] = useState(false);
@@ -38,77 +40,48 @@ function DetailPage() {
     });
   };
 
+  // useEffect(() => {
+  //   Promise.all([
+  //     tourApiViewOne(contentid),
+  //     getLikes({ contentid }),
+  //     fetchDetailIntro(contentid, contenttypeid),
+  //   ]).then(([tourData, likesData, introData]) => {
+  //     setDetail({
+  //       ...tourData,
+  //       likes_count: likesData,
+  //     });
+  //     setLikesCount(likesData);
+  //     setIntro(introData);
+  //     console.log("detail 응답: ", tourData);
+  //     console.log("like:", likesData);
+  //     console.log("intro 응답: ", introData);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    Promise.all([tourApiViewOne(contentid), getLikes({ contentid })]).then(
-      ([tourData, likesData]) => {
+    tourApiViewOne(contentid)
+      .then(async (tourData) => {
+        const { contenttypeid: ContentTypeId } = tourData;
+        const [likesData, introData] = await Promise.all([
+          getLikes({ contentid }),
+          fetchDetailIntro(contentid, ContentTypeId),
+        ]);
+
         setDetail({
           ...tourData,
           likes_count: likesData,
         });
         setLikesCount(likesData);
-      }
-    );
-  }, []);
+        setIntro(introData);
 
-  // //상세 정보, 안내 정보 이펙트
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         `https://apis.data.go.kr/B551011/KorService2/detailCommon2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&numOfRows=10&pageNo=1`
-  //       );
-  //       const data = await res.json();
-  //       const item = data.response.body.items.item[0];
-  //       setDetail(item);
-  //       console.log("detail 응답:", data);
-
-  //       if (item.contenttypeid) {
-  //         const contentTypeId = item.contenttypeid;
-  //         const resIntro = await fetch(
-  //           `https://apis.data.go.kr/B551011/KorService2/detailIntro2?serviceKey=l0WtV%2F7q2V%2FEH86zOC4y54rjJIci1FU1Dx8yW149%2F2RoPbMkLFPBsMUxIr97MJRg%2FlxhrnVx9xKksuIihnSJsw%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&contentTypeId=${contentTypeId}&numOfRows=10&pageNo=1`
-  //         );
-  //         const dataIntro = await resIntro.json();
-  //         setIntro(dataIntro.response.body.items.item[0]);
-  //         console.log("intro 응답:", dataIntro);
-  //       }
-  //     } catch (err) {
-  //       console.error("API 호출 실패:", err);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [contentid]);
-
-  // //지도 이펙트
-  // useEffect(() => {
-  //   if (!detail || !window.kakao || !window.kakao.maps) return;
-
-  //   const container = document.getElementById("map");
-
-  //   const x = parseFloat(detail.mapx);
-  //   const y = parseFloat(detail.mapy);
-
-  //   if (!x || !y) {
-  //     console.warn("위치 정보 없음");
-  //     return;
-  //   }
-
-  //   const options = {
-  //     center: new window.kakao.maps.LatLng(y, x),
-  //     level: 3,
-  //     draggable: false,
-  //     scrollwheel: false,
-  //     disableDoubleClickZoom: true,
-  //   };
-
-  //   const map = new window.kakao.maps.Map(container, options);
-
-  //   const marker = new window.kakao.maps.Marker({
-  //     position: new window.kakao.maps.LatLng(y, x),
-  //   });
-
-  //   marker.setMap(map);
-  // }, [detail]);
+        console.log("detail 응답: ", tourData);
+        console.log("like:", likesData);
+        console.log("intro 응답: ", introData);
+      })
+      .catch((err) => {
+        console.error("데이터 로드 실패:", err);
+      });
+  }, [contentid]);
 
   if (!detail) return <div>데이터 불러오는 중...</div>;
 
@@ -116,7 +89,10 @@ function DetailPage() {
     <>
       <DetailLayout>
         <div className="place-items-center gap-5">
-          <p className="text-4xl font-bold pb-5">{detail?.title}</p>
+          <p className="text-4xl font-bold pb-5">
+            {detail?.title}
+            {intro?.contenttypeid}
+          </p>
           <p className="pb-5 text-gray-500">{detail?.addr1}</p>
         </div>
         <div className="pt-12 place-items-end pb-5">
@@ -170,52 +146,11 @@ function DetailPage() {
             />
           </div>
           <div className="bg-white p-10 flex mb-12">
-            <ul className="ps-20">
-              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
-                <span className="text-[18px] w-[130px]">• 문의 및 안내</span>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      intro?.infocenter?.replace(/\n/g, "<br>") || "정보 없음",
-                  }}
-                />
-              </li>
-              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
-                <span className="text-[18px] w-[130px]">• 이용 시간</span>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      intro?.usetime?.replace(/\n/g, "<br>") || "정보 없음",
-                  }}
-                />
-              </li>
-              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
-                <span className="text-[18px] w-[130px]">• 주소</span>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: intro?.addr1?.replace(/\n/g, "<br>") || "정보 없음",
-                  }}
-                />
-              </li>
-              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
-                <span className="text-[18px] w-[130px]">• 주차</span>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      intro?.parking?.replace(/\n/g, "<br>") || "정보 없음",
-                  }}
-                />
-              </li>
-              <li className="items-start flex gap-2 float-left w-[50%] pt-1">
-                <span className="text-[18px] w-[130px]">• 휴일</span>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      intro?.restdate?.replace(/\n/g, "<br>") || "정보 없음",
-                  }}
-                />
-              </li>
-            </ul>
+            {detail?.contenttypeid == "12" ? (
+              <DetailInfo intro={intro} detail={detail} />
+            ) : (
+              <DetailInfo2 intro={intro} detail={detail} />
+            )}
           </div>
         </div>
         <div className="mb-12">
