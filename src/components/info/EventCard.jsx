@@ -35,7 +35,7 @@ function EventCard({ image, title, location }) {
           <h3 className="text-[18px] text-black">{title}</h3>
           <div className="flex items-center">
             <img
-              src="../public/images/i_heart.png"
+              src="../public/images/heart-o.png"
               className="w-[23px]"
               alt="heart icon"
             />
