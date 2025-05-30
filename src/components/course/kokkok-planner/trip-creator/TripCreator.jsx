@@ -89,8 +89,8 @@ function TripCreator() {
   return (
     <div className="flex w-full h-[900px]">
       {/* 왼쪽 영역 */}
-      <div className="w-[460px] bg-white flex flex-col z-10">
-        <div className="flex justify-between items-center px-5 py-4 border-b bg-white">
+      <div className="w-[430px] bg-white flex flex-col z-10">
+        <div className="flex justify-between items-center px-4 py-4 border-b bg-white">
           <button
             onClick={handleBack}
             className="text-xl font-semibold flex items-center gap-1 text-gray-800"
@@ -103,7 +103,7 @@ function TripCreator() {
           <div className="p-2 flex justify-center">
             <input
               type="text"
-              className="w-[260px] border p-2 rounded text-lg font-normal"
+              className="w-[265px] border p-2 rounded text-lg font-normal"
               placeholder="코스 제목을 입력하세요."
               value={tripTitle}
               onChange={(e) => setTripTitle(e.target.value)}
