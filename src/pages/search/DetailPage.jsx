@@ -89,10 +89,7 @@ function DetailPage() {
     <>
       <DetailLayout>
         <div className="place-items-center gap-5">
-          <p className="text-4xl font-bold pb-5">
-            {detail?.title}
-            {intro?.contenttypeid}
-          </p>
+          <p className="text-4xl font-bold pb-5">{detail?.title}</p>
           <p className="pb-5 text-gray-500">{detail?.addr1}</p>
         </div>
         <div className="pt-12 place-items-end pb-5">

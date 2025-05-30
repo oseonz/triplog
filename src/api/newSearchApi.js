@@ -35,8 +35,7 @@ export const fetchDetailIntro = async (contentId, contentTypeId) => {
 
   try {
     const res = await axios.get(INTRO_URL, { params });
-    const item = res.data?.response?.body?.items?.item;
-    return item;
+    return res.data.response.body.items.item[0];
   } catch (e) {
     console.error("❌ 상세정보 API 호출 실패", e);
     return null;

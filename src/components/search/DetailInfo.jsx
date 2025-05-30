@@ -7,7 +7,7 @@ function DetailInfo({ intro, detail }) {
         <span className="text-[18px] w-[130px]">• 문의 및 안내</span>
         <span
           dangerouslySetInnerHTML={{
-            __html: intro?.infocenter?.replace(/\n/g, "<br>") || "정보 없음",
+            __html: intro.infocenter.replace(/\n/g, "<br>") || "정보 없음",
           }}
         />
       </li>

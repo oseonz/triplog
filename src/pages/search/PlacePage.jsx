@@ -79,7 +79,7 @@ function PlacePage() {
 
   const extractSiGu = (addr1) => {
     if (!addr1) return "주소없음";
-    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
+    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군|시|읍))/;
     const match = addr1.match(regex);
     return match ? match[1] : "시/구 없음";
   };

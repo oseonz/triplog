@@ -15,7 +15,9 @@
     "react-dom": "^18.3.1",
     "react-kakao-maps-sdk": "^1.1.27",
     "react-router-dom": "^7.5.3",
-    "recoil": "^0.7.7"
+    "react-slick": "^0.30.3",
+    "recoil": "^0.7.7",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
