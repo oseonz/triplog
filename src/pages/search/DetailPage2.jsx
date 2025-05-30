@@ -4,7 +4,7 @@ import DetailLayout from "../../layouts/DetailLayout";
 import { Link } from "react-router-dom";
 import TripCard from "../../components/common/TripCard.jsx";
 import BlueBtn from "../../components/common/BlueBtn.jsx";
-import { getList, getOne } from "../../api/placeLikes.jsx";
+import { getList, getOne } from "../../api/course/placeLikes.jsx";
 
 function DetailPage2({ likes_count }) {
   const { contentid } = useParams();

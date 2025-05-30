@@ -1,98 +1,96 @@
 import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { courseDataState } from "../course/atom/courseState";
 import {
   fetchTourPlaces,
-  fetchDetailIntro,
+  fetchDetailIntroNew,
 } from "../../api/course/tourSearchApi.js";
-import { fetchFavorites } from "../../api/course/favoritesApi.jsx";
-import { fetchLikeList } from "../../api/course/placeLikes";
+import { getLikes } from "../../api/course/placeLikes.jsx";
 import TripCreator from "../../components/course/kokkok-planner/trip-creator/TripCreator.jsx";
+import { checkLike } from "../../api/course/placeLikes.jsx";
+import { getFavorites } from "../../api/course/favoritesApi.jsx";
+import { userState } from "../mypage/atom/userState.js";
+
+const init = [
+  {
+    user: [
+      {
+        username: "한성용",
+        userid: 2,
+        useremail: "test@naver.com",
+      },
+    ],
+
+    typeOneList: [],
+    typeTwoList: [],
+  },
+];
 
 function CourseBuilder() {
-  const setCourseData = useSetRecoilState(courseDataState);
   const [currentTab, setCurrentTab] = useState("여행만들기"); // ✅ 상태 선언 추가!
+  const setCourseData = useSetRecoilState(courseDataState);
+  const { id } = useRecoilValue(userState);
+
+  function tourData(type) {
+    fetchTourPlaces(type).then((data) => {
+      console.log(data);
+      Promise.all(
+        data.map((item) =>
+          Promise.all([
+            getLikes(item.contentid),
+            fetchDetailIntroNew(item.contentid, item.contenttypeid),
+            checkLike(id, item.contentid),
+            getFavorites(id, item.contentid),
+          ]).then(([like, detail, mylike, favorite]) => {
+            console.log("##########" + mylike.my_check);
+            const firstFavorite = Array.isArray(favorite) ? favorite[0] : null;
+            return {
+              ...item,
+              likes_count: like,
+              detail: detail,
+              mylike: mylike.my_check,
+              favorite: firstFavorite?.favorites_id ?? null,
+            };
+          })
+        )
+      ).then((dataWithLikesAndDetail) => {
+        if (type == 12) {
+          setCourseData((prevData) => ({
+            ...prevData,
+            typeOneList: dataWithLikesAndDetail,
+          }));
+        } else {
+          setCourseData((prevData) => ({
+            ...prevData,
+            typeTwoList: dataWithLikesAndDetail,
+          }));
+        }
+      });
+    });
+  }
 
   useEffect(() => {
-    const userId = 1;
-
-    const preload = async () => {
-      try {
-        const [tourPlaces, foodPlaces] = await Promise.all([
-          fetchTourPlaces(12),
-          fetchTourPlaces(39),
-        ]);
-
-        const [favoriteTour, favoriteFood] = await Promise.all([
-          fetchFavorites({ user_id: userId, contenttypeid: 12 }),
-          fetchFavorites({ user_id: userId, contenttypeid: 39 }),
-        ]);
-
-        const likeList = await fetchLikeList({
-          user_id: userId,
-          page: 1,
-          size: 100,
-        });
-
-        if (!Array.isArray(likeList)) {
-          console.error("❌ likeList가 배열이 아님!", likeList);
-          return;
-        }
-
-        const likesMap = {};
-        likeList.forEach((item) => {
-          likesMap[item.contentid] = item.likes_count ?? 0;
-        });
-
-        const bookmarkedIds = [
-          ...favoriteTour.map((item) => item.contentid),
-          ...favoriteFood.map((item) => item.contentid),
-        ];
-
-        // ✅ 상세 intro + 이미지 병합
-        const detailIntro = async (places) => {
-          return await Promise.all(
-            places.map(async (place) => {
-              try {
-                const detail = await fetchDetailIntro(
-                  // ✅ 이거로 고쳐야 해!
-                  place.contentid,
-                  place.contenttypeid
-                );
-                const images = await fetchImages(place.contentid);
-
-                return {
-                  ...place,
-                  ...(Array.isArray(detail) ? detail[0] : detail),
-                  images: Array.isArray(images) ? images : [],
-                };
-              } catch (err) {
-                console.warn("⚠️ 상세정보 병합 실패", place.title, err);
-                return place;
-              }
-            })
-          );
-        };
-
-        const detailIntroTourPlaces = await detailIntro(tourPlaces);
-        const detailIntroFoodPlaces = await detailIntro(foodPlaces);
-
-        setCourseData({
-          tourPlaces: detailIntroTourPlaces,
-          foodPlaces: detailIntroFoodPlaces,
-          likesMap,
-          bookmarkedIds,
-        });
-      } catch (err) {
-        console.error("초기 데이터 로딩 실패 ❌", err);
-      }
-    };
-
-    preload();
+    tourData(12);
+    tourData(39);
   }, []);
 
-  // ✅ 상태 props로 전달
-  return <TripCreator currentTab={currentTab} setCurrentTab={setCurrentTab} />;
+  useEffect(() => {
+    checkLike("1", "126273").then((res) => {
+      console.log("test" + res);
+    });
+  }, []);
+
+  useEffect(() => {
+    getFavorites(id, "12").then((res) => {
+      console.log("✅ favorite 응답값:", res);
+      console.log("✅ JSON형태로 보기:", JSON.stringify(res));
+      res.forEach((item) => {
+        console.log("❤️ 찜한 장소:", item.title, item.contentid);
+      });
+    });
+  }, []);
+
+  return <TripCreator />;
 }
 
 export default CourseBuilder;

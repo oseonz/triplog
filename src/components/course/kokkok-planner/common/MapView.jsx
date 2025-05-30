@@ -7,23 +7,11 @@ import {
 } from "react-kakao-maps-sdk";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { courseDataState } from "../../../../pages/course/atom/courseState";
-import { detailIntro } from "../../../../components/course/atom/detailIntro";
-import { courseListState } from "../../../../recoil/atoms";
-import {
-  mapCenterState,
-  mapLevelState,
-} from "../../../../components/course/atom/mapState";
-import { selectedTypeState } from "../../../../components/course/atom/typeState";
 
-function MapView() {
+function MapView(center, level, selectedType, addedCourses, onMarkerClick) {
   const { tourPlaces, foodPlaces } = useRecoilValue(courseDataState);
-  const addedCourses = useRecoilValue(courseListState);
-  const selectedType = useRecoilValue(selectedTypeState);
-  const center = useRecoilValue(mapCenterState);
-  const level = useRecoilValue(mapLevelState);
-  const setSelectedPlace = useSetRecoilState(detailIntro);
 
-  const [selectedId, setSelectedId] = useState(null);
+  //const [selectedId, setSelectedId] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
 
   const places =

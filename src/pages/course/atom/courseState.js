@@ -1,17 +1,12 @@
 // src/recoil/courseDataAtom.js
 import { atom } from "recoil";
 
-// export const courseDataState = atom({
-//   key: "courseDataState",
-//   default: [],
-// });
-
 export const courseDataState = atom({
   key: "courseDataState",
-  default: {
-    tourPlaces: [],
-    foodPlaces: [],
-    likesMap: {}, // contentid: 좋아요 수
-    bookmarkedIds: [], // contentid 리스트
-  },
+  default: [],
+});
+
+export const pl = atom({
+  key: "selectedTypeState",
+  default: "12", // 기본값: 여행지
 });

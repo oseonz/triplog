@@ -2,56 +2,21 @@
 import axios from "axios";
 
 const API_SERVER_HOST = "http://localhost:8081";
+
 const prefix = `${API_SERVER_HOST}/favorites/list`;
 
-export const fetchFavorites = async ({ user_id, contenttypeid }) => {
+export const getFavorites = async (user_id, contentid) => {
   try {
     const res = await axios.get(prefix, {
-      params: {
-        user_id,
-        contenttypeid,
-      },
+      params: { user_id, contentid },
     });
-    return res.data?.items || []; // or res.data if no `items` wrapping
+
+    //console.log("✅ 전체 응답 확인:", res.data); // 이거 꼭 찍어봐야 해
+
+    // items가 없으면 빈 배열 반환
+    return res.data?.items || [];
   } catch (err) {
-    console.error("❌ 찜 목록 불러오기 실패", err);
-    throw err;
+    console.error("❌ getFavorites 에러:", err);
+    return [];
   }
 };
-
-// const favoritesApi = axios.create({
-//   baseURL: "", // 프록시 사용 시 빈 문자열 유지
-//   withCredentials: true,
-//   headers: { "Content-Type": "application/json" },
-// });
-
-/**
- * ✅ 찜 목록 조회 (관광지/음식점)
- * - user_id + contenttypeid(12 or 39)를 기준으로 찜한 항목 리스트 조회
- * - 선택적으로 areacode, sigungucode를 필터로 줄 수 있음
- */
-
-// ✅ 찜 목록 조회 (관광지/음식점) - Recoil 통일 리팩토링
-// export const fetchFavorites = async ({
-//   user_id,
-//   contenttypeid,
-//   areacode,
-//   sigungucode,
-// }) => {
-//   try {
-//     const res = await favoritesApi.get("/favorites/list", {
-//       params: {
-//         user_id,
-//         contenttypeid,
-//         areacode,
-//         sigungucode,
-//       },
-//     });
-
-//     // ✅ 응답에 items가 없다면 빈 배열로 처리
-//     return res.data?.items || [];
-//   } catch (err) {
-//     console.error("❌ 찜 목록 불러오기 실패", err);
-//     return [];
-//   }
-// };

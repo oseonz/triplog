@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { detailIntro } from "../../atom/detailIntro";
-import { fetchDetailIntro, fetchDetailImages } from "../../../../api/course";
+import {
+  fetchDetailIntroNew,
+  fetchDetailImages,
+} from "../../../../api/course/tourSearchApi";
 
 function DetailPanel({
   place,

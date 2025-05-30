@@ -1,58 +1,36 @@
-// 🔗 좋아요 관련 API 클라이언트
 import axios from "axios";
 
 const API_SERVER_HOST = "http://localhost:8081";
+
 const prefix = `${API_SERVER_HOST}/likes/content/`;
 
-/**
- * ✅ [1] 좋아요 수 조회 (단건)
- * - contentid(콘텐츠 ID)를 기준으로 좋아요 수를 가져옴
- * - 예: 관광지 123의 좋아요 수
- */
-export const fetchLikeCount = async (contentid) => {
-  try {
-    const res = await axios.get(`${prefix}view/${contentid}`);
-    return res.data.likes_count ?? 0;
-  } catch (err) {
-    if (err.response?.status === 404) return 0; // 좋아요 없으면 0
-    throw err;
-  }
+export const getOne = async (contentid) => {
+  const res = await axios.get(`${prefix}view/${contentid}`);
+  return res.data;
 };
 
-/**
- * ✅ [2] 좋아요 리스트 조회 (다건)
- * - 조건에 맞는 여러 개의 콘텐츠의 좋아요 수를 한 번에 조회
- * - 예: user_id=1인 사용자의 관광지(12번) 좋아요 목록
- */
-export const fetchLikeList = async ({
-  user_id,
-  contenttypeid,
-  areacode,
-  sigungucode,
-  page = 1,
-  size = 100,
-}) => {
-  try {
-    const res = await axios.get(`${prefix}check`, {
-      params: {
-        user_id,
-        contentid,
-        contenttypeid,
-        areacode,
-        sigungucode,
-        page,
-        size,
-        likes_count: true,
-      },
-    });
-    console.log("🐛 likeList 실제 값:", likeList);
-
-    // ✅ 반드시 items 배열만 반환해야 함!
-    return res.data?.items || [];
-  } catch (err) {
-    console.error("❌ 좋아요 리스트 조회 실패", err);
-    return [];
-  }
+export const getList = async (params) => {
+  const {
+    user_id,
+    areacode,
+    contenttypeid,
+    sigungucode,
+    likes_count,
+    page,
+    size,
+  } = params;
+  const res = await axios.get(`${prefix}list`, {
+    params: {
+      user_id: user_id,
+      areacode: areacode,
+      contenttypeid: contenttypeid,
+      sigungucode: sigungucode,
+      likes_count: likes_count,
+      page: page,
+      size: size,
+    },
+  });
+  return res.data;
 };
 
 /**
@@ -73,5 +51,16 @@ export const checkLike = async (user_id, contentid) => {
   const res = await axios.get(`${prefix}check`, {
     params: { user_id, contentid },
   });
-  return res.data.liked; // true or false
+
+  //console.log(res.data.items);
+  return res.data.items; // true or false
+};
+
+// hanyong5추가
+export const getLikes = async (contentid) => {
+  const res = await axios.get(`${prefix}list`, {
+    params: { contentid },
+  });
+
+  return res.data.items.content[0].likes_count;
 };
