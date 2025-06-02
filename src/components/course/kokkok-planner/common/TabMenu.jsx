@@ -1,5 +1,5 @@
 function TabMenu({ currentTab, setCurrentTab }) {
-  const tabs = ["여행만들기", "찜", "여행노트"];
+  const tabs = ["콕콕검색", "찜", "콕콕코스", "여행노트"];
 
   return (
     <div className="flex border-b bg-white">

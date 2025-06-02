@@ -1,33 +1,22 @@
-// src/api/favoritesApi.js
+// 🔗 찜 목록 관련 API
 import axios from "axios";
 
-const favoritesApi = axios.create({
-  baseURL: "", // proxy 쓰면 빈 문자열
-  withCredentials: true,
-  headers: { "Content-Type": "application/json" },
-});
+const API_SERVER_HOST = "http://localhost:8081";
 
-/**
- * 찜목록 조회
- * @param {object} params
- * @param {string|number} params.user_id         – 사용자 ID
- * @param {string|number} params.contenttypeid   – 콘텐츠 타입 ID (39: 음식점, 12: 관광지 등)
- * @param {string|number} [params.areacode]      – 지역 코드
- * @param {string|number} [params.sigungucode]   – 시군구 코드
- * @returns {Promise<any>}                       – 응답 데이터
- */
-export const fetchFavorites = (params) =>
-  favoritesApi
-    .get("/favorites/list", {
-      params: {
-        user_id: params.user_id,
-        contenttypeid: params.contenttypeid,
-        // 필요하다면 추가 파라미터도 여기에 넣으세요:
-        // areacode: params.areacode,
-        // sigungucode: params.sigungucode,
-      },
-    })
-    .then((res) => {
-      console.log("🧾 API 응답 구조:", res.data);
-      return res.data.items; // ✅ 여기서 .items가 반드시 존재해야 함
+const prefix = `${API_SERVER_HOST}/favorites/list`;
+
+export const getFavorites = async (user_id, contentid) => {
+  try {
+    const res = await axios.get(prefix, {
+      params: { user_id, contentid },
     });
+
+    //console.log("✅ 전체 응답 확인:", res.data); // 이거 꼭 찍어봐야 해
+
+    // items가 없으면 빈 배열 반환
+    return res.data?.items || [];
+  } catch (err) {
+    console.error("❌ getFavorites 에러:", err);
+    return [];
+  }
+};

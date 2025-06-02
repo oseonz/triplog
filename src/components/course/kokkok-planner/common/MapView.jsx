@@ -5,50 +5,49 @@ import {
   CustomOverlayMap,
   Polyline,
 } from "react-kakao-maps-sdk";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { courseDataState } from "../../../../pages/course/atom/courseState";
 
-function MapView({
-  places = [],
-  addedCourses = [],
-  onRemoveCourse,
-  center,
-  level,
-  onMarkerClick,
-  selectedType,
-}) {
-  const [selectedId, setSelectedId] = useState(null);
+function MapView(center, level, selectedType, addedCourses, onMarkerClick) {
+  const { tourPlaces, foodPlaces } = useRecoilValue(courseDataState);
+
+  //const [selectedId, setSelectedId] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
+
+  const places =
+    selectedType === "12"
+      ? tourPlaces
+      : selectedType === "39"
+      ? foodPlaces
+      : addedCourses;
 
   return (
     <div className="w-full vheight">
       <Map
-        center={center || { lat: 37.566826, lng: 126.9786567 }} // ✅ 기본값 서울시청
-        level={level || 5} // ✅ 기본 줌 레벨
+        center={center}
+        level={level}
         style={{ width: "100%", height: "100%" }}
       >
-        {places.map((place, index) => {
+        {places.map((place) => {
           const lat = Number(place.mapy);
           const lng = Number(place.mapx);
-
           if (isNaN(lat) || isNaN(lng)) return null;
-          const isSelected = selectedId === place.contentid;
 
-          const type = String(place.contenttypeid);
+          const isSelected = selectedId === place.contentid;
           const isAdded = addedCourses.some(
-            (course) => course.contentid === place.contentid
+            (item) => item.contentid === place.contentid
           );
           const isHovered = hoveredId === place.contentid;
+          const type = String(place.contenttypeid);
 
-          // ✅ 마커 이미지 조건 분기
           let markerImg = "/images/mapMaker.png";
           if (type === "12") {
-            // 여행지
             markerImg = isAdded
               ? isHovered
                 ? "/images/mapDeleteMaker.png"
                 : "/images/mapWishMaker.png"
               : "/images/mapMaker.png";
           } else {
-            // 음식점
             markerImg = isAdded
               ? isHovered
                 ? "/images/foodDeleteMaker.png"
@@ -58,7 +57,6 @@ function MapView({
 
           return (
             <React.Fragment key={place.contentid}>
-              {/* ✅ 마커 */}
               <MapMarker
                 position={{ lat, lng }}
                 image={{
@@ -69,19 +67,10 @@ function MapView({
                 onMouseOver={() => isAdded && setHoveredId(place.contentid)}
                 onMouseOut={() => setHoveredId(null)}
                 onClick={() => {
-                  if (isAdded && isHovered) {
-                    onRemoveCourse(place.contentid);
-                  } else {
-                    setSelectedId(
-                      selectedId === place.contentid ? null : place.contentid
-                    );
-                  }
                   setSelectedId(place.contentid);
-                  onMarkerClick(place);
+                  setSelectedPlace(place); // ✅ 디테일 패널용 상태 설정
                 }}
               />
-
-              {/* ✅ 마커 오버레이 (타이틀) */}
               {isSelected && (
                 <CustomOverlayMap position={{ lat, lng }} yAnchor={2.5}>
                   <div
@@ -104,7 +93,6 @@ function MapView({
           );
         })}
 
-        {/* ✅ 코스 선 연결 */}
         {selectedType === "course" && addedCourses.length >= 2 && (
           <Polyline
             path={addedCourses.map((place) => ({
