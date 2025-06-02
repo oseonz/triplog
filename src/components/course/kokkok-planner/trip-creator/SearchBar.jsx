@@ -20,6 +20,7 @@ function SearchBar({ selectedType, onSearchReset }) {
         if (onSearchReset) onSearchReset();
         console.log('검색', selectedType); // props로 받은 선택 타입
         console.log('user.id', user.id);
+
         const region = getRegionCodeFromKeyword(keyword);
         console.log(' 검색', selectedType);
         console.log('👉 최종 API 요청값', {
@@ -27,7 +28,8 @@ function SearchBar({ selectedType, onSearchReset }) {
             areaCode: region?.areaCode,
         });
         if (!isAuto && (!region || !region.areaCode)) {
-            alert('해당 지역을 찾을 수 없습니다.');
+            if (!isAuto) alert('해당 지역을 찾을 수 없습니다.');
+            console.warn('🚨 검색 실패: 지역코드 없음');
             return;
         }
         setLoading(true);
