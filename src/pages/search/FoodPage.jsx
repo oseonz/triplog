@@ -74,10 +74,10 @@ function FoodPage() {
     setSelectedRegion(regionName);
   };
 
-  const extractSiGu = (addr) => {
-    if (!addr) return "주소없음";
-    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구))/;
-    const match = addr.match(regex);
+  const extractSiGu = (addr1) => {
+    if (!addr1) return "주소없음";
+    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
+    const match = addr1.match(regex);
     return match ? match[1] : "시/구 없음";
   }; //구까지만 찾아서 나옴
 
@@ -89,7 +89,7 @@ function FoodPage() {
   }; //페이지네이션
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black pb-7">
       <Regions>
         <div className="container mx-auto py-10">
           <div className="relative">
@@ -174,7 +174,7 @@ function FoodPage() {
                   firstimage={
                     item.firstimage || "https://via.placeholder.com/300"
                   }
-                  addr={extractSiGu(item.addr)}
+                  addr1={extractSiGu(item.addr1)}
                   likes_count={item.likes_count}
                 />
               </Link>

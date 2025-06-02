@@ -53,6 +53,14 @@ function MyPageMain() {
               <p className="text-2xl font-bold pb-5">캘린더</p>
               <div className="bg-white rounded-[10px] ps-6 pr-6 pb-6 shadow-lg">
                 <Calendar />
+                <div className="flex justify-end mt-2">
+                  <Link
+                    to="../mypage/mypage_calendar"
+                    className="text-blue-500 hover:underline"
+                  >
+                    전체 보기
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
