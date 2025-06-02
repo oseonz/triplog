@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getList } from "../../api/placeLikes.jsx";
+import { getList } from "../../api/course/placeLikes.jsx";
 import TripRegion from "../../components/search/TripRegion.jsx";
 import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
