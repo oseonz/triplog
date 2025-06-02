@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 //공연/행사 카드
 
-function EventCard({ image, title, location }) {
+function EventCard({ image, title, location, contentid }) {
   const [bookmarked, setBookmarked] = useState(false);
 
   const handleBookmarkClick = (e) => {
@@ -29,7 +29,9 @@ function EventCard({ image, title, location }) {
           alt="bookmark icon"
         />
       </div>
+
       <div className="p-4 flex flex-col justify-between">
+        <a href= {contentid} target="_blank" rel="noopener noreferrer">
         <div>
           <p className="text-sm text-blue-500">{location}</p>
           <h3 className="text-[18px] text-black">{title}</h3>
@@ -42,6 +44,7 @@ function EventCard({ image, title, location }) {
             <span>1</span>
           </div>
         </div>
+        </a>
       </div>
     </div>
   );
