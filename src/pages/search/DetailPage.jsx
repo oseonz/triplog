@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DetailLayout from '../../layouts/DetailLayout';
-import { fetchDetailIntro, tourApiViewOne } from '../../api/newSearchApi';
-import { getLikes } from '../../api/newSearchBackApi';
+import {
+    fetchDetailIntro,
+    tourApiViewOne,
+} from '../../api/search/newSearchApi';
+import { getLikes } from '../../api/search/newSearchBackApi';
 import BlueBtn from '../../components/common/BlueBtn';
 import MapView from '../../components/course/kokkok-planner/common/MapView';
 import MyMap from '../../components/search/MyMap';
