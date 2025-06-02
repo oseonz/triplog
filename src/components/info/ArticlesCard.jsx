@@ -46,7 +46,11 @@ function ArticlesCard({ index, title, description, link, pubDate}) {
 
           <div className="flex w-full overflow-hidden rounded-2xl shadow-md mb-8">
             <a href={link} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center hover:opacity-80 transition">
-              <div className="w-[200px] h-[200px] bg-gray-300"><img src={imageUrl} alt="" /></div>
+              <div className="w-[200px] h-[200px] bg-gray-300">
+                <img src={imageUrl} alt="" 
+                          className="w-[200px] h-[200px] object-cover"
+                 />
+              </div>
               <div className="flex-1 h-[200px] bg-white p-4 flex flex-col justify-center ps-10">
                 <p className="text-xl mb-2">{getPlainText(title)}</p>              
                 <p className="text-sm text-blue-500">{truncate(getPlainText(description), 100)}</p>
