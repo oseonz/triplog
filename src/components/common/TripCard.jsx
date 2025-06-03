@@ -1,15 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { saveFavorite } from '../../api/search/favorites';
 
 function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
     const [bookmarked, setBookmarked] = useState(false);
     const [heart, setHeart] = useState(false);
     const navigate = useNavigate();
 
-    const handleBookmarkClick = (e) => {
+    const handleBookmarkClick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
-        setBookmarked(!bookmarked);
+
+        const payload = {
+            user_id: 2,
+            contentid: item.contentid,
+            contenttypeid: item.contenttypeid || '39',
+            title: item.title,
+            addr: item.addr1 || '주소 없음',
+            areacode: item.areacode || '99',
+            sigungucode: item.sigungucode || '99',
+            firstimage: item.firstimage || '이미지가 없떠여',
+        };
+
+        try {
+            await saveFavorite(payload);
+            setBookmarked(true);
+            console.log('북마크 저장 완료');
+        } catch (error) {
+            console.error('북마크 저장 실패', error);
+            alert('북마크 저장에 실패했어. 나중에 다시 해봐라.');
+        }
     };
 
     const handleHeartClick = (e) => {
