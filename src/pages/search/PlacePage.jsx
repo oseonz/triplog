@@ -91,31 +91,6 @@ function PlacePage() {
         }
     }; //페이지네이션
 
-    const renderPagination = () => {
-        const visiblePages = 10;
-        const startPage = Math.floor(currentPage / visiblePages) * visiblePages;
-        const endPage = Math.min(startPage + visiblePages, totalPages);
-
-        const pages = [];
-        for (let i = startPage; i < endPage; i++) {
-            pages.push(
-                <button
-                    key={i}
-                    onClick={() => handlePageChange(i)}
-                    className={`px-4 py-2 rounded-full border border-blue-500 ${
-                        i === currentPage
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-white text-black'
-                    }`}
-                >
-                    {i + 1}
-                </button>,
-            );
-        }
-
-        return pages;
-    };
-
     return (
         <div className="min-h-screen bg-white text-black pb-7">
             <Regions>
@@ -202,7 +177,7 @@ function PlacePage() {
                                     title={item.title}
                                     firstimage={
                                         item.firstimage ||
-                                        'https://placeholder.com/300'
+                                        'https://via.placeholder.com/300'
                                     }
                                     addr1={extractSiGu(item.addr1)}
                                     likes_count={item.likes_count}
@@ -221,9 +196,19 @@ function PlacePage() {
                         >
                             이전
                         </button>
-
-                        {renderPagination()}
-
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => handlePageChange(i)}
+                                className={`px-4 py-2 rounded-full border border-blue-500 ${
+                                    i === currentPage
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-white text-black'
+                                }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
                         <button
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages - 1}

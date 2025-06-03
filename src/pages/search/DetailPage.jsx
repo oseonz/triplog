@@ -11,7 +11,6 @@ import MapView from '../../components/course/kokkok-planner/common/MapView';
 import MyMap from '../../components/search/MyMap';
 import DetailInfo from '../../components/search/DetailInfo';
 import DetailInfo2 from '../../components/search/DetailInfo2';
-import { deleteBookmark, saveBookmark } from '../../api/search/bookmark';
 
 // //지도 스크립트
 // <script
@@ -27,38 +26,10 @@ function DetailPage() {
     const [heart, setHeart] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
 
-    const handleBookmarkClick = async (e) => {
+    const handleBookmarkClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-
-        if (!detail) return;
-
-        try {
-            if (bookmarked) {
-                // 이미 북마크 돼있으면 삭제
-                await deleteBookmark({
-                    user_id: 1,
-                    contentid: detail.contentid,
-                });
-            } else {
-                // 없으면 저장
-                await saveBookmark({
-                    user_id: 1,
-                    contentid: detail.contentid,
-                    contenttypeid: detail.contenttypeid,
-                    title: detail.title,
-                    addr: detail.addr1,
-                    areacode: detail.areacode || 99,
-                    sigungucode: detail.sigungucode || 99,
-                    firstimage: detail.firstimage || '이미지가 없떠여',
-                });
-            }
-
-            setBookmarked((prev) => !prev);
-        } catch (err) {
-            console.error('북마크 처리 실패:', err);
-            alert('북마크 처리에 실패했다. 서버나 네트워크 확인해라.');
-        }
+        setBookmarked(!bookmarked);
     };
 
     const handleHeartClick = (e) => {

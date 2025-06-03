@@ -1,39 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveBookmark } from '../../api/search/bookmark';
 
-function TripCard({
-    firstimage,
-    title,
-    addr1,
-    likes_count,
-    contentid,
-    isBookmarked,
-}) {
-    const [bookmarked, setBookmarked] = useState(isBookmarked);
+function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
+    const [bookmarked, setBookmarked] = useState(false);
     const [heart, setHeart] = useState(false);
     const navigate = useNavigate();
 
-    const handleBookmarkClick = async (e) => {
+    const handleBookmarkClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-
-        try {
-            await saveBookmark({
-                user_id: 1,
-                contentid,
-                contenttypeid: 12,
-                title,
-                addr: addr1,
-                areacode: 99,
-                sigungucode: 99,
-                firstimage: firstimage || '이미지가 없떠여',
-            });
-
-            setBookmarked(!bookmarked);
-        } catch (err) {
-            alert('북마크 저장 실패!');
-        }
+        setBookmarked(!bookmarked);
     };
 
     const handleHeartClick = (e) => {

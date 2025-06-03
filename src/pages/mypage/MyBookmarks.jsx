@@ -3,13 +3,12 @@ import MainLayout from '../../layouts/MainLayout';
 import { Link } from 'react-router-dom';
 import WhitePageLayout from '../../layouts/WhitePageLayout';
 import TripCard from '../../components/common/TripCard.jsx';
-// import TripCard from "../components/TripCard"; // 실제 카드 컴포넌트 있으면 써라
 
 export const getUserBookmarks = async (user_id) => {
     const res = await axios.get(
         `http://localhost:8081/favorites/list/${user_id}`,
     );
-    return res.data; // [{ contenttypeid: '12', title: ..., ... }, ...]
+    return res.data;
 };
 
 const TABS = {
@@ -34,13 +33,12 @@ function MyBookmarks() {
                     (item) => item.contenttypeid === contenttypeid,
                 );
 
-                // TripCard에 맞춰 필드 정리
                 const formatted = filtered.map((item) => ({
                     id: item.contentid,
                     title: item.title,
                     location: item.addr,
                     image: item.firstimage,
-                    tag: '', // 태그 없으면 빈 값
+                    tag: '',
                 }));
 
                 setItems(formatted);
