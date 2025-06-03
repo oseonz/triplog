@@ -6,10 +6,14 @@ import DetailPanel from './DetailPanel';
 import BookMarkPanel from '../bookmarks/BookMarkPanel';
 import TripNote from '../trip-note/TripNote';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { courseDataState } from '../../../../pages/course/atom/courseState';
+import {
+    courseDataState,
+    selectedPlaceState,
+} from '../../../../pages/course/atom/courseState';
 import { Link, useNavigate } from 'react-router-dom';
 import TabMenu from '../common/TabMenu';
 import ListViewComp from './ListViewComp';
+import CourseCardList from './CourseCardList';
 
 function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
@@ -17,8 +21,6 @@ function TripCreator() {
     const [currentTab, setCurrentTab] = useState('콕콕검색');
     const [tourVisibleCount, setTourVisibleCount] = useState(6);
     const [foodVisibleCount, setFoodVisibleCount] = useState(6);
-    const [isDetailOpen, setIsDetailOpen] = useState(false);
-    const [selectedPlace, setSelectedPlace] = useState(null);
     const [courseList, setCourseList] = useState([]);
     const [mapCenter, setMapCenter] = useState({
         lat: 37.566826,
@@ -29,6 +31,8 @@ function TripCreator() {
 
     const courseData = useRecoilValue(courseDataState);
     const setCourseData = useSetRecoilState(courseDataState);
+    const setSelectedPlace = useSetRecoilState(selectedPlaceState);
+    const selectedPlace = useRecoilValue(selectedPlaceState);
 
     const tourPlaces = courseData.typeOneList || [];
     const foodPlaces = courseData.typeTwoList || [];
@@ -36,7 +40,7 @@ function TripCreator() {
     const visibleList =
         selectedType == '12'
             ? (courseData.typeOneList || []).slice(0, tourVisibleCount)
-            : (courseData.typeTwoListv || []).slice(0, foodVisibleCount);
+            : (courseData.typeTwoList || []).slice(0, foodVisibleCount);
 
     const resetVisibleCounts = () => {
         setTourVisibleCount(6);
@@ -49,6 +53,7 @@ function TripCreator() {
 
     const handleLike = (contentid) => {
         console.log(contentid);
+        alert('좋아요 표시', contentid);
         const listKey = selectedType == '12' ? 'typeOneList' : 'typeTwoList';
         setCourseData((prevData) => ({
             ...prevData,
@@ -85,9 +90,9 @@ function TripCreator() {
     };
 
     return (
-        <div className="flex w-full h-[900px]">
+        <div className="flex w-full h-[900px] overflow-hidden">
             {/* 왼쪽 영역 */}
-            <div className="w-[430px] bg-white flex flex-col z-10">
+            <div className="w-[550px] bg-white flex flex-col z-10">
                 <div className="flex justify-between items-center px-3 py-4 border-b bg-white">
                     <button
                         onClick={handleBack}
@@ -123,18 +128,19 @@ function TripCreator() {
                 ) : currentTab === '여행노트' ? (
                     <TripNote />
                 ) : currentTab === '콕콕코스' ? (
-                    <div className="px-4 py-4">
+                    <div className="px-1 py-3">
                         <h2 className="text-xl font-bold mb-2">
                             📌 나의 콕콕코스
                         </h2>
-                        {/* 콕콕코스 관련 콘텐츠를 여기에 추가 */}
-                        <p>내가 만든 여행 코스를 보여주는 공간입니다.</p>
+                        <CourseCardList checkLike={handleLike} />
                     </div>
                 ) : (
                     <>
                         <SearchBar
                             selectedType={selectedType}
                             onSearchReset={resetVisibleCounts}
+                            setMapCenter={setMapCenter}
+                            setMapLevel={setMapLevel}
                         />
                         <ListBtn
                             typeButton={selectedType}
@@ -151,72 +157,51 @@ function TripCreator() {
                                     </span>
                                 </div>
                             )}
-                            <div className="full px-4 pb-4 ">
+                            <div className="px-4 pb-4 h-[550px] overflow-y-auto ">
                                 {visibleList.map((item) => (
                                     <ListViewComp
+                                        type="one"
                                         key={item.contentid}
                                         place={item}
                                         checkLike={handleLike}
                                         checkFavorite={handleFavorite}
                                     />
                                 ))}
+                                <div className="flex justify-center">
+                                    <button
+                                        className="w-[100px] bg-blue-500 text-white py-2 rounded-3xl hover:bg-blue-500  "
+                                        onClick={() => {
+                                            if (selectedType == '12') {
+                                                setTourVisibleCount(
+                                                    (prev) => prev + 6,
+                                                );
+                                            } else {
+                                                setFoodVisibleCount(
+                                                    (prev) => prev + 6,
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        더보기
+                                    </button>
+                                </div>
                             </div>
-                            <div className="flex justify-center">
-                                <button
-                                    className="w-[100px] bg-blue-500 text-white py-2 rounded-3xl hover:bg-blue-500 "
-                                    onClick={() => {
-                                        if (selectedType == '12') {
-                                            setTourVisibleCount(
-                                                (prev) => prev + 6,
-                                            );
-                                        } else {
-                                            setFoodVisibleCount(
-                                                (prev) => prev + 6,
-                                            );
-                                        }
-                                    }}
-                                >
-                                    더보기
-                                </button>
-                            </div>
-
-                            <div className="bg-red-400 h-3"></div>
-
-                            {visibleList.map((more) => {
-                                const isAdded = courseList.some(
-                                    (item) =>
-                                        item.contentid === place.contentid,
-                                );
-                                return (
-                                    <div>
-                                        <pre>
-                                            {JSON.stringify(
-                                                courseData,
-                                                null,
-                                                2,
-                                            )}
-                                        </pre>
-                                    </div>
-                                );
-                            })}
                         </div>
                     </>
                 )}
             </div>
 
             {/* 오른쪽 지도 영역 */}
-            {/* <MapView
-        center={mapCenter}
-        level={mapLevel}
-        selectedType={selectedType}
-        addedCourses={courseList}
-        onMarkerClick={setSelectedPlace}
-      /> */}
+            <MapView
+                center={mapCenter}
+                level={mapLevel}
+                selectedType={selectedType}
+                checkCourse={courseList}
+                onMarkerClick={setSelectedPlace}
+            />
 
             {/* 상세 정보 패널 */}
-            {isDetailOpen && (
-                <DetailPanel onClose={() => setIsDetailOpen(false)} />
-            )}
+            {selectedPlace && <DetailPanel />}
         </div>
     );
 }
