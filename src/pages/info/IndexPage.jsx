@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import FooterLayout from "../../layouts/FooterLayout";
 
 function IndexPage() {
   return (
+    <>
     <MainLayout>
       <div>
         <span>
@@ -13,6 +15,8 @@ function IndexPage() {
         <Outlet />
       </div>
     </MainLayout>
+    <FooterLayout/>
+    </>
   );
 }
 
