@@ -11,6 +11,7 @@ import MapView from '../../components/course/kokkok-planner/common/MapView';
 import MyMap from '../../components/search/MyMap';
 import DetailInfo from '../../components/search/DetailInfo';
 import DetailInfo2 from '../../components/search/DetailInfo2';
+import EventDetail from '../../components/info/EventDetail';
 
 // //지도 스크립트
 // <script
@@ -156,9 +157,11 @@ function DetailPage() {
                     <div className="bg-white p-10 flex mb-12">
                         {detail?.contenttypeid == '12' ? (
                             <DetailInfo intro={intro} detail={detail} />
+                        ) : ( detail?.contenttypeid == '15' ? (
+                            <EventDetail intro={intro} detail={detail} />
                         ) : (
                             <DetailInfo2 intro={intro} detail={detail} />
-                        )}
+                        ))}
                     </div>
                 </div>
                 <div className="mb-12">
