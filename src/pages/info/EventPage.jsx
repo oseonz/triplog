@@ -4,13 +4,17 @@ import EventCard from "../../components/info/EventCard"; // 카드 컴포넌트 
 import { endOfMonth, format, set, startOfMonth } from "date-fns";
 import axios from "axios";
 
+
 import CompactMonthPicker from "../../components/common/CompactMonthPicker";
+import { userState } from "../mypage/atom/userState";
+import { useRecoilValue } from "recoil";
 
 // npm install date-fns 필요함
 
 function EventPage() {
 
-
+  const { id } = useRecoilValue(userState);  // 유저id
+  // const id = 2
   const imsidata = [
     {
       image: "/images/event1.jpg",
@@ -21,16 +25,6 @@ function EventPage() {
       image: "/images/event2.jpg",
       title: "재즈 나잇 인 홍대",
       location: "서울 마포구",
-    },
-    {
-      image: "/images/event3.jpg",
-      title: "댄스 배틀: 파이널 스테이지",
-      location: "부산 벡스코",
-    },
-    {
-      image: "/images/event3.jpg",
-      title: "댄스 배틀: 파이널 스테이지",
-      location: "부산 벡스코",
     },
   ];
 
@@ -68,11 +62,6 @@ function EventPage() {
       // setParams((prev) => ({ ...prev, page }));
     }
   }; //페이지네이션
-
-
-  // function handlePageChange(newPage) {
-  //   setPage(newPage);
-  // }
 
 
     async function fetchData() {
@@ -139,21 +128,29 @@ function EventPage() {
         <div className="container">
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-              {eventLists.map((event, index) => (
-                
-                console.log('!!!!!!!!! contentid = ' + event.contentId),
+                {eventLists.map((event, index) => {
+                  if (!event.contentId || !id) {
+                    console.warn("렌더링 건너뜀: contentId 또는 user_id 누락", event);
+                    return null;
+                  }
 
-                <EventCard
-                  key={index}
-                  image={event.firstimage}
-                  title={event.title}
-                  location={event.location}
-                  contentid={event.contentId}
-                />
-             
-                
-
-              ))}
+                  return (
+                    <EventCard
+                      key={index}
+                      user_id={id}
+                      contentId={event.contentId}
+                      contentTypeId={event.contentTypeId}
+                      title={event.title}
+                      addr1={event.addr1}
+                      addr2={event.addr2}
+                      areaCode={event.areaCode}
+                      sigunguCode={event.sigunguCode}
+                      firstimage={event.firstimage}
+                      mapX={event.mapX}
+                      mapY={event.mapY}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -204,29 +201,6 @@ function EventPage() {
     </div>
   </div>
 
-
-
-      {/* <div className="flex justify-center items-center mt-4 gap-3">
-        <button
-          className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
-          onClick={() => {
-            handlePageChange(page - 1);
-          }}
-          disabled={page <= 0}
-        >
-          Prev
-        </button>
-        {page + 1}/ {totalPages}
-        <button
-          className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
-          onClick={() => {
-            handlePageChange(page + 1);
-          }}
-          disabled={page + 1 >= totalPages}
-        >
-          Next
-        </button>
-      </div> */}
     </>
   );
 }
