@@ -15,3 +15,8 @@ export const courseListState = atom({
     key: 'courseListState',
     default: [],
 });
+
+export const favoriteListState = atom({
+    key: 'favoriteListState',
+    default: [],
+});

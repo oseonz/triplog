@@ -84,7 +84,7 @@ function DetailPanel() {
     };
 
     return (
-        <div className="absolute top-[95px] left-[435px] w-[400px] h-[90%] bg-white shadow-lg z-50 overflow-y-auto">
+        <div className="absolute top-[95px] left-[435px] w-[400px] h-[97%] bg-white shadow-lg z-50 overflow-y-auto">
             <div className="flex justify-between items-center p-4 border-b">
                 <h2 className="text-lg font-semibold">
                     {isFood ? '음식점' : '여행지'}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { courseDataState } from '../course/atom/courseState';
+import { courseDataState, favoriteListState } from '../course/atom/courseState';
 import {
     fetchTourPlaces,
     fetchDetailIntro,
@@ -8,7 +8,10 @@ import {
 import { getLikes } from '../../api/course/placeLikes.jsx';
 import TripCreator from '../../components/course/kokkok-planner/trip-creator/TripCreator.jsx';
 import { checkLike } from '../../api/course/placeLikes.jsx';
-import { getFavorites } from '../../api/course/favoritesApi.jsx';
+import {
+    getFavorites,
+    getFavoritesType,
+} from '../../api/course/favoritesApi.jsx';
 import { userState } from '../mypage/atom/userState.js';
 
 const init = [
@@ -20,7 +23,6 @@ const init = [
                 useremail: 'test@naver.com',
             },
         ],
-
         typeOneList: [],
         typeTwoList: [],
     },
@@ -30,6 +32,7 @@ function CourseBuilder() {
     const [currentTab, setCurrentTab] = useState('여행만들기'); // ✅ 상태 선언 추가!
     const setCourseData = useSetRecoilState(courseDataState);
     const { id } = useRecoilValue(userState);
+    const setFavoriteList = useSetRecoilState(favoriteListState);
 
     function tourData(type) {
         fetchTourPlaces(type).then((data) => {
@@ -83,13 +86,13 @@ function CourseBuilder() {
     }, []);
 
     useEffect(() => {
-        getFavorites(id, '12').then((res) => {
-            console.log('✅ favorite 응답값:', res);
-            console.log('✅ JSON형태로 보기:', JSON.stringify(res));
-            res.forEach((item) => {
-                console.log('❤️ 찜한 장소:', item.title, item.contentid);
-            });
-        });
+        async function loadFavorites() {
+            const tour = await getFavoritesType(id, '12');
+            const food = await getFavoritesType(id, '39');
+            setFavoriteList([...tour, ...food]);
+        }
+
+        loadFavorites();
     }, []);
 
     return <TripCreator />;

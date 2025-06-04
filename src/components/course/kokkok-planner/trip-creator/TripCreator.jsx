@@ -5,15 +5,15 @@ import MapView from '../common/MapView';
 import DetailPanel from './DetailPanel';
 import BookMarkPanel from '../bookmarks/BookMarkPanel';
 import TripNote from '../trip-note/TripNote';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
     courseDataState,
+    courseListState,
     selectedPlaceState,
 } from '../../../../pages/course/atom/courseState';
 import { Link, useNavigate } from 'react-router-dom';
 import TabMenu from '../common/TabMenu';
 import ListViewComp from './ListViewComp';
-import CourseCardList from './CourseCardList';
 
 function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
@@ -21,7 +21,6 @@ function TripCreator() {
     const [currentTab, setCurrentTab] = useState('콕콕검색');
     const [tourVisibleCount, setTourVisibleCount] = useState(6);
     const [foodVisibleCount, setFoodVisibleCount] = useState(6);
-    const [courseList, setCourseList] = useState([]);
     const [mapCenter, setMapCenter] = useState({
         lat: 37.566826,
         lng: 126.9786567,
@@ -33,6 +32,8 @@ function TripCreator() {
     const setCourseData = useSetRecoilState(courseDataState);
     const setSelectedPlace = useSetRecoilState(selectedPlaceState);
     const selectedPlace = useRecoilValue(selectedPlaceState);
+    //const [courseList, setCourseList] = useRecoilState(courseListState);
+    const [courseList, setCourseList] = useRecoilState(courseListState);
 
     const tourPlaces = courseData.typeOneList || [];
     const foodPlaces = courseData.typeTwoList || [];
@@ -53,8 +54,9 @@ function TripCreator() {
 
     const handleLike = (contentid) => {
         console.log(contentid);
-        alert('좋아요 표시', contentid);
         const listKey = selectedType == '12' ? 'typeOneList' : 'typeTwoList';
+
+        //콕콕검색 핸들러
         setCourseData((prevData) => ({
             ...prevData,
             [listKey]: prevData[listKey].map((item) =>
@@ -69,25 +71,52 @@ function TripCreator() {
                     : item,
             ),
         }));
+        // 콕콕코스 핸들러
+        setCourseList((prevList) =>
+            prevList.map((item) =>
+                item.contentid === contentid
+                    ? {
+                          ...item,
+                          likes_count: item.mylike
+                              ? item.likes_count - 1
+                              : item.likes_count + 1,
+                          mylike: !item.mylike,
+                      }
+                    : item,
+            ),
+        );
 
         // postLike(userid,contendid,likes_count)
         // axios
     };
 
     const handleFavorite = (contentid) => {
-        console.log('찜', contentid);
-        const favoriteKey =
-            selectedType == '12' ? 'typeOneList' : 'typeTwoList';
-        setCourseData((prevData) => ({
-            ...prevData,
-            [favoriteKey]: prevData[favoriteKey].map((item) =>
-                item.contentid === contentid
-                    ? { ...item, favorite: !item.favorite }
-                    : item,
-            ),
-        }));
-        //postFavori()
+        setCourseData((prevData) => {
+            const existsIn = (list) =>
+                list.some((item) => item.contentid === contentid);
+
+            const updateList = (list) =>
+                list.map((item) =>
+                    item.contentid === contentid
+                        ? {
+                              ...item,
+                              favorite: item.favorite === true ? false : true,
+                          }
+                        : item,
+                );
+
+            return {
+                ...prevData,
+                typeOneList: existsIn(prevData.typeOneList || [])
+                    ? updateList(prevData.typeOneList || [])
+                    : prevData.typeOneList,
+                typeTwoList: existsIn(prevData.typeTwoList || [])
+                    ? updateList(prevData.typeTwoList || [])
+                    : prevData.typeTwoList,
+            };
+        });
     };
+    console.log('📌 courseList:', courseList);
 
     return (
         <div className="flex w-full h-[900px] overflow-hidden">
@@ -124,15 +153,26 @@ function TripCreator() {
                     <BookMarkPanel
                         isOpen={true}
                         onClose={() => setCurrentTab('콕콕코스')}
+                        checkLike={handleLike}
+                        checkFavorite={handleFavorite}
                     />
                 ) : currentTab === '여행노트' ? (
                     <TripNote />
                 ) : currentTab === '콕콕코스' ? (
-                    <div className="px-1 py-3">
+                    <div className="px-3 py-3">
                         <h2 className="text-xl font-bold mb-2">
                             📌 나의 콕콕코스
                         </h2>
-                        <CourseCardList checkLike={handleLike} />
+                        <div className="h-[680px] overflow-y-auto">
+                            {courseList.map((item) => (
+                                <ListViewComp
+                                    cardType="two"
+                                    key={item.contentid}
+                                    place={item}
+                                    checkLike={handleLike}
+                                />
+                            ))}
+                        </div>
                     </div>
                 ) : (
                     <>
@@ -157,10 +197,10 @@ function TripCreator() {
                                     </span>
                                 </div>
                             )}
-                            <div className="px-4 pb-4 h-[550px] overflow-y-auto ">
+                            <div className="px-4 pb-4 h-[650px] overflow-y-auto ">
                                 {visibleList.map((item) => (
                                     <ListViewComp
-                                        type="one"
+                                        cardType="one"
                                         key={item.contentid}
                                         place={item}
                                         checkLike={handleLike}
