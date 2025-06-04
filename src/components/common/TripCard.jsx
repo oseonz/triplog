@@ -13,22 +13,23 @@ function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
 
         const payload = {
             user_id: 2,
-            contentid: item.contentid,
-            contenttypeid: item.contenttypeid || '39',
-            title: item.title,
-            addr: item.addr1 || '주소 없음',
-            areacode: item.areacode || '99',
-            sigungucode: item.sigungucode || '99',
-            firstimage: item.firstimage || '이미지가 없떠여',
+            contentid: contentid,
+            contenttypeid: '39',
+            title: title,
+            addr: addr1 || '주소 없음',
+            areacode: '99',
+            sigungucode: '99',
+            firstimage: firstimage || '이미지가 없떠여',
         };
 
         try {
+            console.log('보내는 payload:', payload);
             await saveFavorite(payload);
             setBookmarked(true);
             console.log('북마크 저장 완료');
         } catch (error) {
             console.error('북마크 저장 실패', error);
-            alert('북마크 저장에 실패했어. 나중에 다시 해봐라.');
+            alert('북마크 저장에 실패했습니다.');
         }
     };
 
