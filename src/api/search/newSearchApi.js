@@ -9,6 +9,8 @@ const INTRO_URL = "https://apis.data.go.kr/B551011/KorService2/detailIntro2";
 
 // 상세 데이터 가져오기
 export const tourApiViewOne = async (contentId) => {
+    console.log("-------------------- tourApiViewOne")
+    console.log("contentID : ", contentId)
     const params = {
         ServiceKey: TOUR_API_KEY,
         MobileOS: "ETC",
@@ -24,6 +26,7 @@ export const tourApiViewOne = async (contentId) => {
 };
 
 export const fetchDetailIntro = async (contentId, contentTypeId) => {
+    console.log("-------------------- fetchDetailIntro")
     const params = {
         ServiceKey: TOUR_API_KEY,
         contentId,
