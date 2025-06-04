@@ -46,7 +46,7 @@ function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
     return (
         <div
             onClick={handleCardClick}
-            className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative"
+            className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative "
         >
             <div className="relative">
                 <img
@@ -78,8 +78,8 @@ function TripCard({ firstimage, title, addr1, likes_count, contentid }) {
                         <img
                             src={
                                 heart
-                                    ? '../public/images/i_heart2.png'
-                                    : '../public/images/i_heart.png'
+                                    ? '../public/images/heart-f.png'
+                                    : '../public/images/heart-o.png'
                             }
                             className="w-[23px]"
                             onClick={handleHeartClick}
