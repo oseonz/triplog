@@ -19,8 +19,8 @@ function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
     const [tripTitle, setTripTitle] = useState('');
     const [currentTab, setCurrentTab] = useState('콕콕검색');
-    const [tourVisibleCount, setTourVisibleCount] = useState(6);
-    const [foodVisibleCount, setFoodVisibleCount] = useState(6);
+    const [tourVisibleCount, setTourVisibleCount] = useState(5);
+    const [foodVisibleCount, setFoodVisibleCount] = useState(5);
     const [mapCenter, setMapCenter] = useState({
         lat: 37.566826,
         lng: 126.9786567,
@@ -32,16 +32,24 @@ function TripCreator() {
     const setCourseData = useSetRecoilState(courseDataState);
     const setSelectedPlace = useSetRecoilState(selectedPlaceState);
     const selectedPlace = useRecoilValue(selectedPlaceState);
-    //const [courseList, setCourseList] = useRecoilState(courseListState);
     const [courseList, setCourseList] = useRecoilState(courseListState);
 
-    const tourPlaces = courseData.typeOneList || [];
-    const foodPlaces = courseData.typeTwoList || [];
+    // ✅ 1. 개별 타입별 visible 리스트 정의
+    const visibleTourList = (courseData.typeOneList || []).slice(
+        0,
+        tourVisibleCount,
+    );
+    const visibleFoodList = (courseData.typeTwoList || []).slice(
+        0,
+        foodVisibleCount,
+    );
 
+    // ✅ 2. 맵 마커용으로 둘 다 합친 리스트 생성
+    const mapVisiblePlaces = [...visibleTourList, ...visibleFoodList];
+
+    // ✅ 3. 현재 탭에서 보여줄 리스트 (카드 출력용)
     const visibleList =
-        selectedType == '12'
-            ? (courseData.typeOneList || []).slice(0, tourVisibleCount)
-            : (courseData.typeTwoList || []).slice(0, foodVisibleCount);
+        selectedType === '12' ? visibleTourList : visibleFoodList;
 
     const resetVisibleCounts = () => {
         setTourVisibleCount(6);
@@ -52,6 +60,10 @@ function TripCreator() {
 
     const [loading, setLoading] = useState(false);
 
+    const handleTabChange = (tabName) => {
+        setCurrentTab(tabName); // 기존 탭 변경
+        setSelectedPlace(null); // ✅ 디테일 패널 닫기
+    };
     const handleLike = (contentid) => {
         console.log(contentid);
         const listKey = selectedType == '12' ? 'typeOneList' : 'typeTwoList';
@@ -145,7 +157,7 @@ function TripCreator() {
 
                 <TabMenu
                     currentTab={currentTab}
-                    setCurrentTab={setCurrentTab}
+                    setCurrentTab={handleTabChange}
                 />
                 <div className="border-t-[10px] border-gray-100" />
 
@@ -205,6 +217,7 @@ function TripCreator() {
                                         place={item}
                                         checkLike={handleLike}
                                         checkFavorite={handleFavorite}
+                                        listdata={visibleList}
                                     />
                                 ))}
                                 <div className="flex justify-center">
@@ -236,8 +249,9 @@ function TripCreator() {
                 center={mapCenter}
                 level={mapLevel}
                 selectedType={selectedType}
-                checkCourse={courseList}
+                checkCourse={courseList} // 선 연결
                 onMarkerClick={setSelectedPlace}
+                visiblePlaces={mapVisiblePlaces} //더보기 연동
             />
 
             {/* 상세 정보 패널 */}

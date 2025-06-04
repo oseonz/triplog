@@ -10,7 +10,7 @@ export const getFavorites = async (user_id, contentid) => {
         const res = await axios.get(prefix, {
             params: { user_id, contentid },
         });
-        console.log('🎯 백에서 온 favorite 응답:', res.data);
+        // console.log('🎯 백에서 온 favorite 응답:', res.data);
 
         // items가 없으면 빈 배열 반환
         return res.data?.items || [];

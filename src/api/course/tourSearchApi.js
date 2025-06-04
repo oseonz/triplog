@@ -3,8 +3,8 @@ import axios from 'axios';
 const TOUR_API_KEY =
     'qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==';
 const LOCATION_URL =
-    'https://apis.data.go.kr/B551011/KorService2/detailCommon2';
-const INTRO_URL = 'https://apis.data.go.kr/B551011/KorService1/detailIntro1';
+    'https://apis.data.go.kr/B551011/KorService1/detailCommon1';
+const INTRO_URL = 'https://apis.data.go.kr/B551011/KorService2/detailIntro2';
 
 // 지역 기반 장소 검색 API 호출
 export const fetchTourPlaces = async (

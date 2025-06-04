@@ -1,27 +1,25 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-    courseDataState,
-    favoriteListState,
-} from '../../../../pages/course/atom/courseState';
+import { favoriteListState } from '../../../../pages/course/atom/courseState';
 import ListViewComp from '../trip-creator/ListViewComp';
 
 export default function BookMarkPanel({ checkLike, checkFavorite }) {
-    const courseData = useRecoilValue(courseDataState);
-
     const favoriteList = useRecoilValue(favoriteListState);
-
-    console.log('📌 typeOneList:', courseData.typeOneList);
-    console.log('📌 typeTwoList:', courseData.typeTwoList);
-    console.log('📌 찜 관광지', bookmarkedTourList);
+    const tourFavorites = favoriteList.filter(
+        (item) => item.contenttypeid === '12',
+    );
+    const foodFavorites = favoriteList.filter(
+        (item) => item.contenttypeid === '39',
+    );
 
     return (
-        <div className="px-4 py-4">
-            <h2 className="text-xl font-bold mb-4">💖 나의 찜 리스트</h2>
-
-            <h3 className="text-md font-semibold mt-4">📌 관광지</h3>
-            {bookmarkedTourList.length > 0 ? (
-                bookmarkedTourList.map((item) => (
+        <div className="px-4 py-2 overflow-y-auto">
+            {/* 📌 관광지 섹션 */}
+            <h2 className="text-xl font-semibold mb-2 ">
+                📍 관광지 찜 리스트{' '}
+            </h2>
+            {tourFavorites.length > 0 ? (
+                tourFavorites.map((item) => (
                     <ListViewComp
                         key={item.contentid}
                         place={item}
@@ -34,9 +32,12 @@ export default function BookMarkPanel({ checkLike, checkFavorite }) {
                 <p className="text-gray-500">찜한 관광지가 없습니다.</p>
             )}
 
-            <h3 className="text-md font-semibold mt-4">🍽 음식점</h3>
-            {bookmarkedFoodList.length > 0 ? (
-                bookmarkedFoodList.map((item) => (
+            {/* 🍽 음식점 섹션 */}
+            <h2 className="text-xl font-semibold mt-6 mb-2">
+                🍽 음식점 찜 리스트
+            </h2>
+            {foodFavorites.length > 0 ? (
+                foodFavorites.map((item) => (
                     <ListViewComp
                         key={item.contentid}
                         place={item}

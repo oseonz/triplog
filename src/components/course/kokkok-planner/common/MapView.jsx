@@ -6,28 +6,21 @@ import {
 } from 'react-kakao-maps-sdk';
 import { useRecoilValue } from 'recoil';
 import { courseDataState } from '../../../../pages/course/atom/courseState';
-
-function MapView({ center, level, selectedType, onMarkerClick, checkCourse }) {
+function MapView({
+    center,
+    level,
+    visiblePlaces = [],
+    checkCourse = [],
+    onMarkerClick,
+}) {
     const [selectedId, setSelectedId] = useState(null);
     const [hoveredId, setHoveredId] = useState(null);
-
-    const courseData = useRecoilValue(courseDataState);
     const [map, setMap] = useState(null);
+    const courseData = useRecoilValue(courseDataState);
 
-    const allPlaces = [
-        ...(courseData.typeOneList || []),
-        ...(courseData.typeTwoList || []),
-        ...(checkCourse || []),
-    ];
-
-    const placeMap = new Map();
-    allPlaces.forEach((place) => {
-        placeMap.set(place.contentid, place); // 같은 contentid면 마지막 값 유지
-    });
-    const places = Array.from(placeMap.values());
-
+    // ✅ 선 그리기용
     useEffect(() => {
-        if (!map || !checkCourse || checkCourse.length < 2) return;
+        if (!map || checkCourse.length < 2) return;
 
         const path = checkCourse
             .filter((p) => p.mapy && p.mapx)
@@ -38,7 +31,7 @@ function MapView({ center, level, selectedType, onMarkerClick, checkCourse }) {
                         Number(place.mapx),
                     ),
             );
-        console.log('🧭 선 연결용 checkCourse:', checkCourse);
+
         const line = new window.kakao.maps.Polyline({
             path,
             strokeWeight: 4,
@@ -48,12 +41,12 @@ function MapView({ center, level, selectedType, onMarkerClick, checkCourse }) {
         });
 
         line.setMap(map);
-
         return () => line.setMap(null);
     }, [checkCourse, map]);
 
+    // ✅ 코스 중심으로 이동
     useEffect(() => {
-        if (!map || !checkCourse || checkCourse.length === 0) return;
+        if (!map || checkCourse.length === 0) return;
 
         const last = checkCourse[checkCourse.length - 1];
         const lat = Number(last.mapy);
@@ -64,40 +57,41 @@ function MapView({ center, level, selectedType, onMarkerClick, checkCourse }) {
         }
     }, [checkCourse, map]);
 
+    // ✅ 마커 이미지 조건 분기
+
     return (
         <div className="w-full h-full">
             <KakaoMap
                 center={center}
                 level={level}
-                style={{ width: '100%', height: '100%' }}
                 onCreate={setMap}
+                style={{ width: '100%', height: '100%' }}
             >
-                {places.map((place) => {
+                {visiblePlaces.map((place) => {
                     const lat = Number(place.mapy);
                     const lng = Number(place.mapx);
                     if (isNaN(lat) || isNaN(lng)) return null;
-                    console
-                        .log
-                        // '📍 마커용 좌표',
-                        // place.title,
-                        // place.mapx,
-                        // place.mapy,
-                        ();
+
                     const isSelected = selectedId === place.contentid;
                     const isHovered = hoveredId === place.contentid;
+                    const type = String(place.contenttypeid);
+                    const markerImg =
+                        type === '39'
+                            ? '/images/foodMaker.png'
+                            : '/images/mapMaker.png';
 
                     return (
                         <React.Fragment key={place.contentid}>
                             <MapMarker
                                 position={{ lat, lng }}
                                 image={{
-                                    src: '/images/mapMaker.png',
+                                    src: markerImg,
                                     size: { width: 40, height: 40 },
                                     options: { offset: { x: 20, y: 40 } },
                                 }}
                                 onClick={() => {
-                                    setSelectedId(place.contentid); // 클릭된 ID 기억
-                                    onMarkerClick(place); // 외부에서 디테일 패널 열기
+                                    setSelectedId(place.contentid);
+                                    onMarkerClick(place);
                                 }}
                             />
                             {(isSelected || isHovered) && (

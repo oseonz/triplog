@@ -121,9 +121,7 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                         /> */}
                     </div>
 
-                    <div className="text-sm text-gray-500 truncate">
-                        {place.addr1}
-                    </div>
+                    <div className="text-sm  truncate">{place.addr1}</div>
 
                     <div className=" flex justify-between items-center">
                         <div className="flex items-center gap-1">
