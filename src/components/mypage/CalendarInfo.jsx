@@ -5,7 +5,7 @@ function CalendarInfo() {
         '서울 당일치기 여행',
         '부산 야경 투어',
         '제주도 2박 3일 코스',
-    ]; // 이건 예시니까, 나중에 props나 recoil에서 받아도 됨
+    ];
 
     return (
         <div className="w-[430px] bg-white flex flex-col z-10 shadow-md">

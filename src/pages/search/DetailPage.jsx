@@ -157,11 +157,11 @@ function DetailPage() {
                     <div className="bg-white p-10 flex mb-12">
                         {detail?.contenttypeid == '12' ? (
                             <DetailInfo intro={intro} detail={detail} />
-                        ) : ( detail?.contenttypeid == '15' ? (
+                        ) : detail?.contenttypeid == '15' ? (
                             <EventDetail intro={intro} detail={detail} />
                         ) : (
                             <DetailInfo2 intro={intro} detail={detail} />
-                        ))}
+                        )}
                     </div>
                 </div>
                 <div className="mb-12">
