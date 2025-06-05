@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-//공연/행사 카드
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// import {
+//     checkLikesContent,
+//     setLikesContent,
+//     unsetLikesContent,
+//     checkFavorite,
+//     setFavorites,
+//     unsetFavorite,
+// } from '../../api/course/favoritesApi';
 
 function EventCard({
     user_id,
@@ -20,81 +28,84 @@ function EventCard({
     const [likesCount, setLikesCount] = useState(0);
     const navigate = useNavigate();
 
-    const checkLiked = async () => {
-        const result = await checkLikesContent(user_id, contentId);
-        if (result.my_check == true) setLiked(true);
-        else setLiked(false);
-        setLikesCount(result.likes_count);
-    };
-
-    const checkBookmark = async () => {
-        const result = await checkFavorite(user_id, contentId);
-        if (result == true) setBookmarked(true);
-        else setBookmarked(false);
-    };
-
     useEffect(() => {
-        checkBookmark();
-        checkLiked();
-    }, []);
+        if (!user_id || !contentId) return;
+
+        const fetchData = async () => {
+            try {
+                const likeResult = await checkLikesContent(user_id, contentId);
+                setLiked(likeResult.my_check);
+                setLikesCount(likeResult.likes_count);
+
+                const bookmarkResult = await checkFavorite(user_id, contentId);
+                setBookmarked(bookmarkResult);
+            } catch (error) {
+                console.error('초기 데이터 로딩 오류:', error);
+            }
+        };
+
+        fetchData();
+    }, [user_id, contentId]);
 
     const handleLikeClick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
 
-        if (liked) {
-            await unsetLikesContent(user_id, contentId);
-        } else {
-            await setLikesContent(
-                user_id,
-                contentId,
-                contentTypeId,
-                title,
-                addr1,
-                addr2,
-                areaCode,
-                sigunguCode,
-                firstimage,
-                mapX,
-                mapY,
-            );
+        try {
+            if (liked) {
+                await unsetLikesContent(user_id, contentId);
+            } else {
+                await setLikesContent(
+                    user_id,
+                    contentId,
+                    contentTypeId,
+                    title,
+                    addr1,
+                    addr2,
+                    areaCode,
+                    sigunguCode,
+                    firstimage,
+                    mapX,
+                    mapY,
+                );
+            }
+
+            const result = await checkLikesContent(user_id, contentId);
+            setLiked(result.my_check);
+            setLikesCount(result.likes_count);
+        } catch (err) {
+            console.error('좋아요 처리 중 오류:', err);
         }
-
-        const ret = await checkLikesContent(user_id, contentId);
-
-        setLikesCount(ret.likes_count);
-        setLiked(ret.my_check);
-
-        // setBookmarked(!bookmarked);
     };
 
     const handleBookmarkClick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
 
-        let result;
+        try {
+            if (bookmarked) {
+                await unsetFavorite(user_id, contentId);
+            } else {
+                await setFavorites(
+                    user_id,
+                    contentId,
+                    contentTypeId,
+                    title,
+                    addr1,
+                    addr2,
+                    areaCode,
+                    sigunguCode,
+                    firstimage,
+                    mapX,
+                    mapY,
+                );
+            }
 
-        if (bookmarked) {
-            result = await unsetFavorite(user_id, contentId);
-        } else {
-            result = await setFavorites(
-                user_id,
-                contentId,
-                contentTypeId,
-                title,
-                addr1,
-                addr2,
-                areaCode,
-                sigunguCode,
-                firstimage,
-                mapX,
-                mapY,
-            );
+            const result = await checkFavorite(user_id, contentId);
+            setBookmarked(result);
+        } catch (err) {
+            console.error('북마크 처리 중 오류:', err);
         }
-
-        const ret = await checkFavorite(user_id, contentId);
-        setBookmarked(ret);
-        // setBookmarked(!bookmarked); // 직접 DB상태를 확인하는 것으로 변경
     };
 
     const handleCardClick = () => {
@@ -123,22 +134,17 @@ function EventCard({
                 </div>
             </div>
             <div className="p-4 flex flex-col justify-between">
-                <a
-                    href={contentId}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                ></a>
                 <div>
                     <p className="text-sm text-blue-500">{addr1}</p>
                     <h3 className="text-[18px] text-black">{title}</h3>
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-2">
                         <img
                             src={
                                 liked
                                     ? '/images/heart-f.png'
                                     : '/images/heart-o.png'
                             }
-                            className="w-[23px]"
+                            className="w-[23px] cursor-pointer"
                             onClick={handleLikeClick}
                             alt="heart icon"
                         />
