@@ -8,7 +8,7 @@ function DetailInfo2({ intro, detail }) {
                 <span
                     dangerouslySetInnerHTML={{
                         __html:
-                            intro?.infocenterfood?.replace(/\n/g, '') ||
+                            intro?.infocenterfood?.replace(/\n/g, '<br>') ||
                             '정보 없음',
                     }}
                 />
@@ -18,7 +18,7 @@ function DetailInfo2({ intro, detail }) {
                 <span
                     dangerouslySetInnerHTML={{
                         __html:
-                            intro?.opentimefood?.replace(/\n/g, '') ||
+                            intro?.opentimefood?.replace(/\n/g, '<br>') ||
                             '정보 없음',
                     }}
                 />
@@ -28,7 +28,8 @@ function DetailInfo2({ intro, detail }) {
                 <span
                     dangerouslySetInnerHTML={{
                         __html:
-                            detail?.addr1?.replace(/\n/g, '') || '정보 없음',
+                            detail?.addr1?.replace(/\n/g, '<br>') ||
+                            '정보 없음',
                     }}
                 />
             </li>
@@ -37,7 +38,7 @@ function DetailInfo2({ intro, detail }) {
                 <span
                     dangerouslySetInnerHTML={{
                         __html:
-                            intro?.parkingfood?.replace(/\n/g, '') ||
+                            intro?.parkingfood?.replace(/\n/g, '<br>') ||
                             '정보 없음',
                     }}
                 />
@@ -47,7 +48,7 @@ function DetailInfo2({ intro, detail }) {
                 <span
                     dangerouslySetInnerHTML={{
                         __html:
-                            intro?.restdatefood?.replace(/\n/g, '') ||
+                            intro?.restdatefood?.replace(/\n/g, '<br>') ||
                             '정보 없음',
                     }}
                 />

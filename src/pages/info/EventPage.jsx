@@ -4,13 +4,17 @@ import EventCard from "../../components/info/EventCard"; // 카드 컴포넌트 
 import { endOfMonth, format, set, startOfMonth } from "date-fns";
 import axios from "axios";
 
+
 import CompactMonthPicker from "../../components/common/CompactMonthPicker";
+import { userState } from "../mypage/atom/userState";
+import { useRecoilValue } from "recoil";
 
 // npm install date-fns 필요함
 
 function EventPage() {
 
-
+  const { id } = useRecoilValue(userState);  // 유저id
+  // const id = 2
   const imsidata = [
     {
       image: "/images/event1.jpg",
@@ -21,16 +25,6 @@ function EventPage() {
       image: "/images/event2.jpg",
       title: "재즈 나잇 인 홍대",
       location: "서울 마포구",
-    },
-    {
-      image: "/images/event3.jpg",
-      title: "댄스 배틀: 파이널 스테이지",
-      location: "부산 벡스코",
-    },
-    {
-      image: "/images/event3.jpg",
-      title: "댄스 배틀: 파이널 스테이지",
-      location: "부산 벡스코",
     },
   ];
 
@@ -50,18 +44,28 @@ function EventPage() {
   const [gps_y, setGps_y] = useState("");
   const [radius_km, setRadius_km] = useState(20);
 
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(8);
   const [totalElements, setTotlElements] = useState(0);
-  const [totalPage, setTotalPage] = useState(0);
 
   const [selected, setSelected] = useState(new Date());
   const p_start_date = format(startOfMonth(selected), "yyyyMMdd");  // 선택한 달의 첫날
   const p_end_date = format(endOfMonth(selected), "yyyyMMdd"); // 선택한 달의 마지막 날
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handlePageChange = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+      // setPage(page);
+      // setParams((prev) => ({ ...prev, page }));
+    }
+  }; //페이지네이션
+
 
     async function fetchData() {
-    const URL = `${API_URL}?p_start_date=${p_start_date}&p_end_date=${p_end_date}&keyword=${keyword}&areacode=${areacode}&sigungucode=${sigungucode}&cat3=${cat3}&gps_x=${gps_x}&gps_y=${gps_y}&radius_km=${radius_km}&size=${pageSize}&page=${page}`;
+    const URL = `${API_URL}?p_start_date=${p_start_date}&p_end_date=${p_end_date}&keyword=${keyword}&areacode=${areacode}&sigungucode=${sigungucode}&cat3=${cat3}&gps_x=${gps_x}&gps_y=${gps_y}&radius_km=${radius_km}&size=${pageSize}&page=${currentPage}`;
 
 
     console.log(URL);
@@ -70,7 +74,7 @@ function EventPage() {
       console.log(res.data);
       setEventLists(res.data.items.content)
       setTotlElements(res.data.items.totalElements);
-      setTotalPage(res.data.items.totalPages);
+      setTotalPages(res.data.items.totalPages);
       
     } catch (error) {
       console.error("데이터를 가져오는 중 오류 발생:", error);
@@ -80,18 +84,17 @@ function EventPage() {
   useEffect(() => {
 
    fetchData();
-  },[page]);
+  },[currentPage]);
 
   useEffect(() => {
-    setPage(0); // 날짜가 변경되면 페이지를 초기화
+    setCurrentPage(0); // 날짜가 변경되면 페이지를 초기화
     fetchData(); // 날짜가 변경되면 데이터 다시 가져오기  
   },[selected]);
 
-  function handlePageChange(newPage) {
-    setPage(newPage);
-  }
+
+
   useEffect(() => {
-    setPage(0); // 검색어가 변경되면 페이지를 초기화
+    setCurrentPage(0); // 검색어가 변경되면 페이지를 초기화
     fetchData(); // 검색어가 변경되면 데이터 다시 가져오기  
   },[keyword]);
 
@@ -125,41 +128,79 @@ function EventPage() {
         <div className="container">
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-              {eventLists.map((event, index) => (
-                <EventCard
-                  key={index}
-                  image={event.firstimage}
-                  title={event.title}
-                  location={event.location}
-                  contentid={event.contentid}
-                />
-              ))}
+                {eventLists.map((event, index) => {
+                  if (!event.contentId || !id) {
+                    console.warn("렌더링 건너뜀: contentId 또는 user_id 누락", event);
+                    return null;
+                  }
+
+                  return (
+                    <EventCard
+                      key={index}
+                      user_id={id}
+                      contentId={event.contentId}
+                      contentTypeId={event.contentTypeId}
+                      title={event.title}
+                      addr1={event.addr1}
+                      addr2={event.addr2}
+                      areaCode={event.areaCode}
+                      sigunguCode={event.sigunguCode}
+                      firstimage={event.firstimage}
+                      mapX={event.mapX}
+                      mapY={event.mapY}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-center items-center mt-4 gap-3">
-        <button
-          className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
-          onClick={() => {
-            handlePageChange(page - 1);
-          }}
-          disabled={page <= 0}
-        >
-          Prev
-        </button>
-        {page + 1}/ {totalPage}
-        <button
-          className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
-          onClick={() => {
-            handlePageChange(page + 1);
-          }}
-          disabled={page + 1 >= totalPage}
-        >
-          Next
-        </button>
-      </div>
+
+
+
+<div className="flex justify-center mt-10">
+  <div className="flex gap-2 items-center">
+    {/* 10페이지 단위 이전 */}
+    <button
+      onClick={() => handlePageChange(Math.max(0, Math.floor(currentPage / 10 - 1) * 10))}
+      disabled={currentPage < 10}
+      className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+    >
+      «
+    </button>
+
+      {/* 현재 페이지 블록 표시 */}
+      {Array.from({ length: Math.min(10, totalPages - Math.floor(currentPage / 10) * 10) }, (_, i) => {
+        const pageIndex = Math.floor(currentPage / 10) * 10 + i;
+        return (
+          <button
+            key={pageIndex}
+            onClick={() => handlePageChange(pageIndex)}
+            className={`px-4 py-2 rounded-full border ${
+              pageIndex === currentPage
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-white text-black border-gray-300"
+            }`}
+          >
+            {pageIndex + 1}
+          </button>
+        );
+      })}
+
+      {/* 10페이지 단위 다음 */}
+      <button
+        onClick={() =>
+          handlePageChange(Math.min(totalPages - 1, Math.floor(currentPage / 10 + 1) * 10))
+        }
+        disabled={Math.floor(currentPage / 10 + 1) * 10 >= totalPages}
+        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+      >
+        »
+      </button>
+    </div>
+  </div>
+
     </>
   );
 }

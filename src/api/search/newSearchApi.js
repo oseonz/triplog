@@ -9,6 +9,8 @@ const INTRO_URL = 'https://apis.data.go.kr/B551011/KorService2/detailIntro2';
 
 // 상세 데이터 가져오기
 export const tourApiViewOne = async (contentId) => {
+    console.log("-------------------- tourApiViewOne")
+    console.log("contentID : ", contentId)
     const params = {
         ServiceKey: TOUR_API_KEY,
         MobileOS: 'ETC',
@@ -24,6 +26,7 @@ export const tourApiViewOne = async (contentId) => {
 };
 
 export const fetchDetailIntro = async (contentId, contentTypeId) => {
+    console.log("-------------------- fetchDetailIntro")
     const params = {
         ServiceKey: TOUR_API_KEY,
         contentId,
@@ -35,7 +38,9 @@ export const fetchDetailIntro = async (contentId, contentTypeId) => {
 
     try {
         const res = await axios.get(INTRO_URL, { params });
-        return res.data.response.body.items.item[0];
+        const item = res.data?.response?.body?.items?.item;
+        // ✅ 배열이면 첫 번째 객체만 추출
+        return Array.isArray(item) ? item[0] : item;
     } catch (e) {
         console.error('❌ 상세정보 API 호출 실패', e);
         return null;

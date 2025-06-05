@@ -4,21 +4,30 @@ import ArticlesCard from '../../components/info/ArticlesCard';
 import axios from 'axios';
 
 function ArticlesPage() {
-    const [page, setPage] = useState(1); // 네이버 API는 페이지가 1부터 시작하므로 1로 설정
     const [keyword, setKeyword] = useState('국내여행가볼곳');
     const pageSize = 8; // 페이지당 기사 수
     const [totalElements, setTotalElements] = useState(0);
-    const [totalPage, setTotalPage] = useState(0);
 
     const [articleList, setArticleList] = useState([]);
 
-    function handlePageChange(newPage) {
-        setPage(newPage);
-    }
+    const [currentPage, setCurrentPage] = useState(1); // 네이버 API는 페이지가 1부터 시작하므로 1로 설정
+    const [totalPages, setTotalPages] = useState(0);
+
+    const handlePageChange = (page) => {
+        if (page >= 0 && page < totalPages) {
+            setCurrentPage(page);
+            // setPage(page);
+            // setParams((prev) => ({ ...prev, page }));
+        }
+    }; //페이지네이션
+
+    // function handlePageChange(newPage) {
+    //   setCurrentPage(newPage);
+    // }
 
     async function fetchData() {
         try {
-            const API_URL = `http://localhost:8081/api/news?keyword=${keyword}&page=${page}&size=${pageSize}`;
+            const API_URL = `http://localhost:8081/api/news?keyword=${keyword}&page=${currentPage}&size=${pageSize}`;
 
             const res = await axios(API_URL);
             console.log(res);
@@ -29,9 +38,9 @@ function ArticlesPage() {
             setArticleList(res.data.items);
 
             const totalPages = Math.ceil(res.data.total / pageSize); // // 전체 페이지 수 계산
-            setTotalPage(totalPages);
+            setTotalPages(totalPages);
 
-            console.log('전체 페이지 수:', totalPage);
+            console.log('전체 페이지 수:', totalPages);
         } catch (error) {
             console.error('데이터를 가져오는 중 오류 발생:', error);
         }
@@ -43,7 +52,7 @@ function ArticlesPage() {
 
     useEffect(() => {
         fetchData();
-    }, [page]);
+    }, [currentPage]);
 
     return (
         <>
@@ -75,27 +84,93 @@ function ArticlesPage() {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center items-center mt-4 gap-3">
-                <button
-                    className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
-                    onClick={() => {
-                        handlePageChange(page - 1);
-                    }}
-                    disabled={page <= 1}
-                >
-                    Prev
-                </button>
-                {page}/ {totalPage}
-                <button
-                    className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
-                    onClick={() => {
-                        handlePageChange(page + 1);
-                    }}
-                    disabled={page + 1 >= totalPage}
-                >
-                    Next
-                </button>
+
+            <div className="flex justify-center mt-10">
+                <div className="flex gap-2 items-center">
+                    {/* 10페이지 단위 이전 */}
+                    <button
+                        onClick={() =>
+                            handlePageChange(
+                                Math.max(
+                                    0,
+                                    Math.floor(currentPage / 10 - 1) * 10,
+                                ),
+                            )
+                        }
+                        disabled={currentPage < 10}
+                        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                    >
+                        «
+                    </button>
+
+                    {/* 현재 페이지 블록 표시 */}
+                    {Array.from(
+                        {
+                            length: Math.min(
+                                10,
+                                totalPages - Math.floor(currentPage / 10) * 10,
+                            ),
+                        },
+                        (_, i) => {
+                            const pageIndex =
+                                Math.floor(currentPage / 10) * 10 + i;
+                            return (
+                                <button
+                                    key={pageIndex}
+                                    onClick={() => handlePageChange(pageIndex)}
+                                    className={`px-4 py-2 rounded-full border ${
+                                        pageIndex === currentPage
+                                            ? 'bg-blue-500 text-white border-blue-500'
+                                            : 'bg-white text-black border-gray-300'
+                                    }`}
+                                >
+                                    {pageIndex + 1}
+                                </button>
+                            );
+                        },
+                    )}
+
+                    {/* 10페이지 단위 다음 */}
+                    <button
+                        onClick={() =>
+                            handlePageChange(
+                                Math.min(
+                                    totalPages - 1,
+                                    Math.floor(currentPage / 10 + 1) * 10,
+                                ),
+                            )
+                        }
+                        disabled={
+                            Math.floor(currentPage / 10 + 1) * 10 >= totalPages
+                        }
+                        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                    >
+                        »
+                    </button>
+                </div>
             </div>
+
+            {/* <div className="flex justify-center items-center mt-4 gap-3">
+        <button
+          className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
+          onClick={() => {
+            handlePageChange(currentPage - 1);
+          }}
+          disabled={currentPage <= 1}
+        >
+          Prev
+        </button>
+        {currentPage}/ {totalPage}
+        <button
+          className="px-2 py-1 text-sm text-white bg-blue-400 rounded"
+          onClick={() => {
+            handlePageChange(currentPage + 1);
+          }}
+          disabled={currentPage + 1 >= totalPage}
+        >
+          Next
+        </button>
+      </div> */}
         </>
     );
 }

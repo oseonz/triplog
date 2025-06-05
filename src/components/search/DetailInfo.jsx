@@ -8,7 +8,7 @@ function DetailInfo({ intro, detail }) {
                 <span
                     dangerouslySetInnerHTML={{
                         __html:
-                            intro.infocenter.replace(/\n/g, '<br>') ||
+                            intro?.infocenter?.replace(/\n/g, '<br>') ||
                             '정보 없음',
                     }}
                 />
