@@ -10,10 +10,12 @@ import {
     courseDataState,
     courseListState,
     selectedPlaceState,
+    favoriteListState,
 } from '../../../../pages/course/atom/courseState';
 import { Link, useNavigate } from 'react-router-dom';
 import TabMenu from '../common/TabMenu';
 import ListViewComp from './ListViewComp';
+import { saveCourse } from '../../../../api/course/tourBackApi';
 
 function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
@@ -33,6 +35,23 @@ function TripCreator() {
     const setSelectedPlace = useSetRecoilState(selectedPlaceState);
     const selectedPlace = useRecoilValue(selectedPlaceState);
     const [courseList, setCourseList] = useRecoilState(courseListState);
+    const setFavoriteList = useSetRecoilState(favoriteListState);
+
+    const [note, setNote] = useState({
+        schedule: '',
+        transport: '',
+        budget: '',
+        stay: '',
+        memo: '',
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNote((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
     // ✅ 1. 개별 타입별 visible 리스트 정의
     const visibleTourList = (courseData.typeOneList || []).slice(
@@ -98,10 +117,26 @@ function TripCreator() {
             ),
         );
 
-        // postLike(userid,contendid,likes_count)
+        // ✅ 찜 탭 업데이트 (핵심 추가!)
+        setFavoriteList((prevList) =>
+            prevList.map((item) =>
+                item.contentid === contentid
+                    ? {
+                          ...item,
+                          likes_count:
+                              (item.likes_count || 0) + (item.mylike ? -1 : 1),
+                          mylike: !item.mylike,
+                      }
+                    : item,
+            ),
+        );
+
+        // const user_id = 5; // 나중에 로그인한 유저 ID로 대체
+        // postLike({ user_id, contentid });
         // axios
     };
 
+    //찜 아이콘 핸들러
     const handleFavorite = (contentid) => {
         setCourseData((prevData) => {
             const existsIn = (list) =>
@@ -128,7 +163,40 @@ function TripCreator() {
             };
         });
     };
-    console.log('📌 courseList:', courseList);
+
+    const handleSaveCourse = async () => {
+        if (courseList.length === 0) {
+            alert('저장할 코스가 없습니다!');
+            return;
+        }
+
+        try {
+            const payload = {
+                creator_user_id: 5, // ✍️ 로그인한 사용자 ID로 교체 필요
+                course_name: tripTitle,
+                description: `${note.schedule}||${note.budget}||${note.memo}||${note.transport}||${note.stay}`,
+                contents: courseList.map((place) => ({
+                    contentid: place.contentid,
+                    contenttypeid: place.contenttypeid,
+                    title: place.title,
+                    addr: place.addr1,
+                    titleImage: null, // 아직은 사용 안 함
+                    areacode: place.areacode,
+                    sigungucode: place.sigungucode,
+                    firstimage: place.firstimage,
+                })),
+            };
+
+            const result = await saveCourse(payload);
+            console.log('✅ 저장 결과:', result);
+            alert('코스 저장이 완료되었습니다!');
+        } catch (err) {
+            console.error('❌ 코스 저장 실패:', err);
+            alert('코스 저장 중 오류가 발생했습니다.');
+        }
+    };
+
+    // console.log('📌 courseList:', courseList);
 
     return (
         <div className="flex w-full h-[900px] overflow-hidden">
@@ -169,7 +237,7 @@ function TripCreator() {
                         checkFavorite={handleFavorite}
                     />
                 ) : currentTab === '여행노트' ? (
-                    <TripNote />
+                    <TripNote notedata={note} handleChange={handleChange} />
                 ) : currentTab === '콕콕코스' ? (
                     <div className="px-3 py-3">
                         <h2 className="text-xl font-bold mb-2">
@@ -252,6 +320,7 @@ function TripCreator() {
                 checkCourse={courseList} // 선 연결
                 onMarkerClick={setSelectedPlace}
                 visiblePlaces={mapVisiblePlaces} //더보기 연동
+                onSaveCourse={handleSaveCourse} // 저장하기
             />
 
             {/* 상세 정보 패널 */}

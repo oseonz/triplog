@@ -84,7 +84,7 @@ function DetailPanel() {
     };
 
     return (
-        <div className="absolute top-[95px] left-[435px] w-[400px] h-[97%] bg-white shadow-lg z-50 overflow-y-auto">
+        <div className="absolute top-[95px] left-[433px] w-[400px] h-[97%] bg-white shadow-lg z-50 overflow-y-auto">
             <div className="flex justify-between items-center p-4 border-b">
                 <h2 className="text-lg font-semibold">
                     {isFood ? '음식점' : '여행지'}
@@ -105,24 +105,17 @@ function DetailPanel() {
 
                 {isFood ? (
                     <>
-                        <p>
-                            🕒 운영시간:{' '}
-                            {detailInfo?.opentimefood || '정보 없음'}
-                        </p>
-                        <p>
-                            🍽 대표 메뉴: {detailInfo?.treatmenu || '정보 없음'}
-                        </p>
-                        <p>
-                            ❌ 휴무일: {detailInfo?.restdatefood || '정보 없음'}
-                        </p>
-                        <p>🚗 주차: {detailInfo?.parkingfood || '정보 없음'}</p>
+                        <p>🕒 운영시간: {detailInfo?.opentimefood || '없음'}</p>
+                        <p>🍽 대표 메뉴: {detailInfo?.treatmenu || '없음'}</p>
+                        <p>❌ 휴무일: {detailInfo?.restdatefood || '없음'}</p>
+                        <p>🚗 주차: {detailInfo?.parkingfood || '없음'}</p>
                     </>
                 ) : (
                     <>
-                        <p>📞 안내: {detailInfo?.infocenter || '정보 없음'}</p>
-                        <p>🕒 이용시간: {detailInfo?.usetime || '정보 없음'}</p>
-                        <p>❌ 휴무일: {detailInfo?.restdate || '정보 없음'}</p>
-                        <p>🚗 주차: {detailInfo?.parking || '정보 없음'}</p>
+                        <p>📞 안내: {detailInfo?.infocenter || '없음'}</p>
+                        <p>🕒 이용시간: {detailInfo?.usetime || '없음'}</p>
+                        <p>❌ 휴무일: {detailInfo?.restdate || '없음'}</p>
+                        <p>🚗 주차: {detailInfo?.parking || '없음'}</p>
                     </>
                 )}
 

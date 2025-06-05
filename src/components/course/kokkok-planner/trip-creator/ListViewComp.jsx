@@ -138,9 +138,12 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                                     checkLike(place.contentid);
                                 }}
                             />
-                            <span className="text-sm">
-                                {place.likes_count ?? 0}
-                            </span>
+                            <button
+                                onClick={() => checkLike(place.contentid)}
+                                className="ml-1 text-sm"
+                            >
+                                {place.likes_count}
+                            </button>
                         </div>
                         <input
                             type="checkbox"

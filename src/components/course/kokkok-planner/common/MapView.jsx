@@ -5,24 +5,33 @@ import {
     CustomOverlayMap,
 } from 'react-kakao-maps-sdk';
 import { useRecoilValue } from 'recoil';
-import { courseDataState } from '../../../../pages/course/atom/courseState';
+import {
+    courseDataState,
+    courseListState,
+} from '../../../../pages/course/atom/courseState';
+
 function MapView({
     center,
     level,
     visiblePlaces = [],
     checkCourse = [],
     onMarkerClick,
+    onSaveCourse,
 }) {
     const [selectedId, setSelectedId] = useState(null);
     const [hoveredId, setHoveredId] = useState(null);
     const [map, setMap] = useState(null);
     const courseData = useRecoilValue(courseDataState);
+    const courseList = useRecoilValue(courseListState);
 
+    useEffect(() => {
+        console.log('🔥 courseList:', courseList);
+    }, [courseList]);
     // ✅ 선 그리기용
     useEffect(() => {
-        if (!map || checkCourse.length < 2) return;
+        if (!map || courseList.length < 2) return;
 
-        const path = checkCourse
+        const path = courseList
             .filter((p) => p.mapy && p.mapx)
             .map(
                 (place) =>
@@ -41,8 +50,9 @@ function MapView({
         });
 
         line.setMap(map);
+
         return () => line.setMap(null);
-    }, [checkCourse, map]);
+    }, [courseList, map]);
 
     // ✅ 코스 중심으로 이동
     useEffect(() => {
@@ -120,6 +130,12 @@ function MapView({
                     );
                 })}
             </KakaoMap>
+            <button
+                onClick={onSaveCourse}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-3xl"
+            >
+                코스 저장하기
+            </button>
         </div>
     );
 }
