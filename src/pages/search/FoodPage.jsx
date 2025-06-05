@@ -4,8 +4,14 @@ import TripRegion from "../../components/search/TripRegion.jsx";
 import TripCard from "../../components/common/TripCard.jsx";
 import { Link } from "react-router-dom";
 import Regions from "../../components/search/Regions.jsx";
+import { userState } from "../mypage/atom/userState.js";
+import { useRecoilValue } from "recoil";
 
 function FoodPage() {
+
+  const { id } = useRecoilValue(userState);  // 유저id
+  // const id = 2
+
   const scrollRef = useRef(null);
   const [tourListData, setTourListData] = useState([]);
 
@@ -74,12 +80,12 @@ function FoodPage() {
     setSelectedRegion(regionName);
   };
 
-  const extractSiGu = (addr1) => {
-    if (!addr1) return "주소없음";
-    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
-    const match = addr1.match(regex);
-    return match ? match[1] : "시/구 없음";
-  }; //구까지만 찾아서 나옴
+  // const extractSiGu = (addr1) => {
+  //   if (!addr1) return "주소없음";
+  //   const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
+  //   const match = addr1.match(regex);
+  //   return match ? match[1] : "시/구 없음";
+  // }; //구까지만 찾아서 나옴
 
   const handlePageChange = (page) => {
     if (page >= 0 && page < totalPages) {
@@ -167,18 +173,41 @@ function FoodPage() {
 
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-            {tourListData.map((item, i) => (
-              <Link to={`../detail/${item.contentid}`} key={i}>
-                <TripCard
-                  title={item.title}
-                  firstimage={
-                    item.firstimage || "https://via.placeholder.com/300"
-                  }
-                  addr1={extractSiGu(item.addr1)}
-                  likes_count={item.likes_count}
-                />
-              </Link>
-            ))}
+            {tourListData.map((item, index) => {
+
+                            
+                // if (!item.contentId || !id) {
+                if (!item.contentid || !id) {
+                    console.warn("렌더링 건너뜀: contentId 또는 user_id 누락", item);
+                    return null;
+                }
+
+
+              // <Link to={`../detail/${item.contentid}`} key={index}>
+                return ( 
+                  <TripCard
+                      key={index}
+                        user_id={id}
+                        contentId={item.contentid}
+                        contentTypeId={item.contenttypeid}
+                        // contentId={item.contentId}
+                        // contentTypeId={item.contentTypeId}
+                        title={item.title}
+                        addr1={item.addr1}
+                        addr2={item.addr2}
+                        areaCode={item.areacode}
+                        sigunguCode={item.sigungucode}
+                        // areaCode={item.areaCode}
+                        // sigunguCode={item.sigunguCode}
+                        firstimage={
+                            item.firstimage || "https://via.placeholder.com/300"
+                        }
+                        mapX={item.mapX}
+                        mapY={item.mapY}
+                  />
+                );
+              // </Link>
+            })}
           </div>
         </div>
 

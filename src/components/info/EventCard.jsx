@@ -38,17 +38,16 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
     e.preventDefault();
     
     if (liked) {
-      console.log("call unsetLikesContent");
+
       await unsetLikesContent(user_id, contentId);
     } else {
-      console.log("call setLikesContent", user_id);
+
       await setLikesContent(user_id, contentId, contentTypeId,
         title, addr1, addr2, areaCode, sigunguCode, firstimage, mapX, mapY);
     }
 
-    console.log("------>user, content ",user_id, contentId)
     const ret = await checkLikesContent(user_id, contentId);
-    console.log("checkLikesContent RET : ", ret);
+
     setLikesCount(ret.likes_count)
     setLiked(ret.my_check)
 
@@ -63,21 +62,18 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
     let result;
 
     if (bookmarked) {
-      console.log("call unsetFavorites");
+
       result = await unsetFavorite(user_id, contentId);
     } else {
-      console.log("call setFavorites", user_id);
+
       result = await setFavorites(user_id, contentId, contentTypeId,
         title, addr1, addr2, areaCode, sigunguCode, firstimage, mapX, mapY);
     }
-
-    console.log("------>user, content ",user_id, contentId)
+    
+    
     const ret = await checkFavorite(user_id, contentId);
-    console.log("RET : ", ret);
     setBookmarked(ret)
-
-
-    // setBookmarked(!bookmarked);
+    // setBookmarked(!bookmarked); // 직접 DB상태를 확인하는 것으로 변경
   };
 
   const handleCardClick = () => {
@@ -129,3 +125,4 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
 }
 
 export default EventCard;
+
