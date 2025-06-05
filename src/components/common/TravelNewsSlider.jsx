@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 function TravelNewsSlider() {
     const articles = [
-        '부산의 숨겨진 핫플, 영도 투어',
-        '서울 도심 속 하루치기 여행',
-        '제주에서 즐기는 여름 밤 바다 감성',
+        '태안 가볼만한 곳, 은빛 해변과 모래언덕이 어우러진 만리포 해변',
+        '대전가볼만한곳, 아이부터 어른까지 꽉 찬 하루 코스',
+        '최초의 구산선문, 생명나눔의 시작 남원 실상사 [정용식의 사찰 기행]',
     ];
     const [currentIndex, setCurrentIndex] = useState(1);
 

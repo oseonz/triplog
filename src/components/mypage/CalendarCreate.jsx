@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const COLORS = ['#FFBABB', '#FFEDBA', '#BADAFF', '#D1BAFF'];
+const COLORS = ['#FFBABB', '#FFEDBA', '#BEFFBA', '#BADAFF', '#D1BAFF'];
 
-function CalendarCreat() {
+function CalendarCreate({ course }) {
     const [visible, setVisible] = useState(true);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -24,6 +24,11 @@ function CalendarCreat() {
                 >
                     ✕
                 </button>
+            </div>
+            <div className="p-4">
+                <p className="text-gray-500 mb-2">
+                    선택된 코스: <strong>{course}</strong>
+                </p>
             </div>
 
             {/* 일정 입력 */}
@@ -110,4 +115,4 @@ function CalendarCreat() {
     );
 }
 
-export default CalendarCreat;
+export default CalendarCreate;

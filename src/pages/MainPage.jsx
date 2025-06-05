@@ -93,27 +93,30 @@ function MainPage() {
                                 이달의 여행 기사
                             </span>
                         </div>
-                        <div className="container">
-                            <div className="flex w-full overflow-hidden rounded-2xl shadow-md mb-8">
-                                <div className="w-[400px] h-[300px] bg-gray-300">
-                                    <img
-                                        src="../public/images/mainNews.jpg"
-                                        alt=""
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
+                        <Link to="../info/article">
+                            <div className="container">
+                                <div className="flex w-full overflow-hidden rounded-2xl shadow-md mb-8">
+                                    <div className="w-[400px] h-[300px] bg-gray-300">
+                                        <img
+                                            src="../public/images/mainNews.jpg"
+                                            alt=""
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
 
-                                <div className="flex-1 h-[200px] bg-white p-4 flex flex-col justify-center ps-10">
-                                    {/* <p className="text-xl mb-2">
+                                    <div className="flex-1 h-[200px] bg-white p-4 flex flex-col justify-center ps-10">
+                                        {/* <p className="text-xl mb-2">
                                         {getPlainText(title)}
                                     </p> */}
-                                    {/* <p className="text-black text-xl ">
+                                        {/* <p className="text-black text-xl ">
                                         최근 여행 소식
                                     </p> */}
-                                    <TravelNewsSlider />
+                                        <TravelNewsSlider />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
+
                         <div>
                             {/* <TripCard
                 key={i}

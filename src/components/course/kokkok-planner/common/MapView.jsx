@@ -6,6 +6,7 @@ import {
 } from 'react-kakao-maps-sdk';
 import { useRecoilValue } from 'recoil';
 import { courseDataState } from '../../../../pages/course/atom/courseState';
+import { checkLikesCourse } from '../../../../api/common/LikesApi';
 function MapView({
     center,
     level,
@@ -20,7 +21,7 @@ function MapView({
 
     // ✅ 선 그리기용
     useEffect(() => {
-        if (!map || checkCourse.length < 2) return;
+        if (!map || checkLikesCourse.length < 2) return;
 
         const path = checkCourse
             .filter((p) => p.mapy && p.mapx)
