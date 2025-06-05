@@ -1,25 +1,57 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { getList } from '../../api/course/placeLikes.jsx';
-import TripRegion from '../../components/search/TripRegion.jsx';
-import TripCard from '../../components/common/TripCard.jsx';
-import { Link } from 'react-router-dom';
-import Regions from '../../components/search/Regions.jsx';
+import React, { useRef, useEffect, useState } from "react";
+import { getList } from "../../api/course/placeLikes.jsx";
+import TripRegion from "../../components/search/TripRegion.jsx";
+import TripCard from "../../components/common/TripCard.jsx";
+import { Link } from "react-router-dom";
+import Regions from "../../components/search/Regions.jsx";
+import { userState } from "../mypage/atom/userState";
+import { useRecoilValue } from "recoil";
 
 //java -jar tourAPI-0521.war
 
 function PlacePage() {
-    const scrollRef = useRef(null);
-    const [tourListData, setTourListData] = useState([]);
+    const { id } = useRecoilValue(userState);  // 유저id
+  // const id = 2
+  
+  const scrollRef = useRef(null);
+  const [tourListData, setTourListData] = useState([]);
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-    const [params, setParams] = useState({
-        user_id: '',
-        areacode: 1,
-        contenttypeid: 12,
-        page: 0,
-        size: 12,
+  const [params, setParams] = useState({
+    user_id: "",
+    areacode: 1,
+    contenttypeid: 12,
+    page: 0,
+    size: 12,
+  });
+
+  const [selectedRegion, setSelectedRegion] = useState("서울");
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    getList(params).then((data) => {
+      console.log("받은 응답:", data);
+      if (data && Array.isArray(data.items?.content)) {
+        setTourListData(data.items.content);
+        setTotalPages(data.items.totalPages || 1);
+        console.log(data.items.content);
+      } else {
+        console.error("❌ content 배열이 없음", data);
+        setTourListData([]);
+      }
     });
 
     const [selectedRegion, setSelectedRegion] = useState('서울');
@@ -169,56 +201,76 @@ function PlacePage() {
             👍 <span className="text-blue-500">최근 인기 있는</span> 여행지
           </span>
         </div> */}
-                <div className="flex justify-center">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-                        {tourListData.map((item, i) => (
-                            <Link to={`../detail/${item.contentid}`} key={i}>
-                                <TripCard
-                                    title={item.title}
-                                    firstimage={
-                                        item.firstimage ||
-                                        'https://via.placeholder.com/300'
-                                    }
-                                    addr1={extractSiGu(item.addr1)}
-                                    likes_count={item.likes_count}
-                                />
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
+            {tourListData.map((item, index) => {
 
-                <div className="flex justify-center mt-10">
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 0}
-                            className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
-                        >
-                            이전
-                        </button>
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => handlePageChange(i)}
-                                className={`px-4 py-2 rounded-full border border-blue-500 ${
-                                    i === currentPage
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-white text-black'
-                                }`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages - 1}
-                            className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
-                        >
-                            다음
-                        </button>
-                    </div>
-                </div>
-            </div>
+              
+                // if (!item.contentId || !id) {
+                if (!item.contentid || !id) {
+                    console.warn("렌더링 건너뜀: contentId 또는 user_id 누락", item);
+                    return null;
+                }
+
+
+              // <Link to={`../detail/${item.contentid}`} key={index}>
+                return ( 
+                  <TripCard
+                      key={index}
+                        user_id={id}
+                        contentId={item.contentid}
+                        contentTypeId={item.contenttypeid}
+                        // contentId={item.contentId}
+                        // contentTypeId={item.contentTypeId}
+                        title={item.title}
+                        addr1={item.addr1}
+                        addr2={item.addr2}
+                        areaCode={item.areacode}
+                        sigunguCode={item.sigungucode}
+                        // areaCode={item.areaCode}
+                        // sigunguCode={item.sigunguCode}
+                        firstimage={
+                            item.firstimage || "https://via.placeholder.com/300"
+                        }
+                        mapX={item.mapX}
+                        mapY={item.mapY}
+                  />
+                );
+              // </Link>
+                })}
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-10">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 0}
+              className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
+            >
+              이전
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i)}
+                className={`px-4 py-2 rounded-full border border-blue-500 ${
+                  i === currentPage
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-black"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages - 1}
+              className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
+            >
+              다음
+            </button>
+          </div>
         </div>
     );
 }

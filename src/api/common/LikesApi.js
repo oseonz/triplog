@@ -13,9 +13,6 @@ export const checkLikesContent = async (user_id, contentid) => {
     });
 
 
-    console.log("##### ",res.data)
-
-
     if(!(res?.data?.items)) return false;
 
     const { my_check, likes_count } = res?.data?.items || {};
@@ -34,15 +31,14 @@ export const setLikesContent = async (user_id, contentid, contenttypeid,
 
   const URL = `${API_SERVER_HOST}/likes/content/save`;
 
-  console.log("in setFavorites : ",user_id, contentid )
-  
+ 
   try {
     const res = await axios.post(URL, {user_id, contentid, contenttypeid, 
                       title, addr1, addr2, areacode, sigungucode, firstimage, mapX, mapY }
     );
 
     const { result, message, id_name, id } = res.data;
-    console.log(contentid, result, message, id_name, id)
+
     return result;
 
   } catch (err) {
@@ -62,7 +58,7 @@ export const unsetLikesContent = async (user_id, contentid) => {
     });
 
     const { result, message, id_name, id } = res.data;
-    console.log(contentid, result, message, id_name, id)
+
     return result;
 
   } catch (err) {
@@ -108,7 +104,7 @@ export const setLikesCourse = async (user_id, course_id) => {
      });
 
     const { result, message, id_name, id } = res.data;
-    console.log(result, message, id_name, id)
+
     return result;
 
   } catch (err) {
@@ -128,7 +124,7 @@ export const unsetLikesCourse = async (user_id, course_id) => {
     });
 
     const { result, message, id_name, id } = res.data;
-    console.log(result, message, id_name, id)
+
     return result;
 
   } catch (err) {

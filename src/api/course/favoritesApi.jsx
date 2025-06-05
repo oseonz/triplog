@@ -14,9 +14,6 @@ export const getFavorites = async (user_id, contentid) => {
       params: { user_id, contentid },
     });
 
-    //console.log("✅ 전체 응답 확인:", res.data); // 이거 꼭 찍어봐야 해
-
-    // items가 없으면 빈 배열 반환
     return res.data?.items || [];
   } catch (err) {
     console.error("❌ getFavorites 에러:", err);
@@ -30,7 +27,7 @@ export const setFavorites = async (user_id, contentid, contenttypeid,
 
   const URL = `${API_SERVER_HOST}/favorites/save`;
 
-  console.log("in setFavorites : ",user_id, contentid )
+
   
   try {
     const res = await axios.post(URL, {user_id, contentid, contenttypeid, 
@@ -38,7 +35,7 @@ export const setFavorites = async (user_id, contentid, contenttypeid,
     );
 
     const { result, message, id_name, id } = res.data;
-    console.log(contentid, result, message, id_name, id)
+
     return result;
 
   } catch (err) {
@@ -58,7 +55,7 @@ export const unsetFavorite = async (user_id, contentid) => {
     });
 
     const { result, message, id_name, id } = res.data;
-    console.log(contentid, result, message, id_name, id)
+
     return result;
 
   } catch (err) {
@@ -73,13 +70,12 @@ export const checkFavorite = async (user_id, contentid) => {
   try {
     const prefix = `${API_SERVER_HOST}/favorites/check`;
   
-    console.log("-----> U C ", user_id, contentid)
-
     const res = await axios.get(prefix, {
       params: { user_id, contentid },
     });
 
-    console.log("res------->", res.data)
+    console.log("checkFavorite : ", res.data)
+
     if(!(res?.data?.items)) return false;
 
     const { my_check } = res?.data?.items || {};
