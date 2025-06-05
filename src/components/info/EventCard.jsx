@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { checkFavorite, setFavorites, unsetFavorite } from "../../api/course/favoritesApi";
-import { checkLikesContent, setLikesContent, unsetLikesContent } from "../../api/common/LikesApi";
-
-
+import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 //공연/행사 카드
 
 function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, areaCode, sigunguCode, firstimage, mapX, mapY }) {
@@ -118,10 +114,7 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
             <span>{likesCount}</span>
           </div>
         </div>
-        </a>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default EventCard;
