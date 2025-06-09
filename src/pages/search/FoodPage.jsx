@@ -183,12 +183,14 @@ function FoodPage() {
                                 return null;
                             }
 
-                            // <Link to={`../detail/${item.contentid}`} key={index}>
-                            return (
+
+                            return <>
+{/* 
                                 <Link
                                     to={`/search/detail/${item.contentid}`}
                                     key={index}
-                                >
+                                > */}
+                                    
                                     <TripCard
                                         user_id={id}
                                         contentId={item.contentid}
@@ -202,9 +204,9 @@ function FoodPage() {
                                         mapX={item.mapx}
                                         mapY={item.mapy}
                                     />
-                                </Link>
-                            );
-                            // </Link>
+                                {/* </Link> */}
+                            </>
+
                         })}
                     </div>
                 </div>
