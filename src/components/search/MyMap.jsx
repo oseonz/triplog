@@ -33,7 +33,7 @@ function MyMap({
                     if (isNaN(lat) || isNaN(lng)) return null;
 
                     const isSelected = selectedId === detail.contentid;
-                    const isAdded = checkCourse.some(
+                    const isAdded = addedCourses.some(
                         (course) => course.contentid === detail.contentid,
                     );
                     const isHovered = hoveredId === detail.contentid;

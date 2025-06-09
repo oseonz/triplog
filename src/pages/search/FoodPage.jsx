@@ -8,13 +8,14 @@ import { userState } from '../mypage/atom/userState.js';
 import { useRecoilValue } from 'recoil';
 
 function FoodPage() {
-    const { id } = useRecoilValue(userState); // 유저 ID
-    const scrollRef = useRef(null);
+    const { id } = useRecoilValue(userState); // 유저id
+    // const id = 2
 
+    const scrollRef = useRef(null);
     const [tourListData, setTourListData] = useState([]);
+
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const [selectedRegion, setSelectedRegion] = useState('서울');
 
     const [params, setParams] = useState({
         user_id: '',
@@ -23,6 +24,33 @@ function FoodPage() {
         page: 0,
         size: 12,
     });
+
+    const [selectedRegion, setSelectedRegion] = useState('서울');
+
+    const scrollLeft = () => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    };
+
+    const scrollRight = () => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    };
+
+    useEffect(() => {
+        getList(params).then((data) => {
+            console.log('받은 응답:', data);
+            if (data && Array.isArray(data.items?.content)) {
+                setTourListData(data.items.content);
+                setTotalPages(data.items.totalPages || 1);
+            } else {
+                console.error('❌ content 배열이 없음', data);
+                setTourListData([]);
+            }
+        });
+    }, [params]);
 
     const regionCodeMap = {
         서울: 1,
@@ -44,18 +72,6 @@ function FoodPage() {
         제주: 39,
     };
 
-    const scrollLeft = () => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-        }
-    };
-
-    const scrollRight = () => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-        }
-    };
-
     const handleRegionClick = (regionName) => {
         const code = regionCodeMap[regionName] || 1;
         setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
@@ -63,30 +79,19 @@ function FoodPage() {
         setSelectedRegion(regionName);
     };
 
+    // const extractSiGu = (addr1) => {
+    //   if (!addr1) return "주소없음";
+    //   const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군))/;
+    //   const match = addr1.match(regex);
+    //   return match ? match[1] : "시/구 없음";
+    // }; //구까지만 찾아서 나옴
+
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
             setCurrentPage(page);
             setParams((prev) => ({ ...prev, page }));
         }
-    };
-
-    useEffect(() => {
-        if (!id) return;
-        setParams((prev) => ({ ...prev, user_id: id }));
-    }, [id]);
-
-    useEffect(() => {
-        getList(params).then((data) => {
-            console.log('받은 응답:', data);
-            if (data && Array.isArray(data.items?.content)) {
-                setTourListData(data.items.content);
-                setTotalPages(data.items.totalPages || 1);
-            } else {
-                console.error('❌ content 배열이 없음', data);
-                setTourListData([]);
-            }
-        });
-    }, [params]);
+    }; //페이지네이션
 
     return (
         <div className="min-h-screen bg-white text-black pb-7">
@@ -103,11 +108,29 @@ function FoodPage() {
                             ref={scrollRef}
                             className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
                         >
-                            {Object.keys(regionCodeMap).map((region, index) => (
+                            {[
+                                '서울',
+                                '인천',
+                                '대전',
+                                '대구',
+                                '광주',
+                                '부산',
+                                '울산',
+                                '세종',
+                                '제주',
+                                '강원',
+                                '경기',
+                                '충북',
+                                '충남',
+                                '전북',
+                                '전남',
+                                '경북',
+                                '경남',
+                            ].map((region, index) => (
                                 <TripRegion
                                     key={index}
                                     regionName={region}
-                                    selected={selectedRegion === region}
+                                    selected={selectedRegion === region} // 선택 여부
                                     onClick={() => handleRegionClick(region)}
                                 />
                             ))}
@@ -142,9 +165,16 @@ function FoodPage() {
                     </div>
                 </div>
 
+                {/* <div className="pb-[30px]">
+          <span className="text-[22px] text-black font-bold">
+            👍 <span className="text-blue-500">최근 인기 있는</span> 음식점
+          </span>
+        </div> */}
+
                 <div className="flex justify-center">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
                         {tourListData.map((item, index) => {
+                            // if (!item.contentId || !id) {
                             if (!item.contentid || !id) {
                                 console.warn(
                                     '렌더링 건너뜀: contentId 또는 user_id 누락',
@@ -153,17 +183,22 @@ function FoodPage() {
                                 return null;
                             }
 
+                            // <Link to={`../detail/${item.contentid}`} key={index}>
                             return (
                                 <TripCard
                                     key={index}
                                     user_id={id}
                                     contentId={item.contentid}
                                     contentTypeId={item.contenttypeid}
+                                    // contentId={item.contentId}
+                                    // contentTypeId={item.contentTypeId}
                                     title={item.title}
                                     addr1={item.addr1}
                                     addr2={item.addr2}
                                     areaCode={item.areacode}
                                     sigunguCode={item.sigungucode}
+                                    // areaCode={item.areaCode}
+                                    // sigunguCode={item.sigunguCode}
                                     firstimage={
                                         item.firstimage ||
                                         'https://via.placeholder.com/300'
@@ -172,6 +207,7 @@ function FoodPage() {
                                     mapY={item.mapY}
                                 />
                             );
+                            // </Link>
                         })}
                     </div>
                 </div>
