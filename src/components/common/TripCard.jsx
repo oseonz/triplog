@@ -9,7 +9,7 @@ import {
     checkLikesContent,
     setLikesContent,
     unsetLikesContent,
-} from '../../api/common/LikesApi';
+} from '../../api/common/likesApi';
 
 function TripCard({
     user_id,
@@ -122,61 +122,92 @@ function TripCard({
         checkLiked();
     }, []);
 
-    // const handleCardClick = () => {
-    //     navigate(`../detail/${contentId}`);
-    // };
+    const handleCardClick = () => {
+
+      console.log("##$$$$$$$ : " 
+
+
+                             , user_id,
+                      contentId,
+                      contentTypeId,
+                      title,
+                      addr1,
+                      addr2,
+                      areaCode,
+                      sigunguCode,
+                      firstimage,
+                      mapX,
+                      mapY
+      )
+      navigate(`../detail/${contentId}`, {
+                state: {
+                      user_id,
+                      contentId,
+                      contentTypeId,
+                      title,
+                      addr1,
+                      addr2,
+                      areaCode,
+                      sigunguCode,
+                      firstimage,
+                      mapX,
+                      mapY
+                }
+    }); 
+    };
 
     return (
-        // <Link to={`../detail/${contentId}`}>
-        <div
-            // onClick={handleCardClick}
-            className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative"
-        >
-            <div className="relative">
-                <img
-                    src={firstimage}
-                    onError={(e) => {
-                        e.target.src = '../public/images/no_img.jpg';
-                    }}
-                    alt={title}
-                    className="w-[277px] h-[250px] object-cover"
-                />
-                <img
-                    src={
-                        bookmarked
-                            ? '/images/i_bookmarks2.png'
-                            : '/images/i_bookmarks.png'
-                    }
-                    className="absolute top-2 right-3 p-2 cursor-pointer transition"
-                    onClick={handleBookmarkClick}
-                    alt="bookmark icon"
-                />
-            </div>
-            <div className="p-4 flex flex-col justify-between">
-                <div>
-                    <p className="text-sm text-blue-500">
-                        {extractSiGu(addr1)}
-                    </p>
-                    <h3 className="text-[18px] text-black">
-                        {title.length > 14 ? `${title.slice(0, 12)}⋯` : title}
-                    </h3>
-                    <div className="flex items-center">
-                        <img
-                            src={
-                                liked
-                                    ? '/images/heart-f.png'
-                                    : '/images/heart-o.png'
-                            }
-                            className="w-[23px]"
-                            onClick={handleLikeClick}
-                            alt="heart icon"
-                        />
-                        <span>{likesCount}</span>
+
+            <div
+                onClick={handleCardClick}
+                className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative"
+            >
+                <div className="relative">
+                    <img
+                        src={firstimage}
+                        onError={(e) => {
+                            e.target.src = '../public/images/no_img.jpg';
+                        }}
+                        alt={title}
+                        className="w-[277px] h-[250px] object-cover"
+                    />
+                    <img
+                        src={
+                            bookmarked
+                                ? '/images/i_bookmarks2.png'
+                                : '/images/i_bookmarks.png'
+                        }
+                        className="absolute top-2 right-3 p-2 cursor-pointer transition"
+                        onClick={handleBookmarkClick}
+                        alt="bookmark icon"
+                    />
+                </div>
+                <div className="p-4 flex flex-col justify-between">
+                    <div>
+                        <p className="text-sm text-blue-500">
+                            {extractSiGu(addr1)}
+                        </p>
+                        <h3 className="text-[18px] text-black">
+                            {title.length > 14
+                                ? `${title.slice(0, 12)}⋯`
+                                : title}
+                        </h3>
+                        <div className="flex items-center">
+                            <img
+                                src={
+                                    liked
+                                        ? '/images/heart-f.png'
+                                        : '/images/heart-o.png'
+                                }
+                                className="w-[23px]"
+                                onClick={handleLikeClick}
+                                alt="heart icon"
+                            />
+                            <span>{likesCount}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        // </Link>
     );
 }
 

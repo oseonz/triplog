@@ -6,7 +6,7 @@ import {
 } from 'react-kakao-maps-sdk';
 import { useRecoilValue } from 'recoil';
 import { courseDataState } from '../../../../pages/course/atom/courseState';
-import { checkLikesCourse } from '../../../../api/common/LikesApi';
+import { checkLikesCourse } from '../../../../api/common/likesApi';
 function MapView({
     center,
     level,
