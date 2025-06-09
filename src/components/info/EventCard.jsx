@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { checkFavorite, setFavorites, unsetFavorite } from "../../api/course/favoritesApi";
-import { checkLikesContent, setLikesContent, unsetLikesContent } from "../../api/common/LikesApi";
+import { checkLikesContent, setLikesContent, unsetLikesContent } from "../../api/common/likesApi";
 
 
 //공연/행사 카드
@@ -75,7 +75,22 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
   };
 
   const handleCardClick = () => {
-    navigate(`../detail/${contentId}`); 
+    navigate(`../detail/${contentId}`, {
+              state: {
+                    user_id,
+                    contentId,
+                    contentTypeId,
+                    title,
+                    addr1,
+                    addr2,
+                    areaCode,
+                    sigunguCode,
+                    firstimage,
+                    mapX,
+                    mapY
+              }
+
+    }); 
   };
 
   return (

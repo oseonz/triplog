@@ -9,7 +9,7 @@ import {
     checkLikesContent,
     setLikesContent,
     unsetLikesContent,
-} from '../../api/common/LikesApi';
+} from '../../api/common/likesApi';
 
 function TripCard({
     user_id,
@@ -123,11 +123,41 @@ function TripCard({
     }, []);
 
     const handleCardClick = () => {
-        navigate(`../detail/${contentId}`);
+
+      console.log("##$$$$$$$ : " 
+
+
+                             , user_id,
+                      contentId,
+                      contentTypeId,
+                      title,
+                      addr1,
+                      addr2,
+                      areaCode,
+                      sigunguCode,
+                      firstimage,
+                      mapX,
+                      mapY
+      )
+      navigate(`../detail/${contentId}`, {
+                state: {
+                      user_id,
+                      contentId,
+                      contentTypeId,
+                      title,
+                      addr1,
+                      addr2,
+                      areaCode,
+                      sigunguCode,
+                      firstimage,
+                      mapX,
+                      mapY
+                }
+    }); 
     };
 
     return (
-        <Link to={`../detail/${contentId}`}>
+
             <div
                 onClick={handleCardClick}
                 className="bg-white rounded-[20px] shadow-lg overflow-hidden w-64 min-w-10 relative"
@@ -178,7 +208,6 @@ function TripCard({
                     </div>
                 </div>
             </div>
-        </Link>
     );
 }
 
