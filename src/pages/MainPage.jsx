@@ -77,27 +77,25 @@ function MainPage() {
                             <div className="flex justify-center pb-[60px]">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl text-black">
                                     {tourListData.slice(0, 4).map((item, i) => (
-                                        <Link
-                                            to={`/search/detail/${item.contentid}`}
-                                            key={i}
-                                        >
-                                            <TripCard
-                                                user_id={id}
-                                                contentId={item.contentid}
-                                                contentTypeId={
-                                                    item.contenttypeid
-                                                }
-                                                title={item.title}
-                                                addr1={item.addr1}
-                                                addr2={item.addr2}
-                                                areaCode={item.areacode}
-                                                sigunguCode={item.sigungucode}
-                                                firstimage={item.firstimage}
-                                                mapX={item.mapx}
-                                                mapY={item.mapy}
-                                                clickable={false} // TripCard에서 내부 링크 끔
-                                            />
-                                        </Link>
+                                        // <Link
+                                        //     to={`/search/detail/${item.contentid}`}
+                                        //     key={i}
+                                        // >
+                                        <TripCard
+                                            user_id={id}
+                                            contentId={item.contentid}
+                                            contentTypeId={item.contenttypeid}
+                                            title={item.title}
+                                            addr1={item.addr1}
+                                            addr2={item.addr2}
+                                            areaCode={item.areacode}
+                                            sigunguCode={item.sigungucode}
+                                            firstimage={item.firstimage}
+                                            mapX={item.mapx}
+                                            mapY={item.mapy}
+                                            clickable={false} // TripCard에서 내부 링크 끔
+                                        />
+                                        // </Link>
                                     ))}
                                 </div>
                             </div>

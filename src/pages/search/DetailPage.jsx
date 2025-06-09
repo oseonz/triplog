@@ -12,9 +12,18 @@ import MyMap from '../../components/search/MyMap';
 import DetailInfo from '../../components/search/DetailInfo';
 import DetailInfo2 from '../../components/search/DetailInfo2';
 import EventDetail from '../../components/info/EventDetail';
-import { checkFavorite, setFavorites, unsetFavorite } from '../../api/course/favoritesApi';
-import { checkLikesContent, setLikesContent, unsetLikesContent } from '../../api/common/likesApi';
+import {
+    checkFavorite,
+    setFavorites,
+    unsetFavorite,
+} from '../../api/search/favorites';
+import {
+    checkLikesContent,
+    setLikesContent,
+    unsetLikesContent,
+} from '../../api/common/likesApi';
 import { saveRemark } from '../../api/common/remarksApi';
+import MainLayout from '../../layouts/MainLayout';
 
 // //지도 스크립트
 // <script
@@ -23,43 +32,40 @@ import { saveRemark } from '../../api/common/remarksApi';
 // ></script>;
 
 function DetailPage() {
-
     const { contentid } = useParams();
     // const { contentid, contenttypeid } = useParams();
     const location = useLocation();
     const {
-            user_id,
-            contentId,
-            contentTypeId,
-            title,
-            addr1,
-            addr2,
-            areaCode,
-            sigunguCode,
-            firstimage,
-            mapX,
-            mapY
-  } = location.state || {}
+        user_id,
+        contentId,
+        contentTypeId,
+        title,
+        addr1,
+        addr2,
+        areaCode,
+        sigunguCode,
+        firstimage,
+        mapX,
+        mapY,
+    } = location.state || {};
 
-    const [comment, setComment] = useState("");
+    const [comment, setComment] = useState('');
 
     const [detail, setDetail] = useState(null);
     const [intro, setIntro] = useState(null);
     const [bookmarked, setBookmarked] = useState(false);
-      const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(false);
     // const [heart, setHeart] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
 
-
     const handleSaveRemark = async (e) => {
-        
         e.stopPropagation();
         e.preventDefault();
 
         let result;
 
-        if (!comment || comment.trim() === "") {
-            alert("댓글 내용을 작성해 주세요.");
+        if (!comment || comment.trim() === '') {
+            alert('댓글 내용을 작성해 주세요.');
             return;
         }
         try {
@@ -79,17 +85,13 @@ function DetailPage() {
             );
 
             console.log('saveRemark : ', result);
-
+        } catch (err) {
+            console.error('댓글 저장 실패:', err);
+            alert('handleBookmarkClick : 댓글 저장 중 오류가 발생했습니다.');
         }
-        catch(err){
-                console.error("댓글 저장 실패:", err);
-                alert("handleBookmarkClick : 댓글 저장 중 오류가 발생했습니다.");
-        }
-
-        
 
         // 저장한 댓글을 아래에 추가해야함. 전체 페이지 리로드?
-    }
+    };
     const handleBookmarkClick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -180,9 +182,8 @@ function DetailPage() {
         tourApiViewOne(contentId)
             .then(async (tourData) => {
                 const { contenttypeid: ContentTypeId } = tourData;
-                                    console.log("#### content Id : ", contentId);
+                console.log('#### content Id : ', contentId);
                 const [likesData, introData] = await Promise.all([
-
                     getLikes(contentId),
                     fetchDetailIntro(contentId, ContentTypeId),
                 ]);
@@ -207,6 +208,7 @@ function DetailPage() {
 
     return (
         <>
+            {/* <MainLayout /> */}
             <DetailLayout>
                 <div className="place-items-center gap-5">
                     <p className="text-4xl font-bold pb-5">{detail?.title}</p>
@@ -321,18 +323,23 @@ function DetailPage() {
                                 />
                             </div>
                         </div>
-
                     </div>
                     <textarea
                         name="comment"
                         id="comment"
                         value={comment}
-                        onChange={(e)=>{setComment(e.target.value)}}
+                        onChange={(e) => {
+                            setComment(e.target.value);
+                        }}
                         placeholder="소중한 댓글을 남겨주세요."
                         className="w-[1200px] h-[100px] border border-gray-300 p-4 placeholder:text-start resize-none mb-4"
                     />
                     <div className="flex justify-end">
-                        <button name='saveBtn' className="bg-blue-500 text-white py-2 px-6 border border-blue-500 hover:bg-blue-600" onClick={handleSaveRemark}> 
+                        <button
+                            name="saveBtn"
+                            className="bg-blue-500 text-white py-2 px-6 border border-blue-500 hover:bg-blue-600"
+                            onClick={handleSaveRemark}
+                        >
                             등록
                         </button>
                     </div>
