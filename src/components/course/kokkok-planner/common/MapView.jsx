@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import {
     courseDataState,
     courseListState,
+    mapCenterState,
 } from '../../../../pages/course/atom/courseState';
 
 function MapView({
@@ -17,16 +18,40 @@ function MapView({
     checkCourse = [],
     onMarkerClick,
     onSaveCourse,
+    isBookmarkTab,
 }) {
     const [selectedId, setSelectedId] = useState(null);
     const [hoveredId, setHoveredId] = useState(null);
     const [map, setMap] = useState(null);
     const courseData = useRecoilValue(courseDataState);
     const courseList = useRecoilValue(courseListState);
+    const centerCoord = useRecoilValue(mapCenterState);
+
+    const allMarkers = [
+        ...visiblePlaces,
+        ...(isBookmarkTab ? favoriteList : []),
+    ];
+
+    // contentid로 중복 제거
+    const dedupedMarkers = allMarkers.reduce((acc, curr) => {
+        if (!acc.find((item) => item.contentid === curr.contentid)) {
+            acc.push(curr);
+        }
+        return acc;
+    }, []);
+
+    useEffect(() => {
+        if (map && centerCoord.lat && centerCoord.lng) {
+            map.setCenter(
+                new window.kakao.maps.LatLng(centerCoord.lat, centerCoord.lng),
+            );
+        }
+    }, [centerCoord, map]);
 
     useEffect(() => {
         console.log('🔥 courseList:', courseList);
     }, [courseList]);
+
     // ✅ 선 그리기용
     useEffect(() => {
         if (!map || courseList.length < 2) return;

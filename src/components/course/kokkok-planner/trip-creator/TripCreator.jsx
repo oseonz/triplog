@@ -11,13 +11,16 @@ import {
     courseListState,
     selectedPlaceState,
     favoriteListState,
+    searchKeywordState,
+    searchResultState,
 } from '../../../../pages/course/atom/courseState';
 import { Link, useNavigate } from 'react-router-dom';
 import TabMenu from '../common/TabMenu';
 import ListViewComp from './ListViewComp';
 import { saveCourse } from '../../../../api/course/tourBackApi';
+//import { tourData } from '../../../../pages/course/CourseBuilder';
 
-function TripCreator() {
+function TripCreator({ tourData }) {
     const [selectedType, setSelectedType] = useState('12');
     const [tripTitle, setTripTitle] = useState('');
     const [currentTab, setCurrentTab] = useState('콕콕검색');
@@ -36,6 +39,10 @@ function TripCreator() {
     const selectedPlace = useRecoilValue(selectedPlaceState);
     const [courseList, setCourseList] = useRecoilState(courseListState);
     const setFavoriteList = useSetRecoilState(favoriteListState);
+    const favoriteList = useRecoilValue(favoriteListState);
+    const keyword = useRecoilValue(searchKeywordState);
+    const result = useRecoilValue(searchResultState);
+    const searchResult = useRecoilValue(searchResultState);
 
     const [note, setNote] = useState({
         schedule: '',
@@ -65,6 +72,13 @@ function TripCreator() {
 
     // ✅ 2. 맵 마커용으로 둘 다 합친 리스트 생성
     const mapVisiblePlaces = [...visibleTourList, ...visibleFoodList];
+    const allMapMarkers = [...mapVisiblePlaces, ...favoriteList];
+    const dedupedMarkers = allMapMarkers.reduce((acc, curr) => {
+        if (!acc.some((item) => item.contentid === curr.contentid)) {
+            acc.push(curr);
+        }
+        return acc;
+    }, []);
 
     // ✅ 3. 현재 탭에서 보여줄 리스트 (카드 출력용)
     const visibleList =
@@ -196,7 +210,20 @@ function TripCreator() {
         }
     };
 
-    // console.log('📌 courseList:', courseList);
+    useEffect(() => {
+        if (currentTab === '콕콕검색' && keyword) {
+            const selectedList =
+                selectedType === '12'
+                    ? searchResult.typeOneList
+                    : searchResult.typeTwoList;
+
+            setCourseData((prev) => ({
+                ...prev,
+                [selectedType === '12' ? 'typeOneList' : 'typeTwoList']:
+                    selectedList || [],
+            }));
+        }
+    }, [currentTab, keyword, selectedType]);
 
     return (
         <div className="flex w-full h-[900px] overflow-hidden">
@@ -319,8 +346,9 @@ function TripCreator() {
                 selectedType={selectedType}
                 checkCourse={courseList} // 선 연결
                 onMarkerClick={setSelectedPlace}
-                visiblePlaces={mapVisiblePlaces} //더보기 연동
+                //visiblePlaces={mapVisiblePlaces} //더보기 연동
                 onSaveCourse={handleSaveCourse} // 저장하기
+                visiblePlaces={dedupedMarkers}
             />
 
             {/* 상세 정보 패널 */}

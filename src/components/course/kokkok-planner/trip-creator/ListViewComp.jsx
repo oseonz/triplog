@@ -2,6 +2,7 @@ import React from 'react';
 import {
     courseListState,
     selectedPlaceState,
+    mapCenterState,
 } from '../../../../../src/pages/course/atom/courseState';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
@@ -9,16 +10,27 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
     const setSelectedPlace = useSetRecoilState(selectedPlaceState);
     const courseList = useRecoilValue(courseListState);
     const setCourseList = useSetRecoilState(courseListState);
+    const setMapCenter = useSetRecoilState(mapCenterState);
 
     const checkCourse = courseList.some(
         (item) => item.contentid === place.contentid,
     );
+
+    const handleCardClick = () => {
+        setSelectedPlace(place); // ✅ 디테일 패널 뜨게 만듦
+        console.log('🧪 카드 클릭됨:', place.title);
+        console.log('📍 위도:', place.mapy, '경도:', place.mapx);
+        if (place.mapy && place.mapx) {
+            setMapCenter({
+                lat: parseFloat(place.mapy),
+                lng: parseFloat(place.mapx),
+            });
+        }
+    };
     return (
         <div
             className="border p-4 rounded shadow mb-4"
-            onClick={() => {
-                setSelectedPlace(place);
-            }}
+            onClick={handleCardClick}
         >
             {cardType === 'one' ? (
                 // ✅ 타입 원: 썸네일 왼쪽 + 텍스트 오른쪽
@@ -95,10 +107,7 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                 </div>
             ) : (
                 // ✅ 타입 투: 이미지 위 + 텍스트 아래
-                <div
-                    className=" bg-white transition relative cursor-pointer"
-                    onClick={() => setSelectedPlace(place)}
-                >
+                <div className=" bg-white transition relative cursor-pointer">
                     <img
                         src={place.firstimage || '/images/no-image.png'}
                         alt={place.title}

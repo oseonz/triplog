@@ -3,7 +3,11 @@ import { useRecoilValue } from 'recoil';
 import { favoriteListState } from '../../../../pages/course/atom/courseState';
 import ListViewComp from '../trip-creator/ListViewComp';
 
-export default function BookMarkPanel({ checkLike, checkFavorite }) {
+export default function BookMarkPanel({
+    checkLike,
+    checkFavorite,
+    handleFavorite,
+}) {
     const favoriteList = useRecoilValue(favoriteListState);
     const tourFavorites = favoriteList.filter(
         (item) => item.contenttypeid === '12',
@@ -11,6 +15,8 @@ export default function BookMarkPanel({ checkLike, checkFavorite }) {
     const foodFavorites = favoriteList.filter(
         (item) => item.contenttypeid === '39',
     );
+    // console.log('📍 관광지 찜 리스트:', tourFavorites);
+    // console.log('🍽 음식점 찜 리스트:', foodFavorites);
 
     return (
         <div className="px-4 py-2 overflow-y-auto">
@@ -25,7 +31,7 @@ export default function BookMarkPanel({ checkLike, checkFavorite }) {
                         place={item}
                         cardType="two"
                         checkLike={checkLike}
-                        checkFavorite={checkFavorite}
+                        checkFavorite={handleFavorite}
                     />
                 ))
             ) : (
@@ -43,7 +49,7 @@ export default function BookMarkPanel({ checkLike, checkFavorite }) {
                         place={item}
                         cardType="two"
                         checkLike={checkLike}
-                        checkFavorite={checkFavorite}
+                        checkFavorite={handleFavorite}
                     />
                 ))
             ) : (
