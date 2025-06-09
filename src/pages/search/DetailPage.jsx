@@ -39,7 +39,7 @@ function DetailPage() {
 
         setHeart((prev) => {
             const newHeart = !prev;
-            setLikesCount((count) => (newHeart ? count + 1 : count - 1)); // ✅ 증감 처리
+            setLikesCount((count) => (newHeart ? count + 1 : count - 1));
             return newHeart;
         });
     };
@@ -102,11 +102,12 @@ function DetailPage() {
                             <img
                                 src={
                                     heart
-                                        ? '/images/i_heart2.png'
-                                        : '/images/i_heart.png'
+                                        ? '/images/heart-f.png'
+                                        : '/images/heart-o.png'
                                 }
                                 onClick={handleHeartClick}
                                 alt="좋아요"
+                                className="w-[36px]"
                             />
                             <p>{likesCount}</p>
                         </div>
@@ -156,11 +157,11 @@ function DetailPage() {
                     <div className="bg-white p-10 flex mb-12">
                         {detail?.contenttypeid == '12' ? (
                             <DetailInfo intro={intro} detail={detail} />
-                        ) : ( detail?.contenttypeid == '15' ? (
+                        ) : detail?.contenttypeid == '15' ? (
                             <EventDetail intro={intro} detail={detail} />
                         ) : (
                             <DetailInfo2 intro={intro} detail={detail} />
-                        ))}
+                        )}
                     </div>
                 </div>
                 <div className="mb-12">
@@ -171,7 +172,7 @@ function DetailPage() {
                     <div className="pt-5"></div>
                 </div>
                 <div className="flex justify-center items-center gap-5 mb-12">
-                    <BlueBtn />
+                    <BlueBtn to="/course/builder" label="코스 만들러 가기" />
                 </div>
                 <div className="mb-12">
                     <div className="mb-2">

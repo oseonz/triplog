@@ -1,89 +1,112 @@
 // 🔗 찜 목록 관련 API
-import axios from "axios";
+import axios from 'axios';
 
-const API_SERVER_HOST = "http://localhost:8081";
+const API_SERVER_HOST = 'http://localhost:8081';
 
 const prefix = `${API_SERVER_HOST}/favorites/list`;
 
 export const getFavorites = async (user_id, contentid) => {
+    try {
+        const res = await axios.get(prefix, {
+            params: { user_id, contentid },
+        });
+        // console.log('🎯 백에서 온 favorite 응답:', res.data);
 
-  const prefix = `${API_SERVER_HOST}/favorites/list`;
-
-  try {
-    const res = await axios.get(prefix, {
-      params: { user_id, contentid },
-    });
-
-    return res.data?.items || [];
-  } catch (err) {
-    console.error("❌ getFavorites 에러:", err);
-    return [];
-  }
+        // items가 없으면 빈 배열 반환
+        return res.data?.items || [];
+    } catch (err) {
+        console.error('❌ getFavorites 에러:', err);
+        return [];
+    }
 };
 
+export const getFavoritesType = async (user_id, contenttypeid) => {
+    try {
+        const res = await axios.get(prefix, {
+            params: { user_id, contenttypeid },
+        });
+        console.log('🎯 찜 목록 응답:', res.data);
+        return res.data?.items || [];
+    } catch (err) {
+        console.error('❌ getFavoritesByType 에러:', err);
+        return [];
+    }
+};
 
-export const setFavorites = async (user_id, contentid, contenttypeid, 
-                      title, addr1, addr2, areacode, sigungucode, firstimage, mapX, mapY) => {
+export const setFavorites = async (
+    user_id,
+    contentid,
+    contenttypeid,
+    title,
+    addr1,
+    addr2,
+    areacode,
+    sigungucode,
+    firstimage,
+    mapX,
+    mapY,
+) => {
+    const URL = `${API_SERVER_HOST}/favorites/save`;
 
-  const URL = `${API_SERVER_HOST}/favorites/save`;
+    try {
+        const res = await axios.post(URL, {
+            user_id,
+            contentid,
+            contenttypeid,
+            title,
+            addr1,
+            addr2,
+            areacode,
+            sigungucode,
+            firstimage,
+            mapX,
+            mapY,
+        });
 
+        const { result, message, id_name, id } = res.data;
 
-  
-  try {
-    const res = await axios.post(URL, {user_id, contentid, contenttypeid, 
-                      title, addr1, addr2, areacode, sigungucode, firstimage, mapX, mapY }
-    );
-
-    const { result, message, id_name, id } = res.data;
-
-    return result;
-
-  } catch (err) {
-    console.error("❌ setFavorites에서 catch :", err);
+        return result;
+    } catch (err) {
+        console.error('❌ setFavorites에서 catch :', err);
         const result = 'false';
-    return {result};
-  }
+        return { result };
+    }
 };
-
 
 export const unsetFavorite = async (user_id, contentid) => {
-  try {
-    const prefix = `${API_SERVER_HOST}/favorites/delete`;
-  
-  const res = await axios.delete(prefix, {
-      params: { user_id, contentid },
-    });
+    try {
+        const prefix = `${API_SERVER_HOST}/favorites/delete`;
 
-    const { result, message, id_name, id } = res.data;
+        const res = await axios.delete(prefix, {
+            params: { user_id, contentid },
+        });
 
-    return result;
+        const { result, message, id_name, id } = res.data;
 
-  } catch (err) {
-    console.error("❌ getFavorites 에러:", err);
-    // return [];
-  }
+        return result;
+    } catch (err) {
+        console.error('❌ getFavorites 에러:', err);
+        // return [];
+    }
 };
 
-
 export const checkFavorite = async (user_id, contentid) => {
-  
-  try {
-    const prefix = `${API_SERVER_HOST}/favorites/check`;
-  
-    const res = await axios.get(prefix, {
-      params: { user_id, contentid },
-    });
+    try {
+        const prefix = `${API_SERVER_HOST}/favorites/check`;
 
-    console.log("checkFavorite : ", res.data)
+        const res = await axios.get(prefix, {
+            params: { user_id, contentid },
+        });
 
-    if(!(res?.data?.items)) return false;
+        console.log('checkFavorite : ', res.data);
 
-    const { my_check } = res?.data?.items || {};
-    
-    return my_check;
+        if (!res?.data?.items) return false;
 
-  } catch (err) {
-    console.error("❌ getFavorites 에러:", err);
-    // return [];
-  }
+        const { my_check } = res?.data?.items || {};
+
+        return my_check;
+    } catch (err) {
+        console.error('❌ getFavorites 에러:', err);
+        // return [];
+    }
 };
