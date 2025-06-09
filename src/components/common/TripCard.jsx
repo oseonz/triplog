@@ -4,7 +4,7 @@ import {
     checkFavorite,
     setFavorites,
     unsetFavorite,
-} from '../../api/course/favoritesApi';
+} from '../../api/search/favorites';
 import {
     checkLikesContent,
     setLikesContent,

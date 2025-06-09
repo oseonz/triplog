@@ -65,7 +65,7 @@ function ArticlesPage() {
                 </div>
             </div>
 
-            <div className="min-h-screen bg-[#F3F5F6] flex justify-center pt-[52px]">
+            <div className="min-h-screen flex justify-center pt-[52px]">
                 <div className="container">
                     <div className="flex justify-center">
                         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-6xl">
@@ -85,7 +85,7 @@ function ArticlesPage() {
                 </div>
             </div>
 
-            <div className="flex justify-center mt-10">
+            <div className="flex justify-center mt-10  pb-7">
                 <div className="flex gap-2 items-center">
                     {/* 10페이지 단위 이전 */}
                     <button

@@ -145,7 +145,7 @@ function FoodPage() {
                 </div>
             </Regions>
 
-            <div className="container items-center m-auto mt-12">
+            <div className="container items-center m-auto mt-12 mb-">
                 <div className="flex justify-between items-center pb-[30px]">
                     <span className="text-2xl text-black">
                         방방곡곡 맛집 어디까지 가봤나요?
@@ -185,27 +185,24 @@ function FoodPage() {
 
                             // <Link to={`../detail/${item.contentid}`} key={index}>
                             return (
-                                <TripCard
+                                <Link
+                                    to={`/search/detail/${item.contentid}`}
                                     key={index}
-                                    user_id={id}
-                                    contentId={item.contentid}
-                                    contentTypeId={item.contenttypeid}
-                                    // contentId={item.contentId}
-                                    // contentTypeId={item.contentTypeId}
-                                    title={item.title}
-                                    addr1={item.addr1}
-                                    addr2={item.addr2}
-                                    areaCode={item.areacode}
-                                    sigunguCode={item.sigungucode}
-                                    // areaCode={item.areaCode}
-                                    // sigunguCode={item.sigunguCode}
-                                    firstimage={
-                                        item.firstimage ||
-                                        'https://via.placeholder.com/300'
-                                    }
-                                    mapX={item.mapX}
-                                    mapY={item.mapY}
-                                />
+                                >
+                                    <TripCard
+                                        user_id={id}
+                                        contentId={item.contentid}
+                                        contentTypeId={item.contenttypeid}
+                                        title={item.title}
+                                        addr1={item.addr1}
+                                        addr2={item.addr2}
+                                        areaCode={item.areacode}
+                                        sigunguCode={item.sigungucode}
+                                        firstimage={item.firstimage}
+                                        mapX={item.mapx}
+                                        mapY={item.mapy}
+                                    />
+                                </Link>
                             );
                             // </Link>
                         })}

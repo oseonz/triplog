@@ -186,31 +186,27 @@ function PlacePage() {
                                 return null;
                             }
 
-                            // <Link to={`../detail/${item.contentid}`} key={index}>
                             return (
-                                <TripCard
+                                <Link
+                                    to={`/search/detail/${item.contentid}`}
                                     key={index}
-                                    user_id={id}
-                                    contentId={item.contentid}
-                                    contentTypeId={item.contenttypeid}
-                                    // contentId={item.contentId}
-                                    // contentTypeId={item.contentTypeId}
-                                    title={item.title}
-                                    addr1={item.addr1}
-                                    addr2={item.addr2}
-                                    areaCode={item.areacode}
-                                    sigunguCode={item.sigungucode}
-                                    // areaCode={item.areaCode}
-                                    // sigunguCode={item.sigunguCode}
-                                    firstimage={
-                                        item.firstimage ||
-                                        'https://via.placeholder.com/300'
-                                    }
-                                    mapX={item.mapX}
-                                    mapY={item.mapY}
-                                />
+                                >
+                                    <TripCard
+                                        user_id={id}
+                                        contentId={item.contentid}
+                                        contentTypeId={item.contenttypeid}
+                                        title={item.title}
+                                        addr1={item.addr1}
+                                        addr2={item.addr2}
+                                        areaCode={item.areacode}
+                                        sigunguCode={item.sigungucode}
+                                        firstimage={item.firstimage}
+                                        mapX={item.mapx}
+                                        mapY={item.mapy}
+                                    />
+                                </Link>
                             );
-                            // </Link>
+                            //../detail/${item.contentid}
                         })}
                     </div>
                 </div>
