@@ -7,8 +7,12 @@ import { getList } from '../api/course/placeLikes.jsx';
 import { Link } from 'react-router-dom';
 import BlueBtn from '../components/common/BlueBtn.jsx';
 import TravelNewsSlider from '../components/common/TravelNewsSlider.jsx';
+import { id } from 'date-fns/locale';
+import { useRecoilValue } from 'recoil';
+import { userState } from './mypage/atom/userState.js';
 //메인페이지
 function MainPage() {
+    const { id } = useRecoilValue(userState); // 유저id
     const scrollRef = useRef(null);
     const [tourListData, setTourListData] = useState([]);
 
@@ -72,14 +76,22 @@ function MainPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl text-black">
                                 {tourListData.slice(0, 4).map((item, i) => (
                                     <Link
-                                        to={`../search/detail/${item.contentid}`}
+                                        to={`/search/detail/${item.contentid}`}
                                         key={i}
                                     >
                                         <TripCard
+                                            user_id={id}
+                                            contentId={item.contentid}
+                                            contentTypeId={item.contenttypeid}
                                             title={item.title}
+                                            addr1={item.addr1}
+                                            addr2={item.addr2}
+                                            areaCode={item.areacode}
+                                            sigunguCode={item.sigungucode}
                                             firstimage={item.firstimage}
-                                            addr1={extractSiGu(item.addr1)}
-                                            likes_count={item.likes_count}
+                                            mapX={item.mapx}
+                                            mapY={item.mapy}
+                                            clickable={false} // TripCard에서 내부 링크 끔
                                         />
                                     </Link>
                                 ))}
