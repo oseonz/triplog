@@ -187,10 +187,10 @@ function PlacePage() {
                             }
 
                             return (
-                                <Link
-                                    to={`/search/detail/${item.contentid}`}
-                                    key={index}
-                                >
+                                // <Link
+                                //     to={`/search/detail/${item.contentid}`}
+                                //     key={index}
+                                // >
                                     <TripCard
                                         user_id={id}
                                         contentId={item.contentid}
@@ -204,7 +204,7 @@ function PlacePage() {
                                         mapX={item.mapx}
                                         mapY={item.mapy}
                                     />
-                                </Link>
+                                // </Link>
                             );
                             //../detail/${item.contentid}
                         })}
