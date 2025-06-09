@@ -8,6 +8,7 @@ import courseRouter from "./courseRouter";
 import searchRouter from "./searchRouter";
 import infoRouter from "./infoRouter";
 import mypageRouter from "./mypageRouter";
+import DetailPage from "../pages/search/DetailPage";
 
 const root = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const root = createBrowserRouter([
     path: "/intro",
     element: <IntroPage />,
   },
+ { path: 'detail/:contentid', element: <DetailPage /> },
   searchRouter(),
   // {
   //   path: "/search",
