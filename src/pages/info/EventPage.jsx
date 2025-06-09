@@ -129,6 +129,7 @@ function EventPage() {
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
                 {eventLists.map((event, index) => {
+                  
                   if (!event.contentId || !id) {
                     console.warn("렌더링 건너뜀: contentId 또는 user_id 누락", event);
                     return null;

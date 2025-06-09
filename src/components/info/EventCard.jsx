@@ -19,8 +19,6 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
         setLikesCount(result.likes_count)
   } 
 
-
-
   const checkBookmark = async () => {        
         const result = await checkFavorite(user_id, contentId); 
         if(result == true) setBookmarked(true);
