@@ -46,3 +46,35 @@ export const fetchDetailIntro = async (contentId, contentTypeId) => {
         return null;
     }
 };
+
+
+// 지역 기반 장소 검색 API 호출
+export const searchGovContent = async (params) => {
+    const {
+    contenttypeid = '',
+    page = 1,
+    size = 10,
+    areacode = '',
+    sigungucode = '',
+    } = params;
+
+    const API_KEY = "1C42I%2BvS%2BEOZYNiN75gWOVCBJS9WTLlqh%2B4hyBjlz7njXFfqG%2Fv4qj5j6sA1TaQLjkS0T7qY1H%2BDFEUSTxiTJw%3D%3D";
+    const AREA_URL = `http://apis.data.go.kr/B551011/KorService1/areaBasedList1?serviceKey=${API_KEY}&pageNo=${page}&numOfRows=${size}&MobileApp=AppTest&MobileOS=ETC&arrange=O&areaCode=${areacode != null ? areacode : ''}&sigunguCode=${sigungucode != null ? sigungucode : ''}&contentTypeId=${contenttypeid}&cat1=&cat2=&cat3=&_type=json`;
+
+
+    console.log('📤 API 요청 파라미터:', contenttypeid, areacode);
+
+
+    try {
+        const res = await axios.get(AREA_URL);
+        console.log(res);
+        const itemList = res.data?.response?.body;
+        const raw = Array.isArray(itemList) ? itemList : [itemList];
+        console.log('📥 searchGovContent : API 결과:', itemList); // ✅ 이렇게만!
+
+        return itemList;
+    } catch (e) {
+        console.error('❌ searchGovContent : 지역 기반 장소 검색 실패', e);
+        return [];
+    }
+};

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import Regions from '../../components/search/Regions.jsx';
 import { userState } from '../mypage/atom/userState.js';
 import { useRecoilValue } from 'recoil';
+import { searchGovContent } from '../../api/search/newSearchApi.js';
 
 function FoodPage() {
     const { id } = useRecoilValue(userState); // 유저id
@@ -14,15 +15,25 @@ function FoodPage() {
     const scrollRef = useRef(null);
     const [tourListData, setTourListData] = useState([]);
 
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+
+    useEffect(() => {
+        setTotalPages(Math.max(1, Math.ceil(totalCount / 12)));
+    }, [totalCount]);
+
+    useEffect(() => {
+        setParams((prev) => ({ ...prev, page: currentPage }));
+    }, [currentPage]);
+
 
     const [params, setParams] = useState({
-        user_id: '',
-        areacode: 1,
         contenttypeid: 39,
-        page: 0,
+        page: 1,
         size: 12,
+        areacode: '',
+        sigungucode: '',
     });
 
     const [selectedRegion, setSelectedRegion] = useState('서울');
@@ -40,13 +51,14 @@ function FoodPage() {
     };
 
     useEffect(() => {
-        getList(params).then((data) => {
+        searchGovContent(params).then((data) => {
             console.log('받은 응답:', data);
-            if (data && Array.isArray(data.items?.content)) {
-                setTourListData(data.items.content);
-                setTotalPages(data.items.totalPages || 1);
+            if (data && Array.isArray(data.items?.item)) {
+                setTourListData(data.items.item);
+                setTotalCount(data.totalCount);
+                console.log(data.items.content);
             } else {
-                console.error('❌ content 배열이 없음', data);
+                console.error('❌ item 배열이 없음', data);
                 setTourListData([]);
             }
         });
@@ -75,7 +87,7 @@ function FoodPage() {
     const handleRegionClick = (regionName) => {
         const code = regionCodeMap[regionName] || 1;
         setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
-        setCurrentPage(0);
+        setCurrentPage(1);
         setSelectedRegion(regionName);
     };
 
@@ -211,37 +223,72 @@ function FoodPage() {
                     </div>
                 </div>
 
-                <div className="flex justify-center mt-10">
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 0}
-                            className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
-                        >
-                            이전
-                        </button>
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => handlePageChange(i)}
-                                className={`px-4 py-2 rounded-full border border-blue-500 ${
-                                    i === currentPage
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-white text-black'
-                                }`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages - 1}
-                            className="px-4 py-2 bg-white text-black border rounded disabled:opacity-50"
-                        >
-                            다음
-                        </button>
-                    </div>
+            <div className="flex justify-center mt-10  pb-7">
+                <div className="flex gap-2 items-center">
+                    {/* 10페이지 단위 이전 */}
+                    <button
+                        onClick={() =>
+                            handlePageChange(
+                                Math.max(
+                                    0,
+                                    Math.floor(currentPage / 10 - 1) * 10,
+                                ),
+                            )
+                        }
+                        disabled={currentPage < 10}
+                        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                    >
+                        «
+                    </button>
+
+                    {/* 현재 페이지 블록 표시 */}
+                    {Array.from(
+                        {
+                            length: Math.min(
+                                10,
+                                totalPages - Math.floor(currentPage / 10) * 10,
+                            ),
+                        },
+                        (_, i) => {
+                            const pageIndex =
+                                Math.floor(currentPage / 10) * 10 + i;
+                            return (
+                                <button
+                                    key={pageIndex}
+                                    onClick={() => handlePageChange(pageIndex)}
+                                    className={`px-4 py-2 rounded-full border ${
+                                        pageIndex === currentPage
+                                            ? 'bg-blue-500 text-white border-blue-500'
+                                            : 'bg-white text-black border-gray-300'
+                                    }`}
+                                >
+                                    {pageIndex + 1}
+                                </button>
+                            );
+                        },
+                    )}
+
+                    {/* 10페이지 단위 다음 */}
+                    <button
+                        onClick={() =>
+                            handlePageChange(
+                                Math.min(
+                                    totalPages - 1,
+                                    Math.floor(currentPage / 10 + 1) * 10,
+                                ),
+                            )
+                        }
+                        disabled={
+                            Math.floor(currentPage / 10 + 1) * 10 >= totalPages
+                        }
+                        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                    >
+                        »
+                    </button>
                 </div>
+            </div>
+
+
             </div>
         </div>
     );
