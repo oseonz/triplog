@@ -14,7 +14,8 @@ import DetailInfo2 from '../../components/search/DetailInfo2';
 import EventDetail from '../../components/info/EventDetail';
 import { checkFavorite, setFavorites, unsetFavorite } from '../../api/course/favoritesApi';
 import { checkLikesContent, setLikesContent, unsetLikesContent } from '../../api/common/likesApi';
-import { saveRemark } from '../../api/common/remarksApi';
+import { listRemarks, saveRemark } from '../../api/common/remarksApi';
+import axios from 'axios';
 
 // //지도 스크립트
 // <script
@@ -23,6 +24,10 @@ import { saveRemark } from '../../api/common/remarksApi';
 // ></script>;
 
 function DetailPage() {
+
+    // 댓글 관련 내용, 나중에 모듈로 빼낼것
+
+
 
     const { contentid } = useParams();
     // const { contentid, contenttypeid } = useParams();
@@ -45,8 +50,9 @@ function DetailPage() {
 
     const [detail, setDetail] = useState(null);
     const [intro, setIntro] = useState(null);
+    const [remarksList, setRemarksList] = useState([]);
     const [bookmarked, setBookmarked] = useState(false);
-      const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(false);
     // const [heart, setHeart] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
 
@@ -79,6 +85,10 @@ function DetailPage() {
             );
 
             console.log('saveRemark : ', result);
+
+            const refreshed = await listRemarks(contentId);
+            setRemarksList(refreshed.items); 
+            setComment("");
 
         }
         catch(err){
@@ -117,7 +127,6 @@ function DetailPage() {
         }
 
         const ret = await checkFavorite(user_id, contentId);
-        console.log('checkFavorite : ', result);
         setBookmarked(ret);
         // setBookmarked(!bookmarked); // 직접 DB상태를 확인하는 것으로 변경
     };
@@ -172,8 +181,10 @@ function DetailPage() {
     };
 
     useEffect(() => {
-        checkBookmark();
-        checkLiked();
+        (async () => {
+            await checkBookmark();
+            await checkLiked();
+        })();
     }, []);
 
     useEffect(() => {
@@ -181,10 +192,11 @@ function DetailPage() {
             .then(async (tourData) => {
                 const { contenttypeid: ContentTypeId } = tourData;
                                     console.log("#### content Id : ", contentId);
-                const [likesData, introData] = await Promise.all([
+                const [likesData, introData, remarksData] = await Promise.all([
 
                     getLikes(contentId),
                     fetchDetailIntro(contentId, ContentTypeId),
+                    listRemarks(contentId),
                 ]);
 
                 setDetail({
@@ -193,8 +205,13 @@ function DetailPage() {
                 });
                 setLikesCount(likesData);
                 setIntro(introData);
+                console.log("############## remakrsList : ", remarksData)
+
+                setRemarksList(remarksData.items);
+
 
                 console.log('detail 응답: ', tourData);
+                console.log('remarks 응답:', remarksData);
                 console.log('like:', likesData);
                 console.log('intro 응답: ', introData);
             })
@@ -335,6 +352,24 @@ function DetailPage() {
                         <button name='saveBtn' className="bg-blue-500 text-white py-2 px-6 border border-blue-500 hover:bg-blue-600" onClick={handleSaveRemark}> 
                             등록
                         </button>
+                    </div>
+
+                    <div>
+
+                        {Array.isArray(remarksList) && remarksList.map((item, i) => (
+                            <div key={i} className='mb-5'>
+                                <p>{item.user_nickname}</p>
+                                <div className='flex justify-between'>
+                                    <div>
+                                        {item.comment.split('\n').map((line, idx) => (
+                                        <p key={idx}>{line}</p>
+                                        ))}
+                                    </div>
+                                    <div>{user_id == item.user_id ? <button>X</button> : null }</div>
+                                </div>
+                            </div>
+                        ))} 
+
                     </div>
                 </div>
             </DetailLayout>
