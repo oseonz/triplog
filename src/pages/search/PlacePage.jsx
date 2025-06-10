@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { getList } from '../../api/course/placeLikes.jsx';
+import { getList } from '../../api/search/placeLikes.jsx';
 import TripRegion from '../../components/search/TripRegion.jsx';
 import TripCard from '../../components/common/TripCard.jsx';
 import { Link } from 'react-router-dom';
@@ -82,12 +82,12 @@ function PlacePage() {
         setSelectedRegion(regionName);
     };
 
-  const extractSiGu = (addr1) => {
-    if (!addr1) return "주소없음";
-    const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군|시|읍))/;
-    const match = addr1.match(regex);
-    return match ? match[1] : "시/구 없음";
-  };
+    const extractSiGu = (addr1) => {
+        if (!addr1) return '주소없음';
+        const regex = /^([가-힣]+(특별시|광역시|도)?\s[가-힣]+(구|군|시|읍))/;
+        const match = addr1.match(regex);
+        return match ? match[1] : '시/구 없음';
+    };
 
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
@@ -191,19 +191,19 @@ function PlacePage() {
                                 //     to={`/search/detail/${item.contentid}`}
                                 //     key={index}
                                 // >
-                                    <TripCard
-                                        user_id={id}
-                                        contentId={item.contentid}
-                                        contentTypeId={item.contenttypeid}
-                                        title={item.title}
-                                        addr1={item.addr1}
-                                        addr2={item.addr2}
-                                        areaCode={item.areacode}
-                                        sigunguCode={item.sigungucode}
-                                        firstimage={item.firstimage}
-                                        mapX={item.mapx}
-                                        mapY={item.mapy}
-                                    />
+                                <TripCard
+                                    user_id={id}
+                                    contentId={item.contentid}
+                                    contentTypeId={item.contenttypeid}
+                                    title={item.title}
+                                    addr1={item.addr1}
+                                    addr2={item.addr2}
+                                    areaCode={item.areacode}
+                                    sigunguCode={item.sigungucode}
+                                    firstimage={item.firstimage}
+                                    mapX={item.mapx}
+                                    mapY={item.mapy}
+                                />
                                 // </Link>
                             );
                             //../detail/${item.contentid}

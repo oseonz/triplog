@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getList } from '../../api/course/placeLikes.jsx';
+import { getList } from '../../api/search/placeLikes.jsx';
 import TripRegion from '../../components/search/TripRegion.jsx';
 import TripCard from '../../components/common/TripCard.jsx';
 import { Link } from 'react-router-dom';
@@ -183,14 +183,14 @@ function FoodPage() {
                                 return null;
                             }
 
-
-                            return <>
-{/* 
+                            return (
+                                <>
+                                    {/* 
                                 <Link
                                     to={`/search/detail/${item.contentid}`}
                                     key={index}
                                 > */}
-                                    
+
                                     <TripCard
                                         user_id={id}
                                         contentId={item.contentid}
@@ -204,9 +204,9 @@ function FoodPage() {
                                         mapX={item.mapx}
                                         mapY={item.mapy}
                                     />
-                                {/* </Link> */}
-                            </>
-
+                                    {/* </Link> */}
+                                </>
+                            );
                         })}
                     </div>
                 </div>
