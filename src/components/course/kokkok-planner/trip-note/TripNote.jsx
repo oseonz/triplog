@@ -83,14 +83,14 @@ export default function TripNote({ notedata, handleChange }) {
                 </div>
             </div>
 
-            <div className="px-6 py-2">
+            {/* <div className="px-6 py-2">
                 <button
                     onClick={handleSave}
                     className="ml-auto block px-4 py-2 bg-blue-500 rounded text-sm text-white"
                 >
                     저장하기
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 }

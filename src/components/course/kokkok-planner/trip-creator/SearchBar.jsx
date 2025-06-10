@@ -29,19 +29,33 @@ function SearchBar({
     const setSearchResult = useSetRecoilState(searchResultState);
 
     const handleSearch = async (isAuto = false) => {
-        console.log('선택된 타입:', selectedType);
         if (!isAuto && !keyword.trim()) return alert('검색어를 입력하세요!');
         if (onSearchReset) onSearchReset();
         console.log('검색', selectedType); // props로 받은 선택 타입
         console.log('user.id', user.id);
         const region = getRegionCodeFromKeyword(keyword) || { areaCode: 1 };
         const listKey = selectedType === '12' ? 'typeOneList' : 'typeTwoList';
-        console.log(' 검색', selectedType);
+
         console.log('👉 최종 API 요청값', {
             type: selectedType,
             areaCode: region?.areaCode,
             sigunguCode: region?.sigunguCode,
         });
+        if (!keyword) return;
+
+        // 여행지 검색
+        const tourResults = await fetchTourPlaces(keyword, '12');
+        setCourseData((prev) => ({
+            ...prev,
+            typeOneList: tourResults,
+        }));
+
+        // 음식점 검색
+        const foodResults = await fetchTourPlaces(keyword, '39');
+        setCourseData((prev) => ({
+            ...prev,
+            typeTwoList: foodResults,
+        }));
 
         if (!isAuto && (!region || !region.areaCode)) {
             if (!isAuto) alert('해당 지역을 찾을 수 없습니다.');
@@ -119,11 +133,11 @@ function SearchBar({
         }
     };
 
-    // useEffect(() => {
-    //     console.log('🍔 selectedType이 바뀜 → 검색 다시 실행');
-    //     handleSearch(true);
-    // }, [selectedType]);
-
+    useEffect(() => {
+        if (currentTab === '콕콕검색' && keyword) {
+            handleSearch(true); // 👈 자동으로 현재 keyword 기준 재검색 실행
+        }
+    }, [selectedType]);
     return (
         <div className="flex items-center justify-center gap-2 mt-4">
             <input

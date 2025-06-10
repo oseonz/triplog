@@ -17,10 +17,16 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import TabMenu from '../common/TabMenu';
 import ListViewComp from './ListViewComp';
-import { saveCourse } from '../../../../api/course/tourBackApi';
-//import { tourData } from '../../../../pages/course/CourseBuilder';
+import {
+    saveCourse,
+    saveFavorite,
+    deleteFavorite,
+    deleteLike,
+    postLike,
+} from '../../../../api/course/tourBackApi';
+import { userState } from '../../../../pages/mypage/atom/userState';
 
-function TripCreator({ tourData }) {
+function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
     const [tripTitle, setTripTitle] = useState('');
     const [currentTab, setCurrentTab] = useState('콕콕검색');
@@ -43,6 +49,7 @@ function TripCreator({ tourData }) {
     const keyword = useRecoilValue(searchKeywordState);
     const result = useRecoilValue(searchResultState);
     const searchResult = useRecoilValue(searchResultState);
+    const user = useRecoilValue(userState);
 
     const [note, setNote] = useState({
         schedule: '',
@@ -82,7 +89,7 @@ function TripCreator({ tourData }) {
 
     // ✅ 3. 현재 탭에서 보여줄 리스트 (카드 출력용)
     const visibleList =
-        selectedType === '12' ? visibleTourList : visibleFoodList;
+        selectedType === '12' ? courseData.typeOneList : courseData.typeTwoList;
 
     const resetVisibleCounts = () => {
         setTourVisibleCount(6);
@@ -97,85 +104,147 @@ function TripCreator({ tourData }) {
         setCurrentTab(tabName); // 기존 탭 변경
         setSelectedPlace(null); // ✅ 디테일 패널 닫기
     };
-    const handleLike = (contentid) => {
-        console.log(contentid);
-        const listKey = selectedType == '12' ? 'typeOneList' : 'typeTwoList';
 
-        //콕콕검색 핸들러
-        setCourseData((prevData) => ({
-            ...prevData,
-            [listKey]: prevData[listKey].map((item) =>
-                item.contentid === contentid
-                    ? {
-                          ...item,
-                          likes_count: item.mylike
-                              ? item.likes_count - 1
-                              : item.likes_count + 1,
-                          mylike: !item.mylike,
-                      }
-                    : item,
-            ),
-        }));
-        // 콕콕코스 핸들러
+    const handleLike = async (contentid) => {
+        console.log(contentid);
+        // const listKey = selectedType == '12' ? 'typeOneList' : 'typeTwoList';
+        const user_id = user?.id;
+        // 1️⃣ 현재 값 찾기
+        const item = [
+            ...courseData.typeOneList,
+            ...courseData.typeTwoList,
+            ...courseList, // 혹시 코스에만 있을 수도 있으니까
+        ].find((p) => p.contentid === contentid);
+
+        if (!item) return;
+
+        const wasLiked = !!item.mylike;
+        const newLikeValue = !wasLiked;
+        const likeDiff = newLikeValue ? 1 : -1;
+        const alreadyBookmarked = !!item.favorite;
+        // 2️⃣ 검색 탭 상태 업데이트
+        setCourseData((prev) => {
+            const update = (list) =>
+                list.map((p) =>
+                    p.contentid === contentid
+                        ? {
+                              ...p,
+                              mylike: newLikeValue,
+                              likes_count: (p.likes_count || 0) + likeDiff,
+                          }
+                        : p,
+                );
+            return {
+                ...prev,
+                typeOneList: update(prev.typeOneList || []),
+                typeTwoList: update(prev.typeTwoList || []),
+            };
+        });
+
+        // 3️⃣ 코스 탭 상태도 동일하게 업데이트
         setCourseList((prevList) =>
-            prevList.map((item) =>
-                item.contentid === contentid
+            prevList.map((p) =>
+                p.contentid === contentid
                     ? {
-                          ...item,
-                          likes_count: item.mylike
-                              ? item.likes_count - 1
-                              : item.likes_count + 1,
-                          mylike: !item.mylike,
+                          ...p,
+                          mylike: newLikeValue,
+                          likes_count: (p.likes_count || 0) + likeDiff,
                       }
-                    : item,
+                    : p,
             ),
         );
 
         // ✅ 찜 탭 업데이트 (핵심 추가!)
         setFavoriteList((prevList) =>
-            prevList.map((item) =>
-                item.contentid === contentid
+            prevList.map((p) =>
+                p.contentid === contentid
                     ? {
-                          ...item,
-                          likes_count:
-                              (item.likes_count || 0) + (item.mylike ? -1 : 1),
-                          mylike: !item.mylike,
+                          ...p,
+                          favorite: !alreadyBookmarked,
+                          likes_count: (p.likes_count || 0) + likeDiff,
+                          mylike: newLikeValue,
                       }
-                    : item,
+                    : p,
             ),
         );
-
-        // const user_id = 5; // 나중에 로그인한 유저 ID로 대체
-        // postLike({ user_id, contentid });
-        // axios
+        // ✅ 4. 서버에 좋아요 등록/삭제 요청
+        try {
+            if (newLikeValue) {
+                await postLike({ user_id, contentid });
+                console.log('✅ 좋아요 등록됨', contentid);
+            } else {
+                await deleteLike(user_id, contentid);
+                console.log('🗑️ 좋아요 삭제됨', contentid);
+            }
+        } catch (err) {
+            console.error('❌ 좋아요 처리 실패:', err);
+        }
     };
 
     //찜 아이콘 핸들러
-    const handleFavorite = (contentid) => {
-        setCourseData((prevData) => {
-            const existsIn = (list) =>
-                list.some((item) => item.contentid === contentid);
+    const handleFavorite = async (contentid) => {
+        const item = [
+            ...courseData.typeOneList,
+            ...courseData.typeTwoList,
+        ].find((p) => p.contentid === contentid);
+        if (!item) return;
+        console.log('삭제', item.favorite);
 
-            const updateList = (list) =>
-                list.map((item) =>
-                    item.contentid === contentid
-                        ? {
-                              ...item,
-                              favorite: item.favorite === true ? false : true,
-                          }
-                        : item,
+        const alreadyBookmarked = !!item.favorite;
+
+        // 1. UI 상태 업데이트
+        setCourseData((prev) => {
+            const update = (list) =>
+                list.map((p) =>
+                    p.contentid === contentid
+                        ? { ...p, favorite: !alreadyBookmarked }
+                        : p,
                 );
-
             return {
-                ...prevData,
-                typeOneList: existsIn(prevData.typeOneList || [])
-                    ? updateList(prevData.typeOneList || [])
-                    : prevData.typeOneList,
-                typeTwoList: existsIn(prevData.typeTwoList || [])
-                    ? updateList(prevData.typeTwoList || [])
-                    : prevData.typeTwoList,
+                ...prev,
+                typeOneList: update(prev.typeOneList || []),
+                typeTwoList: update(prev.typeTwoList || []),
             };
         });
+
+        setCourseList((prevList) =>
+            prevList.map((p) =>
+                p.contentid === contentid
+                    ? { ...p, favorite: !alreadyBookmarked }
+                    : p,
+            ),
+        );
+
+        // 2. Recoil 찜 리스트 반영
+        setFavoriteList((prev) => {
+            const exists = prev.some((f) => f.contentid === contentid);
+            return exists
+                ? prev.filter((f) => f.contentid !== contentid)
+                : [...prev, item];
+        });
+
+        // 3. 서버 저장 / 삭제 요청
+        try {
+            if (alreadyBookmarked) {
+                await deleteFavorite(user.id, contentid);
+
+                console.log('🗑️ 찜 삭제 완료');
+            } else {
+                await saveFavorite({
+                    user_id: user.id,
+                    contentid: item.contentid,
+                    contenttypeid: item.contenttypeid,
+                    title: item.title,
+                    addr: item.addr1,
+                    areacode: item.areacode,
+                    sigungucode: item.sigungucode,
+                    firstimage: item.firstimage || '이미지가 없떠여',
+                });
+                console.log('✅ 찜 저장', contentid);
+            }
+        } catch (err) {
+            console.error('❌ 찜 처리 실패:', err);
+        }
     };
 
     const handleSaveCourse = async () => {
@@ -217,18 +286,30 @@ function TripCreator({ tourData }) {
                     ? searchResult.typeOneList
                     : searchResult.typeTwoList;
 
+            // ✅ 찜 정보 덧씌우기
+            const favIds = new Set(favoriteList.map((item) => item.contentid));
+            const enrichedList = (selectedList || []).map((item) => ({
+                ...item,
+                favorite: favIds.has(item.contentid),
+            }));
+
+            // ✅ 리스트 반영
             setCourseData((prev) => ({
                 ...prev,
                 [selectedType === '12' ? 'typeOneList' : 'typeTwoList']:
-                    selectedList || [],
+                    enrichedList,
             }));
         }
-    }, [currentTab, keyword, selectedType]);
+    }, [currentTab, keyword, selectedType, favoriteList, courseList]);
 
     return (
         <div className="flex w-full h-[900px] overflow-hidden">
             {/* 왼쪽 영역 */}
+
             <div className="w-[550px] bg-white flex flex-col z-10">
+                {courseList.map((item) => (
+                    <div>{item.title}</div>
+                ))}
                 <div className="flex justify-between items-center px-3 py-4 border-b bg-white">
                     <button
                         onClick={handleBack}
@@ -277,6 +358,7 @@ function TripCreator({ tourData }) {
                                     key={item.contentid}
                                     place={item}
                                     checkLike={handleLike}
+                                    checkFavorite={handleFavorite}
                                 />
                             ))}
                         </div>
@@ -288,6 +370,7 @@ function TripCreator({ tourData }) {
                             onSearchReset={resetVisibleCounts}
                             setMapCenter={setMapCenter}
                             setMapLevel={setMapLevel}
+                            setSelectedType={setSelectedType}
                         />
                         <ListBtn
                             typeButton={selectedType}
@@ -305,14 +388,14 @@ function TripCreator({ tourData }) {
                                 </div>
                             )}
                             <div className="px-4 pb-4 h-[650px] overflow-y-auto ">
-                                {visibleList.map((item) => (
+                                {(visibleList || []).map((place) => (
                                     <ListViewComp
                                         cardType="one"
-                                        key={item.contentid}
-                                        place={item}
+                                        key={place.contentid}
                                         checkLike={handleLike}
                                         checkFavorite={handleFavorite}
                                         listdata={visibleList}
+                                        place={place}
                                     />
                                 ))}
                                 <div className="flex justify-center">

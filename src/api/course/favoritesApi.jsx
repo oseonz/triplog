@@ -25,7 +25,7 @@ export const getFavoritesType = async (user_id, contenttypeid) => {
         const res = await axios.get(prefix, {
             params: { user_id, contenttypeid },
         });
-        console.log('🎯 찜 목록 응답:', res.data);
+        // console.log('🎯 찜 목록 응답:', res.data);
         return res.data?.items || [];
     } catch (err) {
         console.error('❌ getFavoritesByType 에러:', err);

@@ -157,7 +157,7 @@ function MapView({
             </KakaoMap>
             <button
                 onClick={onSaveCourse}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-3xl"
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-3xl absolute bottom-[-0] right-[20px] z-40 "
             >
                 코스 저장하기
             </button>

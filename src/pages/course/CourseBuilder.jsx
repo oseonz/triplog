@@ -54,7 +54,9 @@ function CourseBuilder() {
                             likes_count: like,
                             detail: detail,
                             mylike: mylike.my_check,
-                            favorite: firstFavorite?.favorites_id ?? null,
+                            favorite: firstFavorite?.favorites_id
+                                ? true
+                                : false,
                             mapx: item.mapx || item.mapX,
                             mapy: item.mapy || item.mapY,
                         };
@@ -88,8 +90,21 @@ function CourseBuilder() {
             }));
 
             setFavoriteList(fixedList);
-        };
+            setCourseData((prevData) => {
+                const favoriteIds = new Set(fixedList.map((f) => f.contentid));
 
+                const updateList = (list = []) =>
+                    list.map((item) => ({
+                        ...item,
+                        favorite: favoriteIds.has(item.contentid),
+                    }));
+
+                return {
+                    typeOneList: updateList(prevData.typeOneList),
+                    typeTwoList: updateList(prevData.typeTwoList),
+                };
+            });
+        };
         fetchFavorites();
     }, []);
 

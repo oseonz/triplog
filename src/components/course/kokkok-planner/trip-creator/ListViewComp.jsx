@@ -7,6 +7,11 @@ import {
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
+    // console.log('🧪 props in ListViewComp:', {
+    //     place,
+    //     checkLike,
+    //     checkFavorite,
+    // });
     const setSelectedPlace = useSetRecoilState(selectedPlaceState);
     const courseList = useRecoilValue(courseListState);
     const setCourseList = useSetRecoilState(courseListState);
@@ -18,8 +23,9 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
 
     const handleCardClick = () => {
         setSelectedPlace(place); // ✅ 디테일 패널 뜨게 만듦
-        console.log('🧪 카드 클릭됨:', place.title);
-        console.log('📍 위도:', place.mapy, '경도:', place.mapx);
+        // console.log('🧪 카드 클릭됨:', place.title);
+        // console.log('📍 위도:', place.mapy, '경도:', place.mapx);
+
         if (place.mapy && place.mapx) {
             setMapCenter({
                 lat: parseFloat(place.mapy),
@@ -27,6 +33,7 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
             });
         }
     };
+    //console.log('💖 카드 렌더링:', place.title, '찜 상태:', place.favorite);
     return (
         <div
             className="border p-4 rounded shadow mb-4"
@@ -115,8 +122,10 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                     />
 
                     <div className="flex justify-between items-center">
-                        <div className="font-semibold">{place.title}</div>
-                        {/* <img
+                        <div className="font-semibold">
+                            {place.title} {place.mylike}
+                        </div>
+                        <img
                             src={
                                 place.favorite
                                     ? '/images/i_bookmarks2.png'
@@ -125,11 +134,11 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                             alt="찜 아이콘"
                             onClick={(e) => {
                                 e.stopPropagation();
+                                checkFavorite(place.contentid);
                             }}
                             className="w-5 h-5 cursor-pointer"
-                        /> */}
+                        />
                     </div>
-
                     <div className="text-sm  truncate">{place.addr1}</div>
 
                     <div className=" flex justify-between items-center">

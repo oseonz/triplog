@@ -4,7 +4,7 @@ const TOUR_API_KEY =
     'qKhW5l3qMZ7vggfkiEeB/roS7hi+V2mYQVSFqnuBbsow954NYhnhwmoFYa7VYRgN0avF6WpT2K7FqLAxtAyoyA==';
 const LOCATION_URL =
     'https://apis.data.go.kr/B551011/KorService1/detailCommon1';
-const INTRO_URL = 'https://apis.data.go.kr/B551011/KorService2/detailIntro2';
+const INTRO_URL = 'https://apis.data.go.kr/B551011/KorService1/detailIntro1';
 
 // 지역 기반 장소 검색 API 호출
 export const fetchTourPlaces = async (
@@ -28,7 +28,7 @@ export const fetchTourPlaces = async (
         _type: 'json',
     };
 
-    console.log('📤 API 요청 파라미터:', contentTypeId, areaCode, sigunguCode);
+    //console.log('📤 API 요청 파라미터:', contentTypeId, areaCode, sigunguCode);
     // ✅ 지역 코드 기반으로만 요청
     if (areaCode) params.areaCode = areaCode;
     if (sigunguCode) params.sigunguCode = sigunguCode;
