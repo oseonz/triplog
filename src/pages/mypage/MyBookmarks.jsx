@@ -5,16 +5,6 @@ import WhitePageLayout from '../../layouts/WhitePageLayout';
 import TripCard from '../../components/common/TripCard.jsx';
 import { useRecoilValue } from 'recoil';
 import { userState } from './atom/userState.js';
-import {
-    checkFavorite,
-    setFavorites,
-    unsetFavorite,
-} from '../../api/search/favorites';
-import {
-    checkLikesContent,
-    setLikesContent,
-    unsetLikesContent,
-} from '../../api/common/LikesApi';
 
 export const getUserBookmarks = async (user_id) => {
     const res = await axios.get(
