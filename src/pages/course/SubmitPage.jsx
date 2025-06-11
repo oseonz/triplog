@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getCourseDetail } from '../../../src/api/course/tourBackApi';
 import MapView from '../../components/course/kokkok-planner/common/MapView'; // 기존 TripCreator에서 쓰던 컴포넌트 재사용
+import { getCourses } from '../../api/course/tourBackApi';
 
 export default function SubmitPage() {
     const { courseId } = useParams();
@@ -11,7 +11,7 @@ export default function SubmitPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getCourseDetail(courseId);
+                const data = await getCourses(courseId);
                 setCourse(data);
             } catch (error) {
                 console.error('코스 상세정보 불러오기 실패:', error);
