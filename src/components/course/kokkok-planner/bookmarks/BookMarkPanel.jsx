@@ -1,18 +1,18 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { courseDataState } from '../../../../pages/course/atom/courseState';
+import { favoriteListState } from '../../../../pages/course/atom/courseState';
 import ListViewComp from '../trip-creator/ListViewComp';
 
 export default function BookMarkPanel({ checkLike, checkFavorite }) {
-    const courseData = useRecoilValue(courseDataState);
+    const favoriteList = useRecoilValue(favoriteListState);
+    console.log('🔥 Recoil favoriteList 상태:', favoriteList);
 
-    const tourFavorites = (courseData.typeOneList || []).filter(
-        (item) => item.favorite,
+    const tourFavorites = favoriteList.filter(
+        (item) => String(item.contenttypeid) === '12',
     );
-    const foodFavorites = (courseData.typeTwoList || []).filter(
-        (item) => item.favorite,
+    const foodFavorites = favoriteList.filter(
+        (item) => String(item.contenttypeid) === '39',
     );
-
     // console.log('📍 관광지 찜 리스트:', tourFavorites);
     // console.log('🍽 음식점 찜 리스트:', foodFavorites);
 

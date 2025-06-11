@@ -3,7 +3,10 @@ import { atom } from 'recoil';
 
 export const courseDataState = atom({
     key: 'courseDataState',
-    default: [],
+    default: {
+        typeOneList: [], // 여행지 리스트
+        typeTwoList: [],
+    },
 });
 
 export const selectedPlaceState = atom({

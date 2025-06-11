@@ -31,108 +31,87 @@ function SearchBar({
     const handleSearch = async (isAuto = false) => {
         if (!isAuto && !keyword.trim()) return alert('검색어를 입력하세요!');
         if (onSearchReset) onSearchReset();
-        console.log('검색', selectedType); // props로 받은 선택 타입
-        console.log('user.id', user.id);
+
         const region = getRegionCodeFromKeyword(keyword) || { areaCode: 1 };
-        const listKey = selectedType === '12' ? 'typeOneList' : 'typeTwoList';
-
-        console.log('👉 최종 API 요청값', {
-            type: selectedType,
-            areaCode: region?.areaCode,
-            sigunguCode: region?.sigunguCode,
-        });
-        if (!keyword) return;
-
-        // 여행지 검색
-        const tourResults = await fetchTourPlaces(keyword, '12');
-        setCourseData((prev) => ({
-            ...prev,
-            typeOneList: tourResults,
-        }));
-
-        // 음식점 검색
-        const foodResults = await fetchTourPlaces(keyword, '39');
-        setCourseData((prev) => ({
-            ...prev,
-            typeTwoList: foodResults,
-        }));
-
-        if (!isAuto && (!region || !region.areaCode)) {
-            if (!isAuto) alert('해당 지역을 찾을 수 없습니다.');
-            console.warn('🚨 검색 실패: 지역코드 없음');
+        if (!keyword || !region?.areaCode) {
+            alert('해당 지역을 찾을 수 없습니다.');
             return;
         }
+
         setLoading(true);
 
         try {
-            const rawResults = await fetchTourPlaces(
-                selectedType,
-                20,
-                region.areaCode,
-                region.sigunguCode,
-            );
-            // 💡 유효한 좌표가 있는 첫 번째 결과 찾기
-            const firstPlaceWithCoords = rawResults.find(
+            // 🌀 동시에 두 타입 검색
+            const [rawTours, rawFoods] = await Promise.all([
+                fetchTourPlaces('12', 20, region.areaCode, region.sigunguCode),
+                fetchTourPlaces('39', 20, region.areaCode, region.sigunguCode),
+            ]);
+
+            // 📍 좌표 중심 잡기 (여행지 먼저 기준으로)
+            const coordBase = [...rawTours, ...rawFoods].find(
                 (place) => place.mapx && place.mapy,
             );
-            // 🔧 시군구 중심 좌표가 있으면 우선 사용
             if (region.lat && region.lng) {
-                setMapCenter({
-                    lat: region.lat,
-                    lng: region.lng,
-                });
+                setMapCenter({ lat: region.lat, lng: region.lng });
                 setMapLevel(8);
-            } else if (firstPlaceWithCoords) {
+            } else if (coordBase) {
                 setMapCenter({
-                    lat: Number(firstPlaceWithCoords.mapy),
-                    lng: Number(firstPlaceWithCoords.mapx),
+                    lat: Number(coordBase.mapy),
+                    lng: Number(coordBase.mapx),
                 });
                 setMapLevel(9);
             }
 
-            console.log('🎯 받아온 rawResults:', rawResults);
-            const enrichedResults = await Promise.all(
-                rawResults.map((item) =>
-                    Promise.all([
-                        getLikes(item.contentid),
-                        fetchDetailIntro(item.contentid, item.contenttypeid),
-                        checkLike(user.id, item.contentid),
-                        getFavorites(user.id, item.contentid),
-                    ]).then(([like, detail, mylike, favorite]) => {
-                        const firstFavorite = Array.isArray(favorite)
-                            ? favorite[0]
-                            : null;
+            // 🔧 enrich 공통 처리 함수
+            const enrich = async (items, type) =>
+                await Promise.all(
+                    items.map((item) =>
+                        Promise.all([
+                            getLikes(item.contentid),
+                            fetchDetailIntro(
+                                item.contentid,
+                                item.contenttypeid,
+                            ),
+                            checkLike(user.id, item.contentid),
+                            getFavorites(user.id, item.contentid),
+                        ]).then(([like, detail, mylike, favorite]) => {
+                            const firstFavorite = Array.isArray(favorite)
+                                ? favorite[0]
+                                : null;
+                            return {
+                                ...item,
+                                likes_count: like,
+                                detail,
+                                mylike: mylike.my_check,
+                                favorite: firstFavorite?.favorites_id ?? null,
+                            };
+                        }),
+                    ),
+                );
 
-                        return {
-                            ...item,
-                            likes_count: like,
-                            detail: detail,
-                            mylike: mylike.my_check,
-                            favorite: firstFavorite?.favorites_id ?? null,
-                        };
-                    }),
-                ),
-            );
-            console.log('✅ selectedType 값:', selectedType);
-            console.log(
-                '✅ 저장할 key:',
-                selectedType == '12' ? 'typeOneList' : 'typeTwoList',
-            );
-            setSearchResult((prev) => ({
-                ...prev,
-                [listKey]: enrichedResults,
-            }));
+            // 🧪 동시 enrich
+            const [tourResults, foodResults] = await Promise.all([
+                enrich(rawTours, '12'),
+                enrich(rawFoods, '39'),
+            ]);
 
-            setCourseData((prev) => ({
-                ...prev,
-                [listKey]: enrichedResults,
-            }));
-            setSearchKeyword(keyword); // ✅ 검색어 저장
+            // ✅ 저장
+            setCourseData({
+                typeOneList: tourResults,
+                typeTwoList: foodResults,
+            });
+            setSearchResult({
+                typeOneList: tourResults,
+                typeTwoList: foodResults,
+            });
+            setSearchKeyword(keyword);
         } catch (err) {
             console.error('❌ 검색 실패:', err);
+            alert('검색 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
     };
-
     useEffect(() => {
         if (currentTab === '콕콕검색' && keyword) {
             handleSearch(true); // 👈 자동으로 현재 keyword 기준 재검색 실행

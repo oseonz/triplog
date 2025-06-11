@@ -43,7 +43,7 @@ function CourseBuilder() {
                         getLikes(item.contentid),
                         fetchDetailIntro(item.contentid, item.contenttypeid),
                         checkLike(id, item.contentid),
-                        //getFavorites(id, item.contentid),
+                        getFavorites(id, item.contentid),
                     ]).then(([like, detail, mylike, favorite]) => {
                         console.log('##########' + mylike.my_check);
                         const firstFavorite = Array.isArray(favorite)

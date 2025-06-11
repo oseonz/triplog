@@ -25,6 +25,7 @@ import {
     postLike,
 } from '../../../../api/course/tourBackApi';
 import { userState } from '../../../../pages/mypage/atom/userState';
+import { getFavorites } from '../../../../api/course/favoritesApi';
 
 function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
@@ -45,12 +46,12 @@ function TripCreator() {
     const setSelectedPlace = useSetRecoilState(selectedPlaceState);
     const selectedPlace = useRecoilValue(selectedPlaceState);
     const [courseList, setCourseList] = useRecoilState(courseListState);
-    const setFavoriteList = useSetRecoilState(favoriteListState);
-    const favoriteList = useRecoilValue(favoriteListState);
+
     const keyword = useRecoilValue(searchKeywordState);
     const result = useRecoilValue(searchResultState);
     const searchResult = useRecoilValue(searchResultState);
     const user = useRecoilValue(userState);
+    const [favoriteList, setFavoriteList] = useRecoilState(favoriteListState);
 
     const [note, setNote] = useState({
         schedule: '',
@@ -184,39 +185,34 @@ function TripCreator() {
 
     //찜 아이콘 핸들러`
     const handleFavorite = async (contentid) => {
-        const item = [
-            ...courseData.typeOneList,
-            ...courseData.typeTwoList,
-        ].find((p) => p.contentid === contentid);
+        // 1. 해당 item 찾기
+        const allItems = [
+            ...(courseData.typeOneList || []),
+            ...(courseData.typeTwoList || []),
+        ];
+        const item = allItems.find((p) => p.contentid === contentid);
         if (!item) return;
         console.log('삭제', item.favorite);
 
         const alreadyBookmarked = !!item.favorite;
 
-        // 1. UI 상태 업데이트
-        setCourseData((prev) => {
-            const update = (list) =>
-                list.map((p) =>
-                    p.contentid === contentid
-                        ? { ...p, favorite: !alreadyBookmarked }
-                        : p,
-                );
-            return {
-                ...prev,
-                typeOneList: update(prev.typeOneList || []),
-                typeTwoList: update(prev.typeTwoList || []),
-            };
-        });
-
-        setCourseList((prevList) =>
-            prevList.map((p) =>
+        // 2. Recoil 상태: courseData, courseList 업데이트
+        const toggleFavorite = (list) =>
+            list.map((p) =>
                 p.contentid === contentid
                     ? { ...p, favorite: !alreadyBookmarked }
                     : p,
-            ),
-        );
+            );
 
-        // 2. Recoil 찜 리스트 반영
+        setCourseData((prev) => ({
+            ...prev,
+            typeOneList: toggleFavorite(prev.typeOneList || []),
+            typeTwoList: toggleFavorite(prev.typeTwoList || []),
+        }));
+
+        setCourseList((prevList) => toggleFavorite(prevList || []));
+
+        // 3. 찜 목록 상태 업데이트 (favoriteListState)
         setFavoriteList((prev) => {
             const exists = prev.some((f) => f.contentid === contentid);
             return exists
@@ -224,11 +220,10 @@ function TripCreator() {
                 : [...prev, item];
         });
 
-        // 3. 서버 저장 / 삭제 요청
+        // 4. 서버 반영
         try {
             if (alreadyBookmarked) {
                 await deleteFavorite(user.id, contentid);
-
                 console.log('🗑️ 찜 삭제 완료');
             } else {
                 await saveFavorite({
@@ -236,7 +231,7 @@ function TripCreator() {
                     contentid: item.contentid,
                     contenttypeid: item.contenttypeid,
                     title: item.title,
-                    addr: item.addr1,
+                    addr1: item.addr1,
                     areacode: item.areacode,
                     sigungucode: item.sigungucode,
                     firstimage: item.firstimage || '이미지가 없떠여',
@@ -299,28 +294,55 @@ function TripCreator() {
         }
     };
 
+    // useEffect(() => {
+    //     if (currentTab === '콕콕검색' && keyword) {
+    //         const selectedList =
+    //             selectedType === '12'
+    //                 ? searchResult.typeOneList
+    //                 : searchResult.typeTwoList;
+
+    //         // ✅ 찜 정보 덧씌우기
+    //         const favIds = new Set(favoriteList.map((item) => item.contentid));
+    //         const enrichedList = (selectedList || []).map((item) => ({
+    //             ...item,
+    //             favorite: favIds.has(item.contentid),
+    //         }));
+
+    //         // ✅ 리스트 반영
+    //         setCourseData((prev) => ({
+    //             ...prev,
+    //             [selectedType === '12' ? 'typeOneList' : 'typeTwoList']:
+    //                 enrichedList,
+    //         }));
+    //     }
+    // }, [currentTab, keyword, selectedType, favoriteList, courseList]);
+
     useEffect(() => {
-        if (currentTab === '콕콕검색' && keyword) {
-            const selectedList =
-                selectedType === '12'
-                    ? searchResult.typeOneList
-                    : searchResult.typeTwoList;
+        const loadFavorites = async () => {
+            const rawList = await getFavorites(user.id);
+            const enrichedList = await Promise.all(
+                rawList.map(async (item) => {
+                    const detail = await fetchDetailIntro(
+                        item.contentid,
+                        item.contenttypeid,
+                    );
+                    return {
+                        ...item,
+                        title: detail?.title || '제목 없음',
+                        addr1: detail?.addr1 || '',
+                        firstimage: detail?.firstimage || '',
+                        overview: detail?.overview || '',
+                        mylike: false,
+                        favorite: item.favorites_id,
+                    };
+                }),
+            );
 
-            // ✅ 찜 정보 덧씌우기
-            const favIds = new Set(favoriteList.map((item) => item.contentid));
-            const enrichedList = (selectedList || []).map((item) => ({
-                ...item,
-                favorite: favIds.has(item.contentid),
-            }));
+            setFavoriteList(enrichedList); // ✅ Recoil에 저장
+        };
 
-            // ✅ 리스트 반영
-            setCourseData((prev) => ({
-                ...prev,
-                [selectedType === '12' ? 'typeOneList' : 'typeTwoList']:
-                    enrichedList,
-            }));
-        }
-    }, [currentTab, keyword, selectedType, favoriteList, courseList]);
+        loadFavorites();
+    }, []);
 
     return (
         <div className="flex w-full h-[900px] overflow-hidden">

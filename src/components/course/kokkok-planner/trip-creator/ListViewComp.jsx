@@ -59,7 +59,10 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                                 alt="찜 아이콘"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    checkFavorite(place.contentid);
+                                    checkFavorite(
+                                        place.contentid,
+                                        place.contenttypeid,
+                                    );
                                 }}
                                 className="w-5 h-5 cursor-pointer"
                             />
@@ -134,7 +137,10 @@ function ListViewComp({ place, checkLike, checkFavorite, cardType }) {
                             alt="찜 아이콘"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                checkFavorite(place.contentid);
+                                checkFavorite(
+                                    place.contentid,
+                                    place.contenttypeid,
+                                );
                             }}
                             className="w-5 h-5 cursor-pointer"
                         />
