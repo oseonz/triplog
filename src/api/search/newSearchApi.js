@@ -56,17 +56,24 @@ export const searchGovContent = async (params) => {
     size = 10,
     areacode = '',
     sigungucode = '',
+    keyword = '',
     } = params;
 
     const API_KEY = "1C42I%2BvS%2BEOZYNiN75gWOVCBJS9WTLlqh%2B4hyBjlz7njXFfqG%2Fv4qj5j6sA1TaQLjkS0T7qY1H%2BDFEUSTxiTJw%3D%3D";
-    const AREA_URL = `http://apis.data.go.kr/B551011/KorService1/areaBasedList1?serviceKey=${API_KEY}&pageNo=${page}&numOfRows=${size}&MobileApp=AppTest&MobileOS=ETC&arrange=O&areaCode=${areacode != null ? areacode : ''}&sigunguCode=${sigungucode != null ? sigungucode : ''}&contentTypeId=${contenttypeid}&cat1=&cat2=&cat3=&_type=json`;
+    let API_URL = "";
 
+    if(keyword == null || keyword.trim() === '') {
+        API_URL = `http://apis.data.go.kr/B551011/KorService1/areaBasedList1?serviceKey=${API_KEY}&pageNo=${page}&numOfRows=${size}&MobileApp=AppTest&MobileOS=ETC&arrange=O&areaCode=${areacode != null ? areacode : ''}&sigunguCode=${sigungucode != null ? sigungucode : ''}&contentTypeId=${contenttypeid}&cat1=&cat2=&cat3=&_type=json`;
+    }
+    else {
+        API_URL = `http://apis.data.go.kr/B551011/KorService2/searchKeyword2?serviceKey=${API_KEY}&pageNo=${page}&numOfRows=${size}&MobileApp=AppTest&MobileOS=ETC&arrange=O&areaCode=${areacode != null ? areacode : ''}&sigunguCode=${sigungucode != null ? sigungucode : ''}&contentTypeId=${contenttypeid}&keyword=${keyword}&cat1=&cat2=&cat3=&_type=json`;
+    }   
 
-    console.log('📤 API 요청 파라미터:', contenttypeid, areacode);
+    console.log('📤 API 요청 파라미터:', contenttypeid, areacode, API_URL);
 
 
     try {
-        const res = await axios.get(AREA_URL);
+        const res = await axios.get(API_URL);
         console.log(res);
         const itemList = res.data?.response?.body;
         const raw = Array.isArray(itemList) ? itemList : [itemList];
