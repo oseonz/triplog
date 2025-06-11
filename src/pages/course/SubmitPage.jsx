@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getCourseDetail } from '../../../src/api/course/tourBackApi';
-import MapView from '../../components/course/kokkok-planner/common/MapView'; // 기존 TripCreator에서 쓰던 컴포넌트 재사용
+//import { getCourseDetail } from '../../../src/api/course/tourBackApi';
+import MapView from '../../components/course/kokkok-planner/common/MapView';
 
 export default function SubmitPage() {
     const { courseId } = useParams();

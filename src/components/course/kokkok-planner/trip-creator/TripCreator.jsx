@@ -182,7 +182,7 @@ function TripCreator() {
         }
     };
 
-    //찜 아이콘 핸들러
+    //찜 아이콘 핸들러`
     const handleFavorite = async (contentid) => {
         const item = [
             ...courseData.typeOneList,
