@@ -4,7 +4,7 @@ import {
     CourseCard,
     MyCourseCard,
 } from '../../components/course/rec-course/CourseCard';
-import { fetchMyCourses } from '../../api/course/tourBackApi';
+import { getCourses } from '../../api/course/tourBackApi';
 
 const dummyCourses = [
     {
@@ -45,7 +45,7 @@ function ListPage() {
     const [myCourses, setMyCourses] = useState([]);
     useEffect(() => {
         const load = async () => {
-            const data = await fetchMyCourses(3); // 유저 ID: 3
+            const data = await getCourses(3); // 유저 ID: 3
             setMyCourses(data);
         };
         load();

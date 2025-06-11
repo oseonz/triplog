@@ -307,9 +307,6 @@ function TripCreator() {
             {/* 왼쪽 영역 */}
 
             <div className="w-[550px] bg-white flex flex-col z-10">
-                {courseList.map((item) => (
-                    <div>{item.title}</div>
-                ))}
                 <div className="flex justify-between items-center px-3 py-4 border-b bg-white">
                     <button
                         onClick={handleBack}
