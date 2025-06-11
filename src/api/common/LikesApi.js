@@ -27,18 +27,18 @@ export const checkLikesContent = async (user_id, contentid) => {
 
 
 export const setLikesContent = async (user_id, contentid, contenttypeid, 
-                      title, addr1, addr2, areacode, sigungucode, firstimage, mapX, mapY) => {
+                      title, addr1, addr2, areacode, sigungucode, firstimage, mapx, mapy) => {
 
   const URL = `${API_SERVER_HOST}/likes/content/save`;
 
- 
+  console.log("########", mapx, mapy)
   try {
     const res = await axios.post(URL, {user_id, contentid, contenttypeid, 
-                      title, addr1, addr2, areacode, sigungucode, firstimage, mapX, mapY }
+                      title, addr1, addr2, areacode, sigungucode, firstimage, mapx, mapy }
     );
 
     const { result, message, id_name, id } = res.data;
-
+console.log("########",res.data)
     return result;
 
   } catch (err) {

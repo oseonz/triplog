@@ -6,7 +6,7 @@ import { checkLikesContent, setLikesContent, unsetLikesContent } from "../../api
 
 //공연/행사 카드
 
-function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, areaCode, sigunguCode, firstimage, mapX, mapY }) {
+function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, areaCode, sigunguCode, firstimage, mapx, mapy }) {
   const [bookmarked, setBookmarked] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
@@ -41,7 +41,7 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
     } else {
 
       await setLikesContent(user_id, contentId, contentTypeId,
-        title, addr1, addr2, areaCode, sigunguCode, firstimage, mapX, mapY);
+        title, addr1, addr2, areaCode, sigunguCode, firstimage, mapx, mapy);
     }
 
     const ret = await checkLikesContent(user_id, contentId);
@@ -65,7 +65,7 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
     } else {
 
       result = await setFavorites(user_id, contentId, contentTypeId,
-        title, addr1, addr2, areaCode, sigunguCode, firstimage, mapX, mapY);
+        title, addr1, addr2, areaCode, sigunguCode, firstimage, mapx, mapy);
     }
     
     
@@ -86,8 +86,8 @@ function EventCard({ user_id, contentId, contentTypeId, title, addr1, addr2, are
                     areaCode,
                     sigunguCode,
                     firstimage,
-                    mapX,
-                    mapY
+                    mapx,
+                    mapy
               }
 
     }); 

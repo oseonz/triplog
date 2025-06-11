@@ -39,7 +39,26 @@ export const listRemarks = async (contentId) => {
 
         return item;
     } catch (e) {
-        console.error('❌ 상세정보 API 호출 실패', e);
+        console.error('❌ listRemarks : API 호출 실패', e);
+        return null;
+    }
+};
+
+export const myRemarks = async (userId) => {
+    console.log("-------------------- fetchDetailIntro")
+    console.log("myRemarks 진입");
+    const URL = `${API_SERVER_HOST}/remarks/content/list?user_id=${userId}`;
+    console.log("myRemarks url 준비");
+    try {
+        const res = await axios.get(URL);
+            console.log("myRemarks 반환");
+
+        const item = res.data;
+        // ✅ 배열이면 첫 번째 객체만 추출
+
+        return item;
+    } catch (e) {
+        console.error('❌ myRemarks : API 호출 실패', e);
         return null;
     }
 };

@@ -21,8 +21,8 @@ function TripCard({
     areaCode,
     sigunguCode,
     firstimage,
-    mapX,
-    mapY,
+    mapx,
+    mapy,
 }) {
     const [bookmarked, setBookmarked] = useState(false);
     const [heart, setHeart] = useState(false);
@@ -57,8 +57,8 @@ function TripCard({
                 areaCode,
                 sigunguCode,
                 firstimage,
-                mapX,
-                mapY,
+                mapx,
+                mapy,
             );
             console.log('setFavorites : ', result);
         }
@@ -89,8 +89,8 @@ function TripCard({
                 areaCode,
                 sigunguCode,
                 firstimage,
-                mapX,
-                mapY,
+                mapx,
+                mapy,
             );
             console.log('setLikesContent : ', result);
         }
@@ -136,8 +136,8 @@ function TripCard({
                       areaCode,
                       sigunguCode,
                       firstimage,
-                      mapX,
-                      mapY
+                      mapx,
+                      mapy
       )
       navigate(`../detail/${contentId}`, {
                 state: {
@@ -150,8 +150,8 @@ function TripCard({
                       areaCode,
                       sigunguCode,
                       firstimage,
-                      mapX,
-                      mapY
+                      mapx,
+                      mapy
                 }
     }); 
     };

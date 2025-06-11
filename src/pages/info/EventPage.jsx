@@ -142,8 +142,8 @@ function EventPage() {
                                         areaCode={event.areaCode}
                                         sigunguCode={event.sigunguCode}
                                         firstimage={event.firstimage}
-                                        mapX={event.mapX}
-                                        mapY={event.mapY}
+                                        mapx={event.mapx}
+                                        mapy={event.mapy}
                                     />
                                 );
                             })}
