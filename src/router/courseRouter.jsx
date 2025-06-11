@@ -1,3 +1,4 @@
+import { Navigate } from 'react-router-dom';
 import CourseBuilder from '../pages/course/CourseBuilder';
 import ListPage from '../pages/course/ListPage';
 import SubmitPage from '../pages/course/SubmitPage';
