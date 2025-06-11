@@ -40,7 +40,7 @@ function PlacePage() {
         keyword: '',
     });
 
-    const [selectedRegion, setSelectedRegion] = useState('서울');
+    const [selectedRegion, setSelectedRegion] = useState('전국');
 
     const scrollLeft = () => {
         if (scrollRef.current) {
@@ -90,6 +90,7 @@ function PlacePage() {
     }, [params]);
 
     const regionCodeMap = {
+        전국: 0,
         서울: 1,
         인천: 2,
         대전: 3,
@@ -110,13 +111,15 @@ function PlacePage() {
     };
 
     const handleRegionClick = (regionName) => {
-        const code = regionCodeMap[regionName] || 1;
+        const code = regionCodeMap[regionName] || '';
+
         setParams((prev) => ({
             ...prev,
-            areacode: code,
+            areacode: regionName === '전국' ? '' : code,
             page: 1,
             keyword: '',
         }));
+
         setCurrentPage(1);
         setSelectedRegion(regionName);
     };
@@ -174,6 +177,7 @@ function PlacePage() {
                             className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
                         >
                             {[
+                                '전국',
                                 '서울',
                                 '인천',
                                 '대전',
