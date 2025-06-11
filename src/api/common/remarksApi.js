@@ -24,3 +24,22 @@ export const saveRemark = async (user_id, contentid, contenttypeid,
     return {result};
   }
 };
+
+export const listRemarks = async (contentId) => {
+    console.log("-------------------- fetchDetailIntro")
+    console.log("listRemarks 진입");
+    const URL = `${API_SERVER_HOST}/remarks/content/list?contentid=${contentId}`;
+    console.log("listRemarks url 준비");
+    try {
+        const res = await axios.get(URL);
+            console.log("listRemarks 반환");
+
+        const item = res.data;
+        // ✅ 배열이면 첫 번째 객체만 추출
+
+        return item;
+    } catch (e) {
+        console.error('❌ 상세정보 API 호출 실패', e);
+        return null;
+    }
+};

@@ -67,12 +67,12 @@ function MyPageMain() {
                                         <div className="flex flex-col items-center">
                                             <div className="bg-gray-200 w-[100px] h-[100px] rounded-[30px] flex items-center justify-center">
                                                 <img
-                                                    src="../images/mp_heart.png"
+                                                    src="../images/mp_speech.png"
                                                     alt=""
                                                 />
                                             </div>
                                             <p className="text-[18px] font-bold">
-                                                댓글/좋아요
+                                                댓글
                                             </p>
                                         </div>
                                     </Link>
