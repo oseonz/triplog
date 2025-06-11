@@ -71,7 +71,7 @@ function BasicMenu({ children }) {
                     >
                         여행정보
                     </Link>
-                    <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[120px] top-8">
+                    <div className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded w-[120px]">
                         <span className="flex flex-col text-[18px] items-center gap-3">
                             <Link to="/info/event">공연/행사</Link>
                             <Link to="/info/article">여행기사</Link>

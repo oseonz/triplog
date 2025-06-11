@@ -11,9 +11,7 @@ import { searchGovContent } from '../../api/search/newSearchApi.js';
 //java -jar tourAPI-0521.war
 
 function PlacePage() {
-
-
-    const [keyword, setKeyword] = useState("");
+    const [keyword, setKeyword] = useState('');
 
     const { id } = useRecoilValue(userState); // 유저id
     // const id = 2
@@ -42,7 +40,7 @@ function PlacePage() {
         keyword: '',
     });
 
-    const [selectedRegion, setSelectedRegion] = useState('서울');
+    const [selectedRegion, setSelectedRegion] = useState('전국');
 
     const scrollLeft = () => {
         if (scrollRef.current) {
@@ -57,21 +55,24 @@ function PlacePage() {
     };
 
     const handleSearchKeyword = (e) => {
-        
         e.stopPropagation();
         e.preventDefault();
 
-        if (!keyword || keyword.trim() === "") {
-            alert("검색어를 입력해 주세요.");
+        if (!keyword || keyword.trim() === '') {
+            alert('검색어를 입력해 주세요.');
             return;
         }
 
-        setParams((prev) => ({ ...prev, keyword: keyword, areacode: '',sigungucode: '', page: 1}));
+        setParams((prev) => ({
+            ...prev,
+            keyword: keyword,
+            areacode: '',
+            sigungucode: '',
+            page: 1,
+        }));
 
-        setKeyword("")
-
-    }
-
+        setKeyword('');
+    };
 
     useEffect(() => {
         searchGovContent(params).then((data) => {
@@ -89,6 +90,7 @@ function PlacePage() {
     }, [params]);
 
     const regionCodeMap = {
+        전국: 0,
         서울: 1,
         인천: 2,
         대전: 3,
@@ -109,8 +111,15 @@ function PlacePage() {
     };
 
     const handleRegionClick = (regionName) => {
-        const code = regionCodeMap[regionName] || 1;
-        setParams((prev) => ({ ...prev, areacode: code, page: 1, keyword: "" }));
+        const code = regionCodeMap[regionName] || '';
+
+        setParams((prev) => ({
+            ...prev,
+            areacode: regionName === '전국' ? '' : code,
+            page: 1,
+            keyword: '',
+        }));
+
         setCurrentPage(1);
         setSelectedRegion(regionName);
     };
@@ -123,30 +132,33 @@ function PlacePage() {
     };
 
     const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-        console.log("페이지 변경)  ", page)
-        setCurrentPage(page);
-    }
+        if (page >= 1 && page <= totalPages) {
+            console.log('페이지 변경)  ', page);
+            setCurrentPage(page);
+        }
     }; //페이지네이션
 
     const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
     const endPage = Math.min(startPage + 9, totalPages);
-    const pageButtons = Array.from({ length: endPage - startPage + 1 }, (_, i) => {
-        const pageIndex = startPage + i;
-        return (
-            <button
-                key={pageIndex}
-                onClick={() => handlePageChange(pageIndex)}
-                className={`px-4 py-2 rounded-full border ${
-                    pageIndex === currentPage
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-black border-gray-300'
-                }`}
-            >
-                {pageIndex}
-            </button>
-        );
-    });
+    const pageButtons = Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => {
+            const pageIndex = startPage + i;
+            return (
+                <button
+                    key={pageIndex}
+                    onClick={() => handlePageChange(pageIndex)}
+                    className={`px-4 py-2 rounded-full border ${
+                        pageIndex === currentPage
+                            ? 'bg-blue-500 text-white border-blue-500'
+                            : 'bg-white text-black border-gray-300'
+                    }`}
+                >
+                    {pageIndex}
+                </button>
+            );
+        },
+    );
 
     return (
         <div className="min-h-screen bg-white text-black pb-7">
@@ -165,6 +177,7 @@ function PlacePage() {
                             className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
                         >
                             {[
+                                '전국',
                                 '서울',
                                 '인천',
                                 '대전',
@@ -186,7 +199,7 @@ function PlacePage() {
                                 <TripRegion
                                     key={index}
                                     regionName={region}
-                                    selected={selectedRegion === region} // 선택 여부
+                                    selected={selectedRegion === region}
                                     onClick={() => handleRegionClick(region)}
                                 />
                             ))}
@@ -209,17 +222,26 @@ function PlacePage() {
                         인기 <span className="font-bold">여행지</span>{' '}
                         알려줄게요!
                     </span>
-                    <form onSubmit={handleSearchKeyword} className="flex items-center gap-2">
+                    <form
+                        onSubmit={handleSearchKeyword}
+                        className="flex items-center gap-2"
+                    >
                         <input
                             type="text"
                             name="keyword"
                             placeholder="키워드로 전국 조회"
-                            onChange={(e)=>{setKeyword(e.target.value)}}
+                            onChange={(e) => {
+                                setKeyword(e.target.value);
+                            }}
                             value={keyword}
                             className="py-4 ps-4 pr-40 border border-gray-300"
                         />
                         <div>
-                            <img src="../public/images/i_search.png" alt="" onClick={handleSearchKeyword} />
+                            <img
+                                src="../public/images/i_search.png"
+                                alt=""
+                                onClick={handleSearchKeyword}
+                            />
                         </div>
                     </form>
                 </div>
@@ -265,35 +287,40 @@ function PlacePage() {
                     </div>
                 </div>
 
-            <div className="flex justify-center mt-10  pb-7">
-                <div className="flex gap-2 items-center">
-
+                <div className="flex justify-center mt-10  pb-7">
                     <div className="flex gap-2 items-center">
-                        {/* 이전 버튼 */}
-                        <button
-                            onClick={() => handlePageChange(Math.max(1, startPage - 10))}
-                            disabled={startPage === 1}
-                            className="px-3 py-2 bg-white border rounded disabled:opacity-50"
-                        >
-                            «
-                        </button>
+                        <div className="flex gap-2 items-center">
+                            {/* 이전 버튼 */}
+                            <button
+                                onClick={() =>
+                                    handlePageChange(
+                                        Math.max(1, startPage - 10),
+                                    )
+                                }
+                                disabled={startPage === 1}
+                                className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                            >
+                                «
+                            </button>
 
-                        {/* 페이지 번호 버튼 */}
-                        {pageButtons}
+                            {/* 페이지 번호 버튼 */}
+                            {pageButtons}
 
-                        {/* 다음 버튼 */}
-                        <button
-                            onClick={() => handlePageChange(Math.min(totalPages, startPage + 10))}
-                            disabled={startPage + 10 > totalPages}
-                            className="px-3 py-2 bg-white border rounded disabled:opacity-50"
-                        >
-                            »
-                        </button>
+                            {/* 다음 버튼 */}
+                            <button
+                                onClick={() =>
+                                    handlePageChange(
+                                        Math.min(totalPages, startPage + 10),
+                                    )
+                                }
+                                disabled={startPage + 10 > totalPages}
+                                className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                            >
+                                »
+                            </button>
+                        </div>
                     </div>
-
                 </div>
-            </div>
-
             </div>
         </div>
     );

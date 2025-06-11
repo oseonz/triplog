@@ -16,7 +16,6 @@ export const getUserBookmarks = async (user_id) => {
 const TABS = {
     여행지: '12',
     음식점: '39',
-    '여행 코스': '25',
     '공연/행사': '15',
 };
 
@@ -79,7 +78,7 @@ function MyBookmarks() {
                                     onClick={() => setActiveTab(tab)}
                                 >
                                     <p
-                                        className={`text-xl font-bold p-5 px-[100px] ${
+                                        className={`text-xl font-bold p-5 px-[160px] ${
                                             activeTab === tab
                                                 ? 'text-blue-500'
                                                 : 'text-black'
@@ -96,7 +95,7 @@ function MyBookmarks() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {cards.length === 0 ? (
                             <p className="col-span-4 text-center text-gray-500">
-                                찜한 {activeTab}가 없습니다.
+                                찜한 {activeTab}(이)가 없습니다.
                             </p>
                         ) : (
                             <Link
