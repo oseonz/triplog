@@ -4,52 +4,42 @@ import {
     CourseCard,
     MyCourseCard,
 } from '../../components/course/rec-course/CourseCard';
-import { getCourses } from '../../api/course/tourBackApi';
-
-const dummyCourses = [
-    {
-        id: 1,
-        title: '전주 한옥마을 여행',
-        address: '전북 전주시 완산구 한옥마을길',
-        image: '/images/jeonju.jpg',
-        likes: 42,
-    },
-    // 추가 항목들...
-];
+import { getCourses, deleteCourse } from '../../api/course/tourBackApi';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userState } from '../mypage/atom/userState';
+import { myCoursesState } from './atom/courseState';
 
 function ListPage() {
     const [currentTab, setCurrentTab] = useState('best');
+    const user = useRecoilValue(userState);
+    const [myCourses, setMyCourses] = useRecoilState(myCoursesState);
 
-    //const bestCourses = [...]; // 베스트 코스
-    //const myCourses = [...];   // 나의 코스
+    const handleDeleteCourse = async (courseId) => {
+        const confirmed = window.confirm('정말 이 코스를 삭제하시겠습니까?');
+        if (!confirmed) return;
 
-    const bestCourses = [
-        {
-            id: 1,
-            title: '경주 역사 여행',
-            address: '경북 경주시',
-            image: '/images/gyeongju.jpg',
-            likes: 50,
-        },
-    ];
+        try {
+            await deleteCourse(courseId);
+            alert('✅ 코스가 삭제되었습니다.');
 
-    // const myCourses = [
-    //     {
-    //         id: 101,
-    //         title: '부산 해운대 코스',
-    //         address: '부산 해운대구',
-    //         image: '/images/haeundae.jpg',
-    //     },
-    // ];
+            const updatedList = await getCourses(user.id);
+            setMyCourses(updatedList); // Recoil 상태 갱신
+        } catch (err) {
+            console.error('❌ 삭제 실패:', err);
+            alert('삭제 중 오류가 발생했습니다.');
+        }
+    };
 
-    const [myCourses, setMyCourses] = useState([]);
+    //const [myCourses, setMyCourses] = useState([]);
     useEffect(() => {
         const load = async () => {
-            const data = await getCourses(3); // 유저 ID: 3
-            setMyCourses(data);
+            if (!user?.id) return;
+            const data = await getCourses(user.id);
+            console.log('📦 내 코스 데이터:', data);
+            setMyCourses(data); // ✅ Recoil로 상태 설정
         };
         load();
-    }, []);
+    }, [user?.id]);
 
     return (
         <div className="w-full flex flex-col items-center">
@@ -74,9 +64,9 @@ function ListPage() {
 
             {currentTab === 'best' && (
                 <section className="w-full max-w-screen-md p-6">
-                    {bestCourses.map((course) => (
+                    {/* {bestCourses.map((course) => (
                         <CourseCard key={course.id} course={course} />
-                    ))}
+                    ))} */}
                     <div className="flex justify-center mt-6">
                         <button className="px-4 py-2 text-sm text-blue-500 border rounded hover:bg-blue-50">
                             더보기
@@ -87,11 +77,14 @@ function ListPage() {
 
             {currentTab === 'my' && (
                 <section className="w-full max-w-screen-xl p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 py-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-4 py-6">
                         {myCourses.map((course) => (
                             <MyCourseCard
                                 key={course.course_id}
                                 course={course}
+                                onDelete={() =>
+                                    handleDeleteCourse(course.course_id)
+                                }
                             />
                         ))}
                     </div>

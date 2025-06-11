@@ -29,6 +29,7 @@ export const getCourses = async (userId) => {
         const response = await axios.get('http://localhost:8081/course/list', {
             params: {
                 creator_user_id: userId,
+                size: 20,
             },
         });
 
@@ -41,5 +42,12 @@ export const getCourses = async (userId) => {
 
 export const saveCourse = async (courseData) => {
     const res = await axios.post(`${API_BASE_URL}/course/save`, courseData);
+    return res.data;
+};
+
+export const deleteCourse = async (courseId) => {
+    const res = await axios.delete(
+        `http://localhost:8081/course/delete?course_id=${courseId}`,
+    );
     return res.data;
 };

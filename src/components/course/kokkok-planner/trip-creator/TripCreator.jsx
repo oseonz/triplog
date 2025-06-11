@@ -29,6 +29,7 @@ import { userState } from '../../../../pages/mypage/atom/userState';
 function TripCreator() {
     const [selectedType, setSelectedType] = useState('12');
     const [tripTitle, setTripTitle] = useState('');
+    const [schedule, setSchedule] = useState('');
     const [currentTab, setCurrentTab] = useState('콕콕검색');
     const [tourVisibleCount, setTourVisibleCount] = useState(5);
     const [foodVisibleCount, setFoodVisibleCount] = useState(5);
@@ -253,10 +254,17 @@ function TripCreator() {
             return;
         }
 
+        const userId = user?.id;
+        if (!userId) {
+            alert('로그인 후 저장할 수 있습니다.');
+            return;
+        }
+
         try {
             const payload = {
-                creator_user_id: 5, // ✍️ 로그인한 사용자 ID로 교체 필요
+                creator_user_id: userId, // ✍️ 로그인한 사용자 ID로 교체 필요
                 course_name: tripTitle,
+                schedule: schedule,
                 description: `${note.schedule}||${note.budget}||${note.memo}||${note.transport}||${note.stay}`,
                 contents: courseList.map((place) => ({
                     contentid: place.contentid,
@@ -272,7 +280,19 @@ function TripCreator() {
 
             const result = await saveCourse(payload);
             console.log('✅ 저장 결과:', result);
-            alert('코스 저장이 완료되었습니다!');
+            console.log('👤 현재 로그인한 id:', user?.id);
+
+            alert('🎉 여행코스가 성공적으로 저장되었습니다!');
+
+            setTripTitle(''); // 제목 초기화
+            setNote({
+                schedule: '',
+                transport: '',
+                budget: '',
+                stay: '',
+                memo: '',
+            });
+            setCurrentTab('콕콕검색'); // 저장 후 검색 탭으로 이동
         } catch (err) {
             console.error('❌ 코스 저장 실패:', err);
             alert('코스 저장 중 오류가 발생했습니다.');

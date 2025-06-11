@@ -41,3 +41,8 @@ export const searchResultState = atom({
         typeTwoList: [],
     },
 });
+
+export const myCoursesState = atom({
+    key: 'myCoursesState',
+    default: [],
+});
