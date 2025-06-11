@@ -5,25 +5,58 @@ import {
     CustomOverlayMap,
 } from 'react-kakao-maps-sdk';
 import { useRecoilValue } from 'recoil';
-import { courseDataState } from '../../../../pages/course/atom/courseState';
-import { checkLikesCourse } from '../../../../api/common/likesApi';
+import {
+    courseDataState,
+    courseListState,
+    mapCenterState,
+} from '../../../../pages/course/atom/courseState';
+
 function MapView({
     center,
     level,
     visiblePlaces = [],
     checkCourse = [],
     onMarkerClick,
+    onSaveCourse,
+    isBookmarkTab,
 }) {
     const [selectedId, setSelectedId] = useState(null);
     const [hoveredId, setHoveredId] = useState(null);
     const [map, setMap] = useState(null);
     const courseData = useRecoilValue(courseDataState);
+    const courseList = useRecoilValue(courseListState);
+    const centerCoord = useRecoilValue(mapCenterState);
+
+    const allMarkers = [
+        ...visiblePlaces,
+        ...(isBookmarkTab ? favoriteList : []),
+    ];
+
+    // contentid로 중복 제거
+    const dedupedMarkers = allMarkers.reduce((acc, curr) => {
+        if (!acc.find((item) => item.contentid === curr.contentid)) {
+            acc.push(curr);
+        }
+        return acc;
+    }, []);
+
+    useEffect(() => {
+        if (map && centerCoord.lat && centerCoord.lng) {
+            map.setCenter(
+                new window.kakao.maps.LatLng(centerCoord.lat, centerCoord.lng),
+            );
+        }
+    }, [centerCoord, map]);
+
+    useEffect(() => {
+        console.log('🔥 courseList:', courseList);
+    }, [courseList]);
 
     // ✅ 선 그리기용
     useEffect(() => {
-        if (!map || checkLikesCourse.length < 2) return;
+        if (!map || courseList.length < 2) return;
 
-        const path = checkCourse
+        const path = courseList
             .filter((p) => p.mapy && p.mapx)
             .map(
                 (place) =>
@@ -42,8 +75,9 @@ function MapView({
         });
 
         line.setMap(map);
+
         return () => line.setMap(null);
-    }, [checkCourse, map]);
+    }, [courseList, map]);
 
     // ✅ 코스 중심으로 이동
     useEffect(() => {
@@ -121,6 +155,12 @@ function MapView({
                     );
                 })}
             </KakaoMap>
+            <button
+                onClick={onSaveCourse}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-3xl absolute bottom-[-0] right-[20px] z-40 "
+            >
+                코스 저장하기
+            </button>
         </div>
     );
 }

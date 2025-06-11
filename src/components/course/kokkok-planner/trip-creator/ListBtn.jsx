@@ -26,15 +26,6 @@ function ListBtn({ tourTypeId, typeButton }) {
             >
                 음식점
             </button>
-            {/* ✅ 추가한 코스 보기 버튼 */}
-            {/* <button
-        onClick={() => selectedType1("course")}
-        className={`px-4 py-2 rounded  text-lg  text-white ${
-          typeButton === "00" ? "bg-blue-500" : "bg-gray-300"
-        }`}
-      >
-        추가된 장소
-      </button> */}
         </div>
     );
 }

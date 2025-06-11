@@ -43,7 +43,7 @@ function CourseBuilder() {
                         getLikes(item.contentid),
                         fetchDetailIntro(item.contentid, item.contenttypeid),
                         checkLike(id, item.contentid),
-                        getFavorites(id, item.contentid),
+                        //getFavorites(id, item.contentid),
                     ]).then(([like, detail, mylike, favorite]) => {
                         console.log('##########' + mylike.my_check);
                         const firstFavorite = Array.isArray(favorite)
@@ -54,7 +54,11 @@ function CourseBuilder() {
                             likes_count: like,
                             detail: detail,
                             mylike: mylike.my_check,
-                            favorite: firstFavorite?.favorites_id ?? null,
+                            favorite: firstFavorite?.favorites_id
+                                ? true
+                                : false,
+                            mapx: item.mapx || item.mapX,
+                            mapy: item.mapy || item.mapY,
                         };
                     }),
                 ),
@@ -75,6 +79,36 @@ function CourseBuilder() {
     }
 
     useEffect(() => {
+        const fetchFavorites = async () => {
+            const tour = await getFavoritesType(id, '12');
+            const food = await getFavoritesType(id, '39');
+
+            const fixedList = [...tour, ...food].map((item) => ({
+                ...item,
+                mapx: item.mapx || item.mapX,
+                mapy: item.mapy || item.mapY,
+            }));
+
+            setFavoriteList(fixedList);
+            setCourseData((prevData) => {
+                const favoriteIds = new Set(fixedList.map((f) => f.contentid));
+
+                const updateList = (list = []) =>
+                    list.map((item) => ({
+                        ...item,
+                        favorite: favoriteIds.has(item.contentid),
+                    }));
+
+                return {
+                    typeOneList: updateList(prevData.typeOneList),
+                    typeTwoList: updateList(prevData.typeTwoList),
+                };
+            });
+        };
+        fetchFavorites();
+    }, []);
+
+    useEffect(() => {
         tourData(12);
         tourData(39);
     }, []);
@@ -89,13 +123,23 @@ function CourseBuilder() {
         async function loadFavorites() {
             const tour = await getFavoritesType(id, '12');
             const food = await getFavoritesType(id, '39');
-            setFavoriteList([...tour, ...food]);
+            const fixedTour = tour.map((item) => ({
+                ...item,
+                mapx: item.mapx || item.mapX,
+                mapy: item.mapy || item.mapY,
+            }));
+            const fixedFood = food.map((item) => ({
+                ...item,
+                mapx: item.mapx || item.mapX,
+                mapy: item.mapy || item.mapY,
+            }));
+            setFavoriteList([...fixedTour, ...fixedFood]);
         }
 
         loadFavorites();
     }, []);
 
-    return <TripCreator />;
+    return <TripCreator tourData={tourData} />;
 }
 
 export default CourseBuilder;
