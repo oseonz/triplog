@@ -22,7 +22,7 @@ function IntroPage() {
                         </span>
                     </div>
                 </div>
-                <div className="flex justify-center items-center w-full">
+                <div className="flex justify-center items-center w-full mb-5">
                     <div className="container flex flex-col items-start">
                         <p className="text-4xl font-bold">
                             <span className="text-blue-500">나만의</span> 여행을
@@ -34,6 +34,29 @@ function IntroPage() {
                             만드는 여행,{' '}
                             <span className="text-blue-500">트립로그</span>와
                             함께 하세요.
+                        </p>
+                    </div>
+                </div>
+                <div className="flex justify-center items-center w-full">
+                    <div className="w-[1200px] h-[300px] overflow-hidden relative">
+                        <img
+                            src="/images/introImg.jpg"
+                            alt=""
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                </div>
+                <div className="flex justify-center items-center w-full mb-5 mt-5">
+                    <div className="container flex flex-col items-start">
+                        <p className="text-4xl font-bold">
+                            감탄을 부르는{' '}
+                            <span className="text-blue-500">여행 코스</span>를
+                            둘러보고,
+                        </p>
+                        <p className="text-4xl font-bold">
+                            나만의 맞춤 여행 코스를{' '}
+                            <span className="text-blue-500">직접 설계</span>할
+                            수 있습니다.{' '}
                         </p>
                     </div>
                 </div>
