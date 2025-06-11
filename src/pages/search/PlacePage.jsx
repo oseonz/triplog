@@ -11,6 +11,10 @@ import { searchGovContent } from '../../api/search/newSearchApi.js';
 //java -jar tourAPI-0521.war
 
 function PlacePage() {
+
+
+    const [keyword, setKeyword] = useState("");
+
     const { id } = useRecoilValue(userState); // 유저id
     // const id = 2
 
@@ -35,6 +39,7 @@ function PlacePage() {
         size: 12,
         areacode: '',
         sigungucode: '',
+        keyword: '',
     });
 
     const [selectedRegion, setSelectedRegion] = useState('서울');
@@ -50,6 +55,23 @@ function PlacePage() {
             scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
         }
     };
+
+    const handleSearchKeyword = (e) => {
+        
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (!keyword || keyword.trim() === "") {
+            alert("검색어를 입력해 주세요.");
+            return;
+        }
+
+        setParams((prev) => ({ ...prev, keyword: keyword, areacode: '',sigungucode: '', page: 1}));
+
+        setKeyword("")
+
+    }
+
 
     useEffect(() => {
         searchGovContent(params).then((data) => {
@@ -88,7 +110,7 @@ function PlacePage() {
 
     const handleRegionClick = (regionName) => {
         const code = regionCodeMap[regionName] || 1;
-        setParams((prev) => ({ ...prev, areacode: code, page: 0 }));
+        setParams((prev) => ({ ...prev, areacode: code, page: 1, keyword: "" }));
         setCurrentPage(1);
         setSelectedRegion(regionName);
     };
@@ -101,13 +123,30 @@ function PlacePage() {
     };
 
     const handlePageChange = (page) => {
-        if (page >= 0 && page < totalPages) {
-            console.log("페이지 변경)  ", page)
-            setCurrentPage(page);
-            // setPage(page);
-            // setParams((prev) => ({ ...prev, page }));
-        }
+    if (page >= 1 && page <= totalPages) {
+        console.log("페이지 변경)  ", page)
+        setCurrentPage(page);
+    }
     }; //페이지네이션
+
+    const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+    const endPage = Math.min(startPage + 9, totalPages);
+    const pageButtons = Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+        const pageIndex = startPage + i;
+        return (
+            <button
+                key={pageIndex}
+                onClick={() => handlePageChange(pageIndex)}
+                className={`px-4 py-2 rounded-full border ${
+                    pageIndex === currentPage
+                        ? 'bg-blue-500 text-white border-blue-500'
+                        : 'bg-white text-black border-gray-300'
+                }`}
+            >
+                {pageIndex}
+            </button>
+        );
+    });
 
     return (
         <div className="min-h-screen bg-white text-black pb-7">
@@ -170,17 +209,19 @@ function PlacePage() {
                         인기 <span className="font-bold">여행지</span>{' '}
                         알려줄게요!
                     </span>
-                    <div className="flex items-center gap-2">
+                    <form onSubmit={handleSearchKeyword} className="flex items-center gap-2">
                         <input
                             type="text"
-                            name="email"
-                            placeholder="검색"
+                            name="keyword"
+                            placeholder="키워드로 전국 조회"
+                            onChange={(e)=>{setKeyword(e.target.value)}}
+                            value={keyword}
                             className="py-4 ps-4 pr-40 border border-gray-300"
                         />
                         <div>
-                            <img src="../public/images/i_search.png" alt="" />
+                            <img src="../public/images/i_search.png" alt="" onClick={handleSearchKeyword} />
                         </div>
-                    </div>
+                    </form>
                 </div>
                 {/* <div className="pb-[30px]">
           <span className="text-[22px] text-black font-bold">
@@ -226,66 +267,30 @@ function PlacePage() {
 
             <div className="flex justify-center mt-10  pb-7">
                 <div className="flex gap-2 items-center">
-                    {/* 10페이지 단위 이전 */}
-                    <button
-                        onClick={() =>
-                            handlePageChange(
-                                Math.max(
-                                    0,
-                                    Math.floor(currentPage / 10 - 1) * 10,
-                                ),
-                            )
-                        }
-                        disabled={currentPage < 10}
-                        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
-                    >
-                        «
-                    </button>
 
-                    {/* 현재 페이지 블록 표시 */}
-                    {Array.from(
-                        {
-                            length: Math.min(
-                                10,
-                                totalPages - Math.floor(currentPage / 10) * 10,
-                            ),
-                        },
-                        (_, i) => {
-                            const pageIndex =
-                                Math.floor(currentPage / 10) * 10 + i;
-                            return (
-                                <button
-                                    key={pageIndex}
-                                    onClick={() => handlePageChange(pageIndex)}
-                                    className={`px-4 py-2 rounded-full border ${
-                                        pageIndex === currentPage
-                                            ? 'bg-blue-500 text-white border-blue-500'
-                                            : 'bg-white text-black border-gray-300'
-                                    }`}
-                                >
-                                    {pageIndex + 1}
-                                </button>
-                            );
-                        },
-                    )}
+                    <div className="flex gap-2 items-center">
+                        {/* 이전 버튼 */}
+                        <button
+                            onClick={() => handlePageChange(Math.max(1, startPage - 10))}
+                            disabled={startPage === 1}
+                            className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                        >
+                            «
+                        </button>
 
-                    {/* 10페이지 단위 다음 */}
-                    <button
-                        onClick={() =>
-                            handlePageChange(
-                                Math.min(
-                                    totalPages - 1,
-                                    Math.floor(currentPage / 10 + 1) * 10,
-                                ),
-                            )
-                        }
-                        disabled={
-                            Math.floor(currentPage / 10 + 1) * 10 >= totalPages
-                        }
-                        className="px-3 py-2 bg-white border rounded disabled:opacity-50"
-                    >
-                        »
-                    </button>
+                        {/* 페이지 번호 버튼 */}
+                        {pageButtons}
+
+                        {/* 다음 버튼 */}
+                        <button
+                            onClick={() => handlePageChange(Math.min(totalPages, startPage + 10))}
+                            disabled={startPage + 10 > totalPages}
+                            className="px-3 py-2 bg-white border rounded disabled:opacity-50"
+                        >
+                            »
+                        </button>
+                    </div>
+
                 </div>
             </div>
 

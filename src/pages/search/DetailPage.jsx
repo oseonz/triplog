@@ -100,6 +100,7 @@ function DetailPage() {
 
         // 저장한 댓글을 아래에 추가해야함. 전체 페이지 리로드?
     }
+    
     const handleBookmarkClick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
