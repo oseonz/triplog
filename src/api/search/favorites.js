@@ -43,8 +43,8 @@ export const setFavorites = async (
     areacode,
     sigungucode,
     firstimage,
-    mapX,
-    mapY,
+    mapx,
+    mapy,
 ) => {
     const URL = `${API_SERVER_HOST}/favorites/save`;
 
@@ -59,8 +59,8 @@ export const setFavorites = async (
             areacode,
             sigungucode,
             firstimage,
-            mapX,
-            mapY,
+            mapx,
+            mapy,
         });
 
         const { result, message, id_name, id } = res.data;

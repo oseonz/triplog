@@ -276,8 +276,8 @@ function FoodPage() {
                                         areaCode={item.areacode}
                                         sigunguCode={item.sigungucode}
                                         firstimage={item.firstimage}
-                                        mapX={item.mapx}
-                                        mapY={item.mapy}
+                                        mapx={item.mapx}
+                                        mapy={item.mapy}
                                     />
                                     {/* </Link> */}
                                 </>
