@@ -37,7 +37,7 @@ function MyActivitys() {
             <div className="min-h-screen bg-[#F3F5F6] flex justify-center">
                 <div className="container">
                     <div className="pt-7">
-                        <div className="flex bg-white border-y-2 justify-around mb-7">
+                        {/* <div className="flex bg-white border-y-2 justify-around mb-7">
                             {TABS.map((tab, i) => (
                                 <div
                                     key={i}
@@ -55,7 +55,7 @@ function MyActivitys() {
                                     </p>
                                 </div>
                             ))}
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -3,6 +3,8 @@ import MainLayout from '../../layouts/MainLayout';
 import { Link } from 'react-router-dom';
 import WhitePageLayout from '../../layouts/WhitePageLayout';
 import TripCard from '../../components/common/TripCard.jsx';
+import { useRecoilValue } from 'recoil';
+import { userState } from './atom/userState.js';
 
 export const getUserBookmarks = async (user_id) => {
     const res = await axios.get(
@@ -19,13 +21,14 @@ const TABS = {
 };
 
 function MyBookmarks() {
+    const { id } = useRecoilValue(userState); // 유저id
     const [activeTab, setActiveTab] = useState('여행지');
     const [cards, setItems] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const allBookmarks = await getUserBookmarks(6); // 유저 ID 고정값 말고 로그인 정보 쓰도록 나중에 바꿔라
+                // const allBookmarks = await getUserBookmarks(6);
 
                 const contenttypeid = TABS[activeTab];
 
@@ -96,16 +99,24 @@ function MyBookmarks() {
                                 찜한 {activeTab}가 없습니다.
                             </p>
                         ) : (
-                            cards.map((card, i) => (
-                                <Link to="" key={i}>
-                                    <TripCard
-                                        title={card.title}
-                                        image={card.image}
-                                        location={card.location}
-                                        tag={card.tag}
-                                    />
-                                </Link>
-                            ))
+                            <Link
+                                to={`/search/detail/${item.contentid}`}
+                                key={index}
+                            >
+                                <TripCard
+                                    user_id={id}
+                                    contentId={item.contentid}
+                                    contentTypeId={item.contenttypeid}
+                                    title={item.title}
+                                    addr1={item.addr1}
+                                    addr2={item.addr2}
+                                    areaCode={item.areacode}
+                                    sigunguCode={item.sigungucode}
+                                    firstimage={item.firstimage}
+                                    mapX={item.mapx}
+                                    mapY={item.mapy}
+                                />
+                            </Link>
                         )}
                     </div>
                 </div>

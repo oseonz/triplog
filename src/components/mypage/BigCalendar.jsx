@@ -63,7 +63,7 @@ function BigCalendar() {
                     {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
                         <div
                             key={day}
-                            className="h-6 text-center font-semibold bg-blue-100"
+                            className="text-center font-semibold border"
                         >
                             {day}
                         </div>

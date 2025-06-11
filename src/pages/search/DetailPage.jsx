@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import DetailLayout from '../../layouts/DetailLayout';
 import {
     fetchDetailIntro,
@@ -12,6 +12,10 @@ import MyMap from '../../components/search/MyMap';
 import DetailInfo from '../../components/search/DetailInfo';
 import DetailInfo2 from '../../components/search/DetailInfo2';
 import EventDetail from '../../components/info/EventDetail';
+import { checkFavorite, setFavorites, unsetFavorite } from '../../api/course/favoritesApi';
+import { checkLikesContent, setLikesContent, unsetLikesContent } from '../../api/common/likesApi';
+import { listRemarks, saveRemark } from '../../api/common/remarksApi';
+import axios from 'axios';
 
 // //지도 스크립트
 // <script
@@ -20,55 +24,179 @@ import EventDetail from '../../components/info/EventDetail';
 // ></script>;
 
 function DetailPage() {
-    const { contentid, contenttypeid } = useParams();
+
+    // 댓글 관련 내용, 나중에 모듈로 빼낼것
+
+
+
+    const { contentid } = useParams();
+    // const { contentid, contenttypeid } = useParams();
+    const location = useLocation();
+    const {
+            user_id,
+            contentId,
+            contentTypeId,
+            title,
+            addr1,
+            addr2,
+            areaCode,
+            sigunguCode,
+            firstimage,
+            mapX,
+            mapY
+  } = location.state || {}
+
+    const [comment, setComment] = useState("");
+
     const [detail, setDetail] = useState(null);
     const [intro, setIntro] = useState(null);
+    const [remarksList, setRemarksList] = useState([]);
     const [bookmarked, setBookmarked] = useState(false);
-    const [heart, setHeart] = useState(false);
+    const [liked, setLiked] = useState(false);
+    // const [heart, setHeart] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
 
-    const handleBookmarkClick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setBookmarked(!bookmarked);
-    };
 
-    const handleHeartClick = (e) => {
+    const handleSaveRemark = async (e) => {
+        
         e.stopPropagation();
         e.preventDefault();
 
-        setHeart((prev) => {
-            const newHeart = !prev;
-            setLikesCount((count) => (newHeart ? count + 1 : count - 1));
-            return newHeart;
-        });
+        let result;
+
+        if (!comment || comment.trim() === "") {
+            alert("댓글 내용을 작성해 주세요.");
+            return;
+        }
+        try {
+            result = await saveRemark(
+                user_id,
+                contentId,
+                contentTypeId,
+                title,
+                addr1,
+                addr2,
+                areaCode,
+                sigunguCode,
+                firstimage,
+                mapX,
+                mapY,
+                comment,
+            );
+
+            console.log('saveRemark : ', result);
+
+            const refreshed = await listRemarks(contentId);
+            setRemarksList(refreshed.items); 
+            setComment("");
+
+        }
+        catch(err){
+                console.error("댓글 저장 실패:", err);
+                alert("handleBookmarkClick : 댓글 저장 중 오류가 발생했습니다.");
+        }
+
+        
+
+        // 저장한 댓글을 아래에 추가해야함. 전체 페이지 리로드?
+    }
+    const handleBookmarkClick = async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        let result;
+
+        if (bookmarked) {
+            result = await unsetFavorite(user_id, contentId);
+            console.log('unsetFavorite : ', result);
+        } else {
+            result = await setFavorites(
+                user_id,
+                contentId,
+                contentTypeId,
+                title,
+                addr1,
+                addr2,
+                areaCode,
+                sigunguCode,
+                firstimage,
+                mapX,
+                mapY,
+            );
+            console.log('setFavorites : ', result);
+        }
+
+        const ret = await checkFavorite(user_id, contentId);
+        setBookmarked(ret);
+        // setBookmarked(!bookmarked); // 직접 DB상태를 확인하는 것으로 변경
     };
 
-    // useEffect(() => {
-    //   Promise.all([
-    //     tourApiViewOne(contentid),
-    //     getLikes({ contentid }),
-    //     fetchDetailIntro(contentid, contenttypeid),
-    //   ]).then(([tourData, likesData, introData]) => {
-    //     setDetail({
-    //       ...tourData,
-    //       likes_count: likesData,
-    //     });
-    //     setLikesCount(likesData);
-    //     setIntro(introData);
-    //     console.log("detail 응답: ", tourData);
-    //     console.log("like:", likesData);
-    //     console.log("intro 응답: ", introData);
-    //   });
-    // }, []);
+    const handleLikeClick = async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        let result;
+
+        if (liked) {
+            result = await unsetLikesContent(user_id, contentId);
+            console.log('unsetLikesContent : ', result);
+        } else {
+            result = await setLikesContent(
+                user_id,
+                contentId,
+                contentTypeId,
+                title,
+                addr1,
+                addr2,
+                areaCode,
+                sigunguCode,
+                firstimage,
+                mapX,
+                mapY,
+            );
+            console.log('setLikesContent : ', result);
+        }
+
+        const ret = await checkLikesContent(user_id, contentId);
+        console.log('checkLikesContent : ', ret);
+
+        setLikesCount(ret.likes_count);
+        setLiked(ret.my_check);
+
+        // setBookmarked(!bookmarked);
+    };
+
+    const checkLiked = async () => {
+        const result = await checkLikesContent(user_id, contentId);
+        if (result.my_check == true) setLiked(true);
+        else setLiked(false);
+        setLikesCount(result.likes_count);
+    };
+
+    const checkBookmark = async () => {
+        console.log('######## user_id, contentId :', user_id, contentId);
+        const result = await checkFavorite(user_id, contentId);
+        if (result == true) setBookmarked(true);
+        else setBookmarked(false);
+    };
 
     useEffect(() => {
-        tourApiViewOne(contentid)
+        (async () => {
+            await checkBookmark();
+            await checkLiked();
+        })();
+    }, []);
+
+    useEffect(() => {
+        tourApiViewOne(contentId)
             .then(async (tourData) => {
                 const { contenttypeid: ContentTypeId } = tourData;
-                const [likesData, introData] = await Promise.all([
-                    getLikes({ contentid }),
-                    fetchDetailIntro(contentid, ContentTypeId),
+                                    console.log("#### content Id : ", contentId);
+                const [likesData, introData, remarksData] = await Promise.all([
+
+                    getLikes(contentId),
+                    fetchDetailIntro(contentId, ContentTypeId),
+                    listRemarks(contentId),
                 ]);
 
                 setDetail({
@@ -77,15 +205,20 @@ function DetailPage() {
                 });
                 setLikesCount(likesData);
                 setIntro(introData);
+                console.log("############## remakrsList : ", remarksData)
+
+                setRemarksList(remarksData.items);
+
 
                 console.log('detail 응답: ', tourData);
+                console.log('remarks 응답:', remarksData);
                 console.log('like:', likesData);
                 console.log('intro 응답: ', introData);
             })
             .catch((err) => {
                 console.error('데이터 로드 실패:', err);
             });
-    }, [contentid]);
+    }, [contentId]);
 
     if (!detail) return <div>데이터 불러오는 중...</div>;
 
@@ -101,11 +234,11 @@ function DetailPage() {
                         <div className="flex items-center gap-1">
                             <img
                                 src={
-                                    heart
+                                    liked
                                         ? '/images/heart-f.png'
                                         : '/images/heart-o.png'
                                 }
-                                onClick={handleHeartClick}
+                                onClick={handleLikeClick}
                                 alt="좋아요"
                                 className="w-[36px]"
                             />
@@ -157,11 +290,11 @@ function DetailPage() {
                     <div className="bg-white p-10 flex mb-12">
                         {detail?.contenttypeid == '12' ? (
                             <DetailInfo intro={intro} detail={detail} />
-                        ) : ( detail?.contenttypeid == '15' ? (
+                        ) : detail?.contenttypeid == '15' ? (
                             <EventDetail intro={intro} detail={detail} />
                         ) : (
                             <DetailInfo2 intro={intro} detail={detail} />
-                        ))}
+                        )}
                     </div>
                 </div>
                 <div className="mb-12">
@@ -175,18 +308,68 @@ function DetailPage() {
                     <BlueBtn to="/course/builder" label="코스 만들러 가기" />
                 </div>
                 <div className="mb-12">
-                    <div className="mb-2">
-                        <p className="text-2xl font-bold">로그 톡톡</p>
+                    <div className="flex mb-2 justify-between">
+                        <div>
+                            <p className="text-2xl font-bold">로그 톡톡</p>
+                        </div>
+                        <div className="flex">
+                            <div className="flex items-center gap-1">
+                                <img
+                                    src={
+                                        liked
+                                            ? '/images/heart-f.png'
+                                            : '/images/heart-o.png'
+                                    }
+                                    onClick={handleLikeClick}
+                                    alt="좋아요"
+                                    className="w-[36px]"
+                                />
+                                <p>{likesCount}</p>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <img
+                                    src={
+                                        bookmarked
+                                            ? '/images/i_bookmarks2.png'
+                                            : '/images/i_bookmarks.png'
+                                    }
+                                    onClick={handleBookmarkClick}
+                                    alt="북마크"
+                                />
+                            </div>
+                        </div>
+
                     </div>
                     <textarea
                         name="comment"
+                        id="comment"
+                        value={comment}
+                        onChange={(e)=>{setComment(e.target.value)}}
                         placeholder="소중한 댓글을 남겨주세요."
                         className="w-[1200px] h-[100px] border border-gray-300 p-4 placeholder:text-start resize-none mb-4"
                     />
                     <div className="flex justify-end">
-                        <button className="bg-blue-500 text-white py-2 px-6 border border-blue-500 hover:bg-blue-600">
+                        <button name='saveBtn' className="bg-blue-500 text-white py-2 px-6 border border-blue-500 hover:bg-blue-600" onClick={handleSaveRemark}> 
                             등록
                         </button>
+                    </div>
+
+                    <div>
+
+                        {Array.isArray(remarksList) && remarksList.map((item, i) => (
+                            <div key={i} className='mb-5'>
+                                <p>{item.user_nickname}</p>
+                                <div className='flex justify-between'>
+                                    <div>
+                                        {item.comment.split('\n').map((line, idx) => (
+                                        <p key={idx}>{line}</p>
+                                        ))}
+                                    </div>
+                                    <div>{user_id == item.user_id ? <button>X</button> : null }</div>
+                                </div>
+                            </div>
+                        ))} 
+
                     </div>
                 </div>
             </DetailLayout>

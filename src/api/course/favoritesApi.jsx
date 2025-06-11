@@ -98,8 +98,6 @@ export const checkFavorite = async (user_id, contentid) => {
             params: { user_id, contentid },
         });
 
-        console.log('checkFavorite : ', res.data);
-
         if (!res?.data?.items) return false;
 
         const { my_check } = res?.data?.items || {};
